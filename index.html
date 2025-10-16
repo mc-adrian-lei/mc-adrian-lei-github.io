@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>32 Aspect Developmental Self Clock — Mind–Body–Energy Mapping</title>
+  <style>
+    /* =============================================================
+       32 Aspect Developmental Self Clock — Single File Implementation
+       • Plain HTML, CSS, and JavaScript (no external libraries)
+       • Accessible controls + Canvas visualization
+       • Keyboard navigation, high-contrast defaults, mobile-friendly
+       ============================================================= */
+
+    :root {
+      --bg: #0f1220;
+      --panel: #12162a;
+      --ink: #f6f7fb;
+      --muted: #b8bfd9;
+      --accent: #7dd3fc; /* cyan */
+      --accent-2: #a78bfa; /* violet */
+      --good: #34d399; /* green */
+      --warn: #fbbf24; /* amber */
+      --bad: #f87171;  /* red */
+      --ring: #1f2543;
+      --focus: #fde68a;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 1200px at 70% 20%, #1b2245 0%, var(--bg) 55%);
+      color: var(--ink);
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      grid-template-rows: auto 1fr auto;
+      grid-template-areas: 
+        "top top"
+        "vis side"
+        "footer footer";
+      gap: 12px;
+      height: 100dvh;
+      padding: 10px;
+    }
+
+    header {
+      grid-area: top;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: color-mix(in oklab, var(--panel) 80%, black 20%);
+      border: 1px solid #1c2248;
+      border-radius: 14px;
+      padding: 10px 12px;
+      box-shadow: 0 4px 22px rgba(0,0,0,.25);
+    }
+
+    header h1 { font-size: clamp(16px, 2vw, 18px); margin: 0; letter-spacing: .3px; }
+
+    header .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+
+    .btn {
+      background: linear-gradient(180deg, #22306b, #1a234a);
+      color: var(--ink);
+      border: 1px solid #31407c;
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+    .btn.secondary { background: #1a1f3d; border-color: #2b356a; }
+    .btn.warn { background: #3b1f1f; border-color: #6b2b2b; }
+
+    .vis {
+      grid-area: vis;
+      position: relative;
+      background: radial-gradient(800px 800px at 50% 45%, #141a34 0%, #0e1328 60%);
+      border-radius: 16px;
+      border: 1px solid #1b1f3f;
+      display: grid;
+      grid-template-rows: 1fr auto;
+      overflow: clip;
+    }
+
+    canvas { width: 100%; height: 100%; display: block; }
+
+    .legend {
+      padding: 10px;
+      border-top: 1px solid #1b1f3f;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      background: #0f1430;
+    }
+
+    .legend .chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid #2a315f; border-radius: 999px; padding: 6px 10px;
+      color: var(--muted);
+      background: #12183b;
+      font-size: 12px;
+    }
+
+    .legend .swatch { width: 12px; height: 12px; border-radius: 3px; background: var(--accent); display: inline-block; }
+
+    aside {
+      grid-area: side;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 10px;
+      background: color-mix(in oklab, var(--panel) 90%, black 10%);
+      border: 1px solid #1c2248;
+      border-radius: 16px;
+      padding: 10px;
+      overflow: hidden;
+    }
+
+    .panel { background: #0f1430; border: 1px solid #1b214b; border-radius: 12px; padding: 10px; }
+
+    .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    .metric { background: #0c1027; border: 1px solid #18204b; border-radius: 12px; padding: 10px; }
+    .metric h3 { margin: 0 0 6px; font-size: 12px; color: var(--muted); font-weight: 600; }
+    .metric .val { font-size: 18px; font-weight: 800; }
+
+    .scroll { overflow: auto; min-height: 120px; max-height: 50vh; padding-right: 4px; }
+    .aspect-list { display: grid; gap: 6px; }
+
+    .aspect-item { background: #0a0f24; border: 1px solid #1a2352; border-radius: 12px; padding: 8px; display: grid; gap: 6px; }
+    .aspect-item[aria-selected="true"] { outline: 2px solid var(--focus); }
+    .row { display: flex; gap: 8px; align-items: center; justify-content: space-between; }
+    .row .name { display: flex; align-items: center; gap: 8px; font-weight: 700; }
+    .dot { width: 10px; height: 10px; border-radius: 999px; }
+    .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tag { font-size: 10px; color: var(--muted); background: #12183b; border: 1px solid #222c65; padding: 2px 6px; border-radius: 999px; }
+
+    label { font-size: 12px; color: var(--muted); }
+    input[type="range"] { width: 100%; }
+    input[type="range"]:focus-visible { outline: 2px solid var(--focus); }
+
+    footer {
+      grid-area: footer;
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between;
+      background: #0e1433; border-top: 1px solid #18204b; padding: 8px 10px; border-radius: 12px;
+    }
+
+    .vis-hint { color: var(--muted); font-size: 12px; }
+
+    /* Dialog (for quick info/tooltip-like modal) */
+    dialog { border: 1px solid #24306f; border-radius: 16px; padding: 0; color: var(--ink); background: #0c1129; max-width: min(520px, 92vw); }
+    dialog::backdrop { background: rgba(0,0,0,.4); }
+    .modal-head { padding: 12px; border-bottom: 1px solid #1b214b; display: flex; align-items: center; justify-content: space-between; }
+    .modal-body { padding: 12px; display: grid; gap: 10px; }
+    .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .modal-grid > div { background: #0a0f24; border: 1px solid #1a2352; border-radius: 10px; padding: 8px; }
+
+    @media (max-width: 1024px) {
+      .app { grid-template-columns: 1fr; grid-template-areas: "top" "vis" "side" "footer"; height: auto; min-height: 100dvh; }
+      aside { order: 3; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" role="application" aria-label="32 Aspect Developmental Self Clock">
+    <header>
+      <h1>32 Aspect Self Clock · Mind–Body–Energy Mapping</h1>
+      <div class="controls">
+        <button id="modeMind" class="btn" aria-pressed="true" title="View Mind model (psych/semantic)">Mind</button>
+        <button id="modeBody" class="btn secondary" aria-pressed="false" title="View Body model (neuro/physiology)">Body</button>
+        <button id="modeSoul" class="btn secondary" aria-pressed="false" title="View Soul model (archetypal/transpersonal)">Soul</button>
+        <button id="btnTutorial" class="btn" aria-pressed="false" title="Toggle tutorial/walkthrough mode (keyboard: T)">▶ Tutorial</button>
+        <button id="btnRandomize" class="btn secondary" title="Randomize activations (keyboard: R)">Shuffle</button>
+        <button id="btnDeactivate" class="btn secondary" title="Set all activations to 0 (keyboard: 0)">Deactivate All</button>
+        <button id="btnExport" class="btn" title="Export all aspect states as JSON (keyboard: E)">Export JSON</button>
+      </div>
+    </header>
+
+    <section class="vis">
+      <canvas id="clock" aria-label="Developmental Self Clock canvas" tabindex="0"></canvas>
+      <div class="legend" aria-label="Legend">
+        <div class="chip"><span class="swatch" style="background: var(--accent)"></span> Stage cross-lines (12)</div>
+        <div class="chip"><span class="swatch" style="background: var(--accent-2)"></span> Concentric rings (8)</div>
+        <div class="chip"><span class="swatch" style="background: #34d399"></span> Resonance links (similar activation)</div>
+        <div class="chip"><span class="swatch" style="background: #f59e0b"></span> Tutorial highlight</div>
+      </div>
+    </section>
+
+    <aside>
+      <div class="panel metrics" aria-label="System metrics">
+        <div class="metric" aria-live="polite"><h3>SCI (Semantic Coherence Index)</h3><div class="val" id="sciVal">—</div></div>
+        <div class="metric" aria-live="polite"><h3>Energy–Matter</h3><div class="val" id="emVal">—</div></div>
+      </div>
+
+      <div class="panel" aria-label="Developmental stage slider">
+        <label for="devStageSlider"><strong>Developmental Stage</strong> <span id="devStageVal">1</span></label>
+        <input id="devStageSlider" type="range" min="0" max="11" value="0" />
+        <p class="vis-hint">0 = birth/infancy ··· 12 = wisdom/end-of-life · Adjusts all activations via devProfile</p>
+      </div>
+
+      <div class="panel scroll" aria-label="Aspect controls">
+        <div id="aspectList" class="aspect-list" role="listbox" aria-multiselectable="false"></div>
+      </div>
+
+      <div class="panel" aria-label="Legend and codes">
+        <div class="tags" style="margin-bottom:6px">
+          <span class="tag">Brain: PFC, Limbic, Insula, Amygdala…</span>
+          <span class="tag">NT: 5-HT, DA, NE, GABA, ACh, Oxytocin</span>
+          <span class="tag">Modes: visual, auditory, interoceptive…</span>
+        </div>
+        <p class="vis-hint">Keyboard: Arrow keys pan focus · Enter opens details · T tutorial · R shuffle · E export · 0 clear</p>
+      </div>
+    </aside>
+
+    <footer>
+      <div class="vis-hint">C = E × MC · Energy input → neural region → neurochemical output → system response</div>
+      <div class="vis-hint">Open science: Export preserves all annotations for reproducibility</div>
+      <div class="vis-hint">Adrian Lei Martinez-Conol, founder of the Only When Prompted Research Initiative 2018</div>
+    </footer>
+  </div>
+
+  <!-- Info Modal (tooltip-like, accessible) -->
+  <dialog id="infoModal" aria-label="Aspect details">
+    <div class="modal-head">
+      <strong id="mTitle">Aspect</strong>
+      <button class="btn" value="cancel">Close</button>
+    </div>
+    <div class="modal-body">
+      <div id="mDef" class="panel"></div>
+      <div class="modal-grid">
+        <div>
+          <div><strong>Brain Region(s)</strong></div>
+          <div id="mBrain" aria-live="polite"></div>
+        </div>
+        <div>
+          <div><strong>Neurochemistry</strong></div>
+          <div id="mNT"></div>
+        </div>
+        <div>
+          <div><strong>Energy Pathway / Sensory</strong></div>
+          <div id="mEnergy"></div>
+        </div>
+        <div>
+          <div><strong>Developmental Stage · Ring</strong></div>
+          <div id="mStage"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <label for="mSlider"><strong>Activation</strong> <span id="mActVal" style="float:right">0</span></label>
+        <input id="mSlider" type="range" min="0" max="100" value="0" />
+      </div>
+      <div class="panel">
+        <strong>Matter/Energy Summary</strong>
+        <div id="mSummary"></div>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    /* ============================================================
+       DATA MODEL
+       ------------------------------------------------------------
+       • Three model lenses: Mind / Body / Soul
+       • Each lens has 32 aspects with a 12-point developmental profile
+    ============================================================ */
+
+    const N_ASPECTS = 32;
+    const TWO_PI = Math.PI * 2;
+    const center = { x: 0, y: 0 };
+    const DEV_STAGES = 12;
+
+    // Placeholders; replace with canonical mappings as needed
+    const BRAIN = ["PFC", "Limbic", "Insula", "Amygdala", "Hippocampus", "ACC", "Basal Ganglia", "Cerebellum"];
+    const NT = ["Serotonin (5-HT)", "Dopamine (DA)", "Norepinephrine (NE)", "GABA", "Acetylcholine (ACh)", "Oxytocin", "Endorphins"];
+    const MODES = ["visual", "auditory", "somatosensory", "interoceptive", "proprioceptive", "olfactory"];
+
+    // Developmental profile generator (smooth rise → peak → taper)
+    function makeDevProfile(i, stage, ring) {
+      const len = DEV_STAGES;
+      const arr = [];
+      const phase = (stage-1) / 12;      // shift by nominal stage
+      const amp = 0.6 + (ring/8)*0.3;    // outer rings slightly higher
+      const noise = (seed)=> (Math.sin((i+1)*(seed+1.73))*0.04);
+      for (let s=0; s<len; s++) {
+        const t = s/(len-1);             // 0..1 lifespan
+        const bell = Math.sin(Math.PI * (t*0.85 + phase*0.12));
+        const base = Math.max(0, bell) * amp + 0.15*(1 - Math.pow(1-t, 3));
+        const val = Math.max(0, Math.min(1, base + noise(s)));
+        arr.push(Math.round(val*100));
+      }
+      return arr;
+    }
+
+    // Build a complete 32-aspect set for a given lens (mind/body/soul)
+    function makeAspectSet(model) {
+      return Array.from({ length: N_ASPECTS }, (_, i) => {
+        const hue = Math.round((i * (360 / N_ASPECTS)) % 360);
+        const stage = 1 + (i % 12);
+        const ring  = 1 + (i % 8);
+        const devProfile = makeDevProfile(i, stage, ring);
+        const base = {
+          id: i+1,
+          name: `${model[0].toUpperCase()+model.slice(1)} Aspect ${i+1}`,
+          stage, ring, hue,
+          activation: devProfile[0],
+          devProfile,
+        };
+        if (model === 'mind') {
+          return Object.assign(base, {
+            definition: "Cognitive/semantic placeholder.",
+            corePsychologicalRole: "Role placeholder",
+            nsilSemanticSignature: "nsil:placeholder",
+            semanticGravity: "attractor",
+            quantumMode: ["particle","wave","field"][i%3],
+            particleWaveFieldFunction: "propagation placeholder",
+            brainRegion: "—",
+            neurotransmitter: "—",
+            energyMode: "—",
+            matterOutput: "—",
+          });
+        }
+        if (model === 'body') {
+          return Object.assign(base, {
+            definition: "Neuro/physiology placeholder.",
+            brainRegion: BRAIN[i%8],
+            neurotransmitter: ["5-HT","DA","NE","GABA","ACh","Oxytocin","Endorphins"][i%7],
+            energyMode: MODES[i%MODES.length],
+            matterOutput: "Physiological function",
+          });
+        }
+        // soul
+        return Object.assign(base, {
+          definition: "Archetypal/transpersonal placeholder.",
+          archetypalSymbol: "Symbol",
+          spiritualRole: "Role",
+          nsilPrincipleSignature: "nsil:principle",
+          brainRegion: "—",
+          neurotransmitter: "—",
+          energyMode: "—",
+          matterOutput: "—",
+        });
+      });
+    }
+
+    // Three parallel datasets (placeholders until you provide canonical labels)
+    const mindAspects = makeAspectSet('mind');
+    const bodyAspects = makeAspectSet('body');
+    const soulAspects = makeAspectSet('soul');
+
+    // Active lens state
+    let mode = 'mind';
+    let aspects = mindAspects;
+
+    /* ============================================================
+       STATE + METRICS
+    ============================================================ */
+    const state = {
+      resonanceThreshold: 18, // activation similarity to link nodes
+      tutorial: false,
+      tutorialIndex: 0,
+      focusId: 1,
+      devStage: 0,
+    };
+
+    // SCI: mean / (1 + stddev) * 100
+    function computeSCI() {
+      const vals = aspects.map(a => a.activation);
+      const mean = vals.reduce((a,b)=>a+b,0) / vals.length;
+      const variance = vals.reduce((acc, v)=> acc + Math.pow(v-mean, 2), 0) / vals.length;
+      const std = Math.sqrt(variance);
+      const sci = (mean / (1 + std)) * 100;
+      return { mean, std, sci };
+    }
+
+    // Energy–Matter overview (simple but informative proxy)
+    function computeEnergyMatter() {
+      const total = aspects.reduce((s,a)=> s + a.activation, 0);
+      const byNT = new Map();
+      for (const a of aspects) {
+        const k = a.neurotransmitter || '—';
+        byNT.set(k, (byNT.get(k)||0) + a.activation);
+      }
+      const metabolic = total / (N_ASPECTS * 100);
+      return { total, byNT, metabolic };
+    }
+
+    /* ============================================================
+       DOM HELPERS
+    ============================================================ */
+    const el = sel => document.querySelector(sel);
+    const listEl = el('#aspectList');
+    const sciEl  = el('#sciVal');
+    const emEl   = el('#emVal');
+    const devSlider = el('#devStageSlider');
+    const devVal = el('#devStageVal');
+
+    function applyDevStage(stage){
+      state.devStage = stage;
+      if (devVal) devVal.textContent = stage + 1;
+      aspects.forEach(a => { if (a.devProfile?.length === DEV_STAGES) a.activation = a.devProfile[stage]; });
+      draw(); updateMetrics(); syncListRanges();
+    }
+
+    if (devSlider) devSlider.addEventListener('input', (e)=> applyDevStage(Number(e.target.value)));
+
+    function tagHTML(a){
+      if (mode==='mind') {
+        return `<span class="tag">${a.quantumMode}</span><span class="tag">NSIL</span><span class="tag">${a.semanticGravity}</span>`;
+      } else if (mode==='body') {
+        return `<span class="tag">${a.brainRegion}</span><span class="tag">${String(a.neurotransmitter||'—').split(' ')[0]}</span><span class="tag">${a.energyMode}</span>`;
+      }
+      return `<span class="tag">${a.archetypalSymbol}</span><span class="tag">${a.spiritualRole}</span><span class="tag">NSIL</span>`;
+    }
+
+    function hsl(h, s=70, l=52) { return `hsl(${h} ${s}% ${l}%)`; }
+    function hslAlpha(h, a=.25, s=70, l=50) { return `hsl(${h} ${s}% ${l}% / ${a})`; }
+
+    function updateMetrics() {
+      const { mean, std, sci } = computeSCI();
+      sciEl.textContent = `${sci.toFixed(1)}  (μ=${mean.toFixed(1)}, σ=${std.toFixed(1)})`;
+      const { total, byNT, metabolic } = computeEnergyMatter();
+      const top = [...byNT.entries()].sort((a,b)=>b[1]-a[1]).slice(0,2).map(([k,v])=> `${String(k).split(' ')[0]} ${Math.round(v)}` ).join(', ');
+      emEl.textContent = `ΣE=${Math.round(total)} · NT↑ ${top || '—'} · Metabolic ${(metabolic*100).toFixed(0)}%`;
+    }
+
+    function createAspectRow(a) {
+      const item = document.createElement('div');
+      item.className = 'aspect-item';
+      item.role = 'option';
+      item.tabIndex = 0;
+      item.dataset.id = a.id;
+      item.setAttribute('aria-selected', a.id === state.focusId ? 'true' : 'false');
+
+      const r1 = document.createElement('div');
+      r1.className = 'row';
+      r1.innerHTML = `<div class="name"><span class="dot" style="background:${hsl(a.hue)}"></span>${a.name}</div>
+                      <div class="tag">Stage ${a.stage} · Ring ${a.ring}</div>`;
+
+      const r2 = document.createElement('div');
+      r2.className = 'row';
+      const label = document.createElement('label');
+      label.textContent = `Activation: ${a.activation}`;
+      label.style.flex = '1';
+      label.htmlFor = `rng-${a.id}`;
+
+      const range = document.createElement('input');
+      range.type = 'range';
+      range.min = 0; range.max = 100; range.value = a.activation; range.id = `rng-${a.id}`;
+      range.setAttribute('aria-label', `${a.name} activation`);
+      range.addEventListener('input', (e) => {
+        a.activation = Number(e.target.value);
+        label.textContent = `Activation: ${a.activation}`;
+        draw();
+        updateMetrics();
+      });
+
+      const detailsBtn = document.createElement('button');
+      detailsBtn.className = 'btn secondary';
+      detailsBtn.textContent = 'Details';
+      detailsBtn.addEventListener('click', () => openModal(a));
+
+      r2.append(label, range, detailsBtn);
+
+      const r3 = document.createElement('div');
+      r3.className = 'tags';
+      r3.innerHTML = `${tagHTML(a)}`;
+
+      item.append(r1, r2, r3);
+
+      item.addEventListener('click', () => { state.focusId = a.id; refreshListSelection(); draw(); });
+      item.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); openModal(a); }
+      });
+
+      return item;
+    }
+
+    function refreshListSelection() {
+      [...listEl.children].forEach(ch => ch.setAttribute('aria-selected', ch.dataset.id == state.focusId ? 'true':'false'));
+    }
+
+    function buildList() {
+      listEl.innerHTML = '';
+      aspects.forEach(a => listEl.appendChild(createAspectRow(a)));
+    }
+
+    /* ============================================================
+       MODAL (tooltip-style info + slider)
+    ============================================================ */
+    const dlg = el('#infoModal');
+    const mTitle = el('#mTitle');
+    const mDef = el('#mDef');
+    const mBrain = el('#mBrain');
+    const mNT = el('#mNT');
+    const mEnergy = el('#mEnergy');
+    const mStage = el('#mStage');
+    const mSlider = el('#mSlider');
+    const mActVal = el('#mActVal');
+    const mSummary = el('#mSummary');
+
+    let currentAspect = null;
+
+    function openModal(a) {
+      currentAspect = a;
+      mTitle.textContent = a.name;
+      if (mode==='mind') {
+        mDef.textContent = a.definition;
+        mBrain.textContent = a.nsilSemanticSignature || '—';
+        mNT.textContent = `${a.quantumMode || '—'} · ${a.particleWaveFieldFunction || ''}`;
+        mEnergy.textContent = `${a.semanticGravity || '—'}`;
+        mStage.textContent = `Stage ${a.stage} · Ring ${a.ring}`;
+      } else if (mode==='body') {
+        mDef.textContent = a.definition;
+        mBrain.textContent = a.brainRegion;
+        mNT.textContent = a.neurotransmitter;
+        mEnergy.textContent = a.energyMode;
+        mStage.textContent = `Stage ${a.stage} · Ring ${a.ring}`;
+      } else {
+        mDef.textContent = a.definition;
+        mBrain.textContent = a.archetypalSymbol || '—';
+        mNT.textContent = a.spiritualRole || '—';
+        mEnergy.textContent = a.nsilPrincipleSignature || '—';
+        mStage.textContent = `Stage ${a.stage} · Ring ${a.ring}`;
+      }
+      mSlider.value = String(a.activation);
+      mActVal.textContent = String(a.activation);
+      updateModalSummary();
+      dlg.showModal();
+    }
+
+    function updateModalSummary() {
+      if (!currentAspect) return;
+      const energyIn = currentAspect.activation;
+      const region = currentAspect.brainRegion || '—';
+      const ntStr = String(currentAspect.neurotransmitter || '—');
+      const neuroOut = ntStr.split(' ')[0];
+      const metabolic = Math.round((energyIn/100) * 100);
+      mSummary.textContent = `Energy in: ${energyIn} → ${region} → NT: ${neuroOut} → functional output: ${currentAspect.matterOutput || '—'} (metabolic load ≈ ${metabolic}%)`;
+    }
+
+    dlg.addEventListener('close', ()=>{ currentAspect = null; });
+    dlg.addEventListener('click', (e)=>{
+      const rect = dlg.getBoundingClientRect();
+      if (e.clientY < rect.top || e.clientY > rect.bottom || e.clientX < rect.left || e.clientX > rect.right) dlg.close();
+    });
+    dlg.querySelector('button[value="cancel"]').addEventListener('click', ()=> dlg.close());
+    mSlider.addEventListener('input', (e) => {
+      if (!currentAspect) return;
+      currentAspect.activation = Number(e.target.value);
+      mActVal.textContent = String(currentAspect.activation);
+      updateModalSummary();
+      const row = listEl.querySelector(`[data-id="${currentAspect.id}"]`);
+      if (row) {
+        const label = row.querySelector('label');
+        const range = row.querySelector('input[type="range"]');
+        if (range) range.value = String(currentAspect.activation);
+        if (label) label.textContent = `Activation: ${currentAspect.activation}`;
+      }
+      draw();
+      updateMetrics();
+    });
+
+    /* ============================================================
+       CANVAS RENDERING
+    ============================================================ */
+    const canvas = el('#clock');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      const dpr = Math.max(1, window.devicePixelRatio || 1);
+      const { clientWidth:w, clientHeight:h } = canvas;
+      canvas.width = Math.floor(w * dpr);
+      canvas.height = Math.floor(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      center.x = w/2; center.y = h/2;
+      draw();
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    function polar(angle, radius) {
+      return { x: center.x + Math.cos(angle)*radius, y: center.y + Math.sin(angle)*radius };
+    }
+
+    function drawRings(maxR) {
+      const rings = 8;
+      const step = maxR / rings;
+      ctx.save();
+      for (let i=1;i<=rings;i++) {
+        ctx.beginPath();
+        ctx.strokeStyle = i % 2 ? '#1a214a' : '#161c3f';
+        ctx.lineWidth = 1;
+        ctx.arc(center.x, center.y, step*i, 0, TWO_PI);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawStageLines(maxR) {
+      const count = 12;
+      ctx.save();
+      ctx.strokeStyle = '#24306f';
+      ctx.lineWidth = 1;
+      for (let s=0; s<count; s++) {
+        const angle = (s/count)*TWO_PI - Math.PI/2;
+        const p1 = polar(angle, 10);
+        const p2 = polar(angle, maxR);
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawNodes(maxR) {
+      const nodeR = 10;
+      const radius = maxR * 0.92;
+      const out = [];
+      aspects.forEach((a, i) => {
+        const angle = (i/N_ASPECTS)*TWO_PI - Math.PI/2;
+        const p = polar(angle, radius);
+        const arcSize = Math.max(0.05, a.activation/100) * (TWO_PI / N_ASPECTS);
+        ctx.beginPath();
+        ctx.arc(center.x, center.y, radius, angle - arcSize/2, angle + arcSize/2);
+        ctx.strokeStyle = hsl(a.hue, 70, 55);
+        ctx.lineWidth = 8;
+        ctx.globalAlpha = 0.55;
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+
+        ctx.beginPath();
+        ctx.fillStyle = hsl(a.hue, 70, 50);
+        ctx.arc(p.x, p.y, nodeR, 0, TWO_PI);
+        ctx.fill();
+        ctx.lineWidth = (a.id === state.focusId) ? 3 : 1.5;
+        ctx.strokeStyle = (a.id === state.focusId) ? '#fde68a' : '#0b0f2a';
+        ctx.stroke();
+
+        ctx.fillStyle = '#cbd5f1';
+        ctx.font = '12px ui-sans-serif, system-ui, -apple-system, Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(a.name, p.x, p.y - (nodeR+8));
+
+        out.push({ id: a.id, x: p.x, y: p.y, angle });
+      });
+      return out;
+    }
+
+    function drawResonanceLinks(nodePoints) {
+      ctx.save();
+      for (let i=0;i<aspects.length;i++) {
+        for (let j=i+1;j<aspects.length;j++) {
+          const ai = aspects[i], aj = aspects[j];
+          const sim = Math.abs(ai.activation - aj.activation);
+          const sameStage = (ai.stage === aj.stage);
+          const sameRing = (ai.ring === aj.ring);
+          const shouldLink = sim <= state.resonanceThreshold || sameStage || sameRing;
+          if (!shouldLink) continue;
+          const pi = nodePoints[i], pj = nodePoints[j];
+          const d = Math.hypot(pi.x - pj.x, pi.y - pj.y);
+          const alpha = Math.min(0.35, 0.08 + (1 - sim/100) * 0.25) * (sameStage ? 1.25 : 1) * (sameRing ? 1.15 : 1);
+          ctx.beginPath();
+          const grad = ctx.createLinearGradient(pi.x, pi.y, pj.x, pj.y);
+          grad.addColorStop(0, 'rgba(52, 211, 153, '+alpha.toFixed(3)+')');
+          grad.addColorStop(1, 'rgba(125, 211, 252, '+alpha.toFixed(3)+')');
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = Math.max(0.5, 2.5 - (d/260));
+          ctx.moveTo(pi.x, pi.y);
+          ctx.lineTo(pj.x, pj.y);
+          ctx.stroke();
+        }
+      }
+      ctx.restore();
+    }
+
+    function drawTutorialHalo(nodePoints) {
+      if (!state.tutorial) return;
+      const idx = (state.tutorialIndex % aspects.length);
+      const { x, y } = nodePoints[idx];
+      const t = performance.now()/1000;
+      const pulse = 10 + 6*Math.sin(t*2);
+      ctx.save();
+      const g = ctx.createRadialGradient(x, y, 2, x, y, 42+pulse);
+      g.addColorStop(0, 'rgba(245, 158, 11, 0.7)');
+      g.addColorStop(1, 'rgba(245, 158, 11, 0.0)');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(x, y, 42+pulse, 0, TWO_PI);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function draw() {
+      const { width:w, height:h } = canvas;
+      ctx.clearRect(0,0,w,h);
+      const maxR = Math.min(w, h)/2 - 30;
+      drawRings(maxR);
+      drawStageLines(maxR);
+      const points = drawNodes(maxR);
+      drawResonanceLinks(points);
+      drawTutorialHalo(points);
+    }
+
+    // Animation loop for tutorial halo
+    function tick() { if (state.tutorial) draw(); requestAnimationFrame(tick); }
+
+    /* ============================================================
+       HIT TEST & INTERACTION (mouse/touch)
+    ============================================================ */
+    function getMousePos(evt) {
+      const rect = canvas.getBoundingClientRect();
+      return { x: evt.clientX - rect.left, y: evt.clientY - rect.top };
+    }
+
+    function nodeAt(x, y) {
+      const { width:w, height:h } = canvas;
+      const maxR = Math.min(w, h)/2 - 30; const radius = maxR * 0.92; const nodeR = 12;
+      for (let i=0;i<aspects.length;i++) {
+        const angle = (i/N_ASPECTS)*TWO_PI - Math.PI/2;
+        const p = polar(angle, radius);
+        if (Math.hypot(x - p.x, y - p.y) <= nodeR+2) return aspects[i];
+      }
+      return null;
+    }
+
+    canvas.addEventListener('click', (e)=>{
+      const p = getMousePos(e);
+      const a = nodeAt(p.x, p.y);
+      if (a) { state.focusId = a.id; refreshListSelection(); draw(); openModal(a); }
+    });
+
+    // Basic keyboard navigation
+    window.addEventListener('keydown', (e)=>{
+      const key = e.key.toLowerCase();
+      if (key === 't') { toggleTutorial(); }
+      if (key === 'r') { randomize(); }
+      if (key === 'e') { exportJSON(); }
+      if (key === '0') { deactivateAll(); }
+      if (key === 'arrowright' || key === 'arrowdown') { e.preventDefault(); moveFocus(1); }
+      if (key === 'arrowleft' || key === 'arrowup') { e.preventDefault(); moveFocus(-1); }
+      if (key === 'enter') { e.preventDefault(); const a = aspects.find(x=>x.id===state.focusId); if (a) openModal(a); }
+    });
+
+    function moveFocus(delta) {
+      const idx = aspects.findIndex(a => a.id === state.focusId);
+      const next = (idx + delta + aspects.length) % aspects.length;
+      state.focusId = aspects[next].id;
+      refreshListSelection();
+      draw();
+      const row = listEl.querySelector(`[data-id="${state.focusId}"]`);
+      row?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    /* ============================================================
+       COMMANDS & EXPORT
+    ============================================================ */
+    function randomize() {
+      aspects.forEach(a => a.activation = Math.round(Math.random()*100));
+      syncListRanges(); draw(); updateMetrics();
+    }
+
+    function deactivateAll() {
+      aspects.forEach(a => a.activation = 0);
+      syncListRanges(); draw(); updateMetrics();
+    }
+
+    function syncListRanges() {
+      aspects.forEach(a => {
+        const row = listEl.querySelector(`[data-id="${a.id}"]`);
+        if (!row) return;
+        const range = row.querySelector('input[type="range"]');
+        const label = row.querySelector('label');
+        if (range) range.value = a.activation;
+        if (label) label.textContent = `Activation: ${a.activation}`;
+      });
+    }
+
+    // Build payload separately so we can unit-test it
+    function buildExportPayload() {
+      const { mean, std, sci } = computeSCI();
+      const { total, byNT, metabolic } = computeEnergyMatter();
+      return {
+        generatedAt: new Date().toISOString(),
+        model: `32 Aspect Developmental Self Clock — ${mode}`,
+        devStage: state.devStage,
+        metrics: { mean, std, sci },
+        energyMatter: { total, byNT: Object.fromEntries(byNT), metabolic },
+        aspects: aspects
+      };
+    }
+
+    function exportJSON() {
+      const payload = buildExportPayload();
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'self-clock-export.json';
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    /* ============================================================
+       TUTORIAL / WALKTHROUGH MODE
+    ============================================================ */
+    let tutorialTimer = null;
+    function toggleTutorial() {
+      state.tutorial = !state.tutorial;
+      el('#btnTutorial').setAttribute('aria-pressed', String(state.tutorial));
+      el('#btnTutorial').textContent = state.tutorial ? '⏸ Tutorial' : '▶ Tutorial';
+      if (state.tutorial) {
+        if (!tutorialTimer) tutorialTimer = setInterval(()=>{
+          state.tutorialIndex = (state.tutorialIndex + 1) % aspects.length;
+          state.focusId = aspects[state.tutorialIndex].id;
+          refreshListSelection(); draw();
+        }, 1400);
+      } else {
+        clearInterval(tutorialTimer); tutorialTimer = null; draw();
+      }
+    }
+
+    /* ============================================================
+       UI WIRING
+    ============================================================ */
+    el('#btnTutorial').addEventListener('click', toggleTutorial);
+    el('#btnRandomize').addEventListener('click', randomize);
+    el('#btnDeactivate').addEventListener('click', deactivateAll);
+    el('#btnExport').addEventListener('click', exportJSON);
+
+    function setMode(newMode){
+      mode = newMode;
+      aspects = (mode==='mind') ? mindAspects : (mode==='body') ? bodyAspects : soulAspects;
+      el('#modeMind').classList.toggle('secondary', mode!=='mind');
+      el('#modeBody').classList.toggle('secondary', mode!=='body');
+      el('#modeSoul').classList.toggle('secondary', mode!=='soul');
+      el('#modeMind').setAttribute('aria-pressed', String(mode==='mind'));
+      el('#modeBody').setAttribute('aria-pressed', String(mode==='body'));
+      el('#modeSoul').setAttribute('aria-pressed', String(mode==='soul'));
+      buildList();
+      applyDevStage(state.devStage);
+      updateMetrics();
+      draw();
+    }
+
+    el('#modeMind').addEventListener('click', ()=> setMode('mind'));
+    el('#modeBody').addEventListener('click', ()=> setMode('body'));
+    el('#modeSoul').addEventListener('click', ()=> setMode('soul'));
+
+    /* ============================================================
+       SELF-TESTS (basic runtime checks) — shown in console
+       We add tests since none existed previously.
+    ============================================================ */
+    function runSelfTests() {
+      const results = [];
+      function assert(name, cond) { results.push({ name, pass: !!cond }); }
+
+      // Test 1: DEV_STAGES
+      assert('DEV_STAGES == 12', DEV_STAGES === 12);
+
+      // Test 2: Each dataset has 32 aspects
+      assert('mindAspects length', mindAspects.length === 32);
+      assert('bodyAspects length', bodyAspects.length === 32);
+      assert('soulAspects length', soulAspects.length === 32);
+
+      // Test 3: devProfile lengths
+      assert('mind devProfile[0].length == 12', mindAspects[0].devProfile.length === 12);
+
+      // Test 4: SCI on uniform activations → std≈0, sci≈mean*100
+      const bak = aspects;
+      aspects = [{ activation: 50 },{ activation: 50 },{ activation: 50 },{ activation: 50 }];
+      const { mean, std, sci } = computeSCI();
+      assert('SCI std == 0', Math.abs(std - 0) < 1e-9);
+      assert('SCI value', Math.abs(sci - (50/(1+0)*100)) < 1e-6);
+      aspects = bak;
+
+      // Test 5: export payload shape
+      const payload = buildExportPayload();
+      assert('payload.aspects length == 32', Array.isArray(payload.aspects) && payload.aspects.length === 32);
+      assert('payload.metrics has sci', typeof payload.metrics.sci === 'number');
+
+      // Report
+      const passCount = results.filter(r=>r.pass).length;
+      const fail = results.filter(r=>!r.pass);
+      console.log('%cSelf-tests:', 'font-weight:bold');
+      results.forEach(r=> console.log(r.pass ? '✅' : '❌', r.name));
+      if (fail.length) {
+        console.warn('Some self-tests failed:', fail);
+      } else {
+        console.log(`All ${passCount} self-tests passed.`);
+      }
+    }
+
+    // Initial build & draw
+    buildList();
+    updateMetrics();
+    resizeCanvas();
+    applyDevStage(state.devStage);
+    requestAnimationFrame(tick);
+    runSelfTests();
+
+    /* ============================================================
+       SCIENCE NOTES (for researchers inside code comments)
+       ----------------------------------------------------
+       • SCI implements the user's formula: mean/(1+stddev)*100.
+       • We visualize C = E × MC (concept → energy × matter × cognition) via
+         the info modal's pipeline description and resonance links.
+       • 12 radial cross-lines = expanded Erikson-like developmental stages; 
+         use your mapping to stage names in your dataset if available.
+       • 8 concentric rings = anatomy/energy zones; link to somatic/energetic
+         layers (e.g., brainstem → cortex, fascia layers, chakric analogues).
+       • Resonance edges connect nodes with similar activation OR sharing
+         stage/ring, encoding feedback/overlap and nonlinearity.
+       • Tutorial traces a simple loop through aspects. For research demos,
+         extend by adding causal/feedback animations (mind→body→action→mind).
+       • Accessibility: All controls are reachable by keyboard; modal is a
+         native <dialog>; listbox items are focusable and announce changes.
+    ============================================================ */
+  </script>
+</body>
+</html>
