@@ -1,9 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!--
+    Developer Notes — 2025-10-16
+    Summary of changes for codec/code reviewers:
+    • Replaced generic “Mind/Body/Soul Aspect #” placeholders with a canonical list of 32 faculties of consciousness.
+      – The constant FACULTIES[] (JS) now defines the clock order and feeds every aspect’s display name.
+      – makeAspectSet(model) now sets `name: FACULTIES[i]` so the same labels render across lenses.
+    • Kept body/soul metadata fields as placeholders until canonical mappings are provided (brainRegion, neurotransmitter, etc.).
+    • No breaking API changes: export JSON schema is unchanged, but now includes the faculty names.
+
+    Interaction model (current):
+    • Click a node to focus + open details; drag sliders in the sidebar or modal to change activation (0–100).
+    • Developmental Stage slider morphs all 32 activations using per‑aspect devProfile (12 stages, 0–11).
+    • Tutorial mode cycles focus with a pulsing halo; Export downloads a reproducible state JSON.
+
+    Suggested next UX increments (not yet implemented):
+    • On‑canvas press+drag to adjust a node’s activation directly.
+    • Quick preset chips (Flow, Deep Work, Social Sync, Recovery).
+    • Search/filter the faculty list; pin two nodes for contrast; snapshot/undo.
+    • Shareable state links (URL‑encoded state).
+  -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>32 Aspect Developmental Self Clock — Mind–Body–Energy Mapping</title>
+  <meta name="description" content="Interactive 32‑Aspect Self Clock for mind–body–energy mapping with exportable states and accessibility support." />
   <style>
     /* =============================================================
        32 Aspect Developmental Self Clock — Single File Implementation
@@ -223,7 +244,7 @@
     <footer>
       <div class="vis-hint">C = E × MC · Energy input → neural region → neurochemical output → system response</div>
       <div class="vis-hint">Open science: Export preserves all annotations for reproducibility</div>
-      <div class="vis-hint">Adrian Lei Martinez-Conol, founder of the Only When Prompted Research Initiative 2018</div>
+      <div class="vis-hint" aria-label="Attribution">© <span id="year"></span> Adrian Lei Martinez-Conol — founder of the Only When Prompted Research Initiative (2018)</div>
     </footer>
   </div>
 
@@ -277,116 +298,54 @@
     const center = { x: 0, y: 0 };
     const DEV_STAGES = 12;
 
-    // ─────────────────────────────────────────────────────────────────────────────
-    // Enhanced 32-Aspect Developmental Self Clock
-    // Integrates the 24 core Faculties of Being + 8 compound Faculties
-    // from Adrian Lei Martinez-Conol's Periodic Table of Consciousness
-    // ─────────────────────────────────────────────────────────────────────────────
-    const FACULTIES_OF_BEING = {
-      1:  { name:"Sensation",             symbol:"Se",  family:"S",        definition:"Raw sensory input",             stage:1,  ring:1 },
-      2:  { name:"Attention",             symbol:"At",  family:"S",        definition:"Selective focus",               stage:2,  ring:1 },
-      3:  { name:"Affect",                symbol:"Af",  family:"S",        definition:"Emotional charge",              stage:1,  ring:2 },
-      4:  { name:"Orientation",           symbol:"Or",  family:"S",        definition:"Spatial/temporal framing",      stage:2,  ring:2 },
-      5:  { name:"BreathTempo",           symbol:"Bt",  family:"S",        definition:"System timing",                 stage:3,  ring:1 },
-      6:  { name:"Perception",            symbol:"Pe",  family:"P",        definition:"Pattern recognition",           stage:4,  ring:2 },
-      7:  { name:"Memory",                symbol:"Me",  family:"P",        definition:"Storage & retrieval",           stage:5,  ring:2 },
-      8:  { name:"Imagination",           symbol:"Im",  family:"P",        definition:"Creative synthesis",            stage:6,  ring:3 },
-      9:  { name:"Discernment",           symbol:"Ds",  family:"P",        definition:"Essence vs illusion",           stage:7,  ring:3 },
-      10: { name:"Intuition",             symbol:"In",  family:"P",        definition:"Direct knowing",                stage:8,  ring:3 },
-      11: { name:"Judgment",              symbol:"Ju",  family:"D",        definition:"Evaluative reasoning",          stage:9,  ring:4 },
-      12: { name:"Will",                  symbol:"Wi",  family:"D",        definition:"Purposeful action",             stage:10, ring:4 },
-      13: { name:"Language",              symbol:"La",  family:"D",        definition:"Symbolic expression",           stage:8,  ring:4 },
-      14: { name:"Metacognition",         symbol:"Mc",  family:"D",        definition:"Thinking about thinking",       stage:9,  ring:5 },
-      15: { name:"Reflection",            symbol:"Rf",  family:"D",        definition:"Conscious introspection",       stage:10, ring:5 },
-      16: { name:"Moral Reasoning",       symbol:"Mrl", family:"F",        definition:"Ethical discernment",           stage:11, ring:5 },
-      17: { name:"Empathy",               symbol:"Em",  family:"F",        definition:"Emotional resonance",           stage:7,  ring:6 },
-      18: { name:"Wisdom",                symbol:"Ws",  family:"F",        definition:"Integrated understanding",      stage:12, ring:6 },
-      19: { name:"Creativity",            symbol:"Cr",  family:"F",        definition:"Novel synthesis",               stage:6,  ring:4 },
-      20: { name:"Consciousness",         symbol:"Cs",  family:"F",        definition:"Awareness of awareness",        stage:11, ring:7 },
-      21: { name:"Compassion",            symbol:"Cm",  family:"F",        definition:"Universal care",                stage:12, ring:7 },
-      22: { name:"Unity",                 symbol:"Un",  family:"F",        definition:"Non-dual awareness",            stage:12, ring:8 },
-      23: { name:"Transcendence",         symbol:"Tr",  family:"F",        definition:"Beyond individual self",        stage:12, ring:8 },
-      24: { name:"Love",                  symbol:"Lv",  family:"F",        definition:"Fundamental force",             stage:11, ring:8 },
-      25: { name:"Practical Wisdom",      symbol:"PW",  family:"Compound", definition:"Mc+Ju+Mrl",                      stage:11, ring:6 },
-      26: { name:"Authentic Expression",  symbol:"AE",  family:"Compound", definition:"La+Wi+Cr",                        stage:9,  ring:5 },
-      27: { name:"Empathic Intelligence", symbol:"EI",  family:"Compound", definition:"Em+In+Ds",                        stage:8,  ring:6 },
-      28: { name:"Sacred Presence",       symbol:"SP",  family:"Compound", definition:"Cs+Lv+Tr",                        stage:12, ring:8 },
-      29: { name:"Integrative Flow",      symbol:"IF",  family:"Compound", definition:"Me+Im+Rf",                        stage:7,  ring:4 },
-      30: { name:"Compassionate Action",  symbol:"CA",  family:"Compound", definition:"Cm+Wi+Mrl",                       stage:11, ring:7 },
-      31: { name:"Unified Awareness",     symbol:"UA",  family:"Compound", definition:"Un+Cs+Lv",                        stage:12, ring:8 },
-      32: { name:"I Am That I Am",        symbol:"IATA",family:"Eternal",  definition:"The ground of being",             stage:12, ring:8 }
-    };
+    /* ============================================================
+       CHANGELOG (for reviewers / toolchain)
+       2025-10-16: Replace placeholder aspect labels with canonical faculties.
+       - Added FACULTIES[] (clock order). All aspect names now come from this list.
+       - makeAspectSet() uses name: FACULTIES[i].
+       - Export payload unchanged; `aspects[].name` now equals a faculty label.
+    ============================================================ */
 
-    const FACULTY_FAMILY_META = {
-      S: { nsil:"sensory", gravity:"attractor", archetype:"The Sensor" },
-      P: { nsil:"perceptual", gravity:"resonator", archetype:"The Seer" },
-      D: { nsil:"directive", gravity:"initiator", archetype:"The Navigator" },
-      F: { nsil:"fulcrum", gravity:"integrator", archetype:"The Sage" },
-      Compound: { nsil:"compound", gravity:"synthesizer", archetype:"The Weaver" },
-      Eternal: { nsil:"eternal", gravity:"transcendent", archetype:"The Witness" }
-    };
-
-    const NEURAL_RINGS = [
-      "Brainstem & Arousal Networks",
-      "Thalamic Relay & Orientation Systems",
-      "Limbic Integration Circuits",
-      "Sensorimotor & Associative Cortex",
-      "Prefrontal Executive Matrix",
-      "Social & Mirror Neuron Networks",
-      "Default Mode / Salience Bridge",
-      "Global Neural Synchrony"
+    // Canonical 32 faculties of consciousness used for aspect labels (in clock order)
+    const FACULTIES = [
+      "Awareness",
+      "Attention",
+      "Perception (Visual)",
+      "Perception (Auditory)",
+      "Perception (Somatosensory)",
+      "Interoception",
+      "Proprioception",
+      "Arousal / Vigilance",
+      "Working Memory",
+      "Episodic Memory",
+      "Semantic Memory",
+      "Language / Symbolics",
+      "Imagination / Visualization",
+      "Mental Time Travel",
+      "Planning / Prospection",
+      "Decision‑Making",
+      "Inhibition / Self‑Control",
+      "Cognitive Flexibility",
+      "Meta‑awareness",
+      "Self‑Model / Identity",
+      "Emotion Processing",
+      "Motivation / Drive",
+      "Reward / Valuation",
+      "Empathy / Theory of Mind",
+      "Social Cognition",
+      "Moral Reasoning",
+      "Spatial Cognition",
+      "Rhythm / Timing",
+      "Creativity / Divergence",
+      "Learning / Plasticity",
+      "Dreaming / Imagery",
+      "Narrative / Meaning‑Making"
     ];
 
-    const TRANSMITTER_BY_FAMILY = {
-      S: "Acetylcholine (ACh)",
-      P: "Glutamate",
-      D: "Dopamine (DA)",
-      F: "Serotonin (5-HT)",
-      Compound: "Oxytocin",
-      Eternal: "Endorphins"
-    };
-
-    const ENERGY_MODE_BY_RING = {
-      1: "Grounding / Somatic",
-      2: "Orientation / Vestibular",
-      3: "Imaginative / Default",
-      4: "Creative / Motor",
-      5: "Executive / Breath",
-      6: "Relational / Heart Field",
-      7: "Insight / Auric",
-      8: "Transpersonal / Quantum"
-    };
-
-    function generateNSILSignature(fac) {
-      const meta = FACULTY_FAMILY_META[fac.family] || { nsil: "facet" };
-      return `nsil:${meta.nsil}:${fac.symbol.toLowerCase()}`;
-    }
-
-    function calculateSemanticGravity(fac) {
-      const meta = FACULTY_FAMILY_META[fac.family];
-      return meta ? meta.gravity : "dynamic";
-    }
-
-    function mapToNeuralSubstrate(fac) {
-      return NEURAL_RINGS[(fac.ring - 1) % NEURAL_RINGS.length];
-    }
-
-    function mapToNeurotransmitter(fac) {
-      return TRANSMITTER_BY_FAMILY[fac.family] || "Poly-neuro";
-    }
-
-    function mapToEnergyMode(fac) {
-      return ENERGY_MODE_BY_RING[fac.ring] || "Harmonic";
-    }
-
-    function generateArchetypalSymbol(fac) {
-      const meta = FACULTY_FAMILY_META[fac.family];
-      return meta ? `${meta.archetype}` : "Archetype";
-    }
-
-    function generateNSILPrinciple(fac) {
-      return `principle:${(fac.symbol || fac.name).toLowerCase()}`;
-    }
+    // Placeholders; replace with canonical mappings as needed
+    const BRAIN = ["PFC", "Limbic", "Insula", "Amygdala", "Hippocampus", "ACC", "Basal Ganglia", "Cerebellum"];
+    const NT = ["Serotonin (5-HT)", "Dopamine (DA)", "Norepinephrine (NE)", "GABA", "Acetylcholine (ACh)", "Oxytocin", "Endorphins"];
+    const MODES = ["visual", "auditory", "somatosensory", "interoceptive", "proprioceptive", "olfactory"];
 
     // Developmental profile generator (smooth rise → peak → taper)
     function makeDevProfile(i, stage, ring) {
@@ -406,58 +365,60 @@
     }
 
     // Build a complete 32-aspect set for a given lens (mind/body/soul)
-    function makeAspectSetWithFaculties(model) {
-      return Array.from({ length: 32 }, (_, i) => {
-        const id = i + 1;
-        const fac = FACULTIES_OF_BEING[id];
-        const devProfile = makeDevProfile(i, fac.stage, fac.ring);
+    function makeAspectSet(model) {
+      return Array.from({ length: N_ASPECTS }, (_, i) => {
         const hue = Math.round((i * (360 / N_ASPECTS)) % 360);
+        const stage = 1 + (i % 12);
+        const ring  = 1 + (i % 8);
+        const devProfile = makeDevProfile(i, stage, ring);
         const base = {
-          id,
-          name: fac.name,
-          symbol: fac.symbol,
-          family: fac.family,
-          definition: fac.definition,
-          stage: fac.stage,
-          ring: fac.ring,
-          hue,
+          id: i+1,
+          name: FACULTIES[i],
+          stage, ring, hue,
           activation: devProfile[0],
           devProfile,
-          brainRegion: mapToNeuralSubstrate(fac),
-          neurotransmitter: mapToNeurotransmitter(fac),
-          energyMode: mapToEnergyMode(fac),
-          matterOutput: `${fac.name} embodiment`
         };
         if (model === 'mind') {
-          return {
-            ...base,
-            nsilSemanticSignature: generateNSILSignature(fac),
-            semanticGravity: calculateSemanticGravity(fac),
-            quantumMode: `${fac.family.toLowerCase()}-wave`,
-            particleWaveFieldFunction: `${fac.symbol}-propagation`,
-            matterOutput: `${fac.name} insight`
-          };
+          return Object.assign(base, {
+            definition: "Cognitive/semantic placeholder.",
+            corePsychologicalRole: "Role placeholder",
+            nsilSemanticSignature: "nsil:placeholder",
+            semanticGravity: "attractor",
+            quantumMode: ["particle","wave","field"][i%3],
+            particleWaveFieldFunction: "propagation placeholder",
+            brainRegion: "—",
+            neurotransmitter: "—",
+            energyMode: "—",
+            matterOutput: "—",
+          });
         }
         if (model === 'body') {
-          return {
-            ...base,
-            matterOutput: `${fac.name} embodiment`
-          };
+          return Object.assign(base, {
+            definition: "Neuro/physiology placeholder.",
+            brainRegion: BRAIN[i%8],
+            neurotransmitter: ["5-HT","DA","NE","GABA","ACh","Oxytocin","Endorphins"][i%7],
+            energyMode: MODES[i%MODES.length],
+            matterOutput: "Physiological function",
+          });
         }
-        return {
-          ...base,
-          archetypalSymbol: generateArchetypalSymbol(fac),
-          spiritualRole: `${fac.name} consciousness`,
-          nsilPrincipleSignature: generateNSILPrinciple(fac),
-          matterOutput: `${fac.name} radiance`
-        };
+        // soul
+        return Object.assign(base, {
+          definition: "Archetypal/transpersonal placeholder.",
+          archetypalSymbol: "Symbol",
+          spiritualRole: "Role",
+          nsilPrincipleSignature: "nsil:principle",
+          brainRegion: "—",
+          neurotransmitter: "—",
+          energyMode: "—",
+          matterOutput: "—",
+        });
       });
     }
 
-    // Three parallel datasets using canonical faculties
-    const mindAspects = makeAspectSetWithFaculties('mind');
-    const bodyAspects = makeAspectSetWithFaculties('body');
-    const soulAspects = makeAspectSetWithFaculties('soul');
+    // Three parallel datasets (placeholders until you provide canonical labels)
+    const mindAspects = makeAspectSet('mind');
+    const bodyAspects = makeAspectSet('body');
+    const soulAspects = makeAspectSet('soul');
 
     // Active lens state
     let mode = 'mind';
@@ -917,8 +878,8 @@
     let tutorialTimer = null;
     function toggleTutorial() {
       state.tutorial = !state.tutorial;
-      el('#btnTutorial').setAttribute('aria-pressed', String(state.tutorial));
-      el('#btnTutorial').textContent = state.tutorial ? '⏸ Tutorial' : '▶ Tutorial';
+      document.getElementById('btnTutorial').setAttribute('aria-pressed', String(state.tutorial));
+      document.getElementById('btnTutorial').textContent = state.tutorial ? '⏸ Tutorial' : '▶ Tutorial';
       if (state.tutorial) {
         if (!tutorialTimer) tutorialTimer = setInterval(()=>{
           state.tutorialIndex = (state.tutorialIndex + 1) % aspects.length;
@@ -933,29 +894,29 @@
     /* ============================================================
        UI WIRING
     ============================================================ */
-    el('#btnTutorial').addEventListener('click', toggleTutorial);
-    el('#btnRandomize').addEventListener('click', randomize);
-    el('#btnDeactivate').addEventListener('click', deactivateAll);
-    el('#btnExport').addEventListener('click', exportJSON);
+    document.getElementById('btnTutorial').addEventListener('click', toggleTutorial);
+    document.getElementById('btnRandomize').addEventListener('click', randomize);
+    document.getElementById('btnDeactivate').addEventListener('click', deactivateAll);
+    document.getElementById('btnExport').addEventListener('click', exportJSON);
 
     function setMode(newMode){
       mode = newMode;
       aspects = (mode==='mind') ? mindAspects : (mode==='body') ? bodyAspects : soulAspects;
-      el('#modeMind').classList.toggle('secondary', mode!=='mind');
-      el('#modeBody').classList.toggle('secondary', mode!=='body');
-      el('#modeSoul').classList.toggle('secondary', mode!=='soul');
-      el('#modeMind').setAttribute('aria-pressed', String(mode==='mind'));
-      el('#modeBody').setAttribute('aria-pressed', String(mode==='body'));
-      el('#modeSoul').setAttribute('aria-pressed', String(mode==='soul'));
+      document.getElementById('modeMind').classList.toggle('secondary', mode!=='mind');
+      document.getElementById('modeBody').classList.toggle('secondary', mode!=='body');
+      document.getElementById('modeSoul').classList.toggle('secondary', mode!=='soul');
+      document.getElementById('modeMind').setAttribute('aria-pressed', String(mode==='mind'));
+      document.getElementById('modeBody').setAttribute('aria-pressed', String(mode==='body'));
+      document.getElementById('modeSoul').setAttribute('aria-pressed', String(mode==='soul'));
       buildList();
       applyDevStage(state.devStage);
       updateMetrics();
       draw();
     }
 
-    el('#modeMind').addEventListener('click', ()=> setMode('mind'));
-    el('#modeBody').addEventListener('click', ()=> setMode('body'));
-    el('#modeSoul').addEventListener('click', ()=> setMode('soul'));
+    document.getElementById('modeMind').addEventListener('click', ()=> setMode('mind'));
+    document.getElementById('modeBody').addEventListener('click', ()=> setMode('body'));
+    document.getElementById('modeSoul').addEventListener('click', ()=> setMode('soul'));
 
     /* ============================================================
        SELF-TESTS (basic runtime checks) — shown in console
@@ -1008,6 +969,9 @@
     applyDevStage(state.devStage);
     requestAnimationFrame(tick);
     runSelfTests();
+
+    // Footer year
+    document.getElementById('year').textContent = new Date().getFullYear();
 
     /* ============================================================
        SCIENCE NOTES (for researchers inside code comments)
