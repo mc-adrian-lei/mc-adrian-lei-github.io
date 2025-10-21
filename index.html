@@ -295,6 +295,148 @@
       gap: 10px;
     }
 
+    .codex-suite {
+      grid-column: 1 / -1;
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+
+    .codex-suite .panel {
+      position: relative;
+      min-height: 280px;
+    }
+
+    .codex-editor h2,
+    .codex-preview h2,
+    .codex-docs h2 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: 0.3px;
+    }
+
+    .codex-editor textarea,
+    .codex-editor input[type="text"] {
+      width: 100%;
+      font: 14px/1.4 "JetBrains Mono", "Fira Code", "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      color: var(--ink);
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .codex-editor textarea:focus-visible,
+    .codex-editor input[type="text"]:focus-visible {
+      border-color: var(--input-border-focus);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
+      outline: none;
+    }
+
+    .codex-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .codex-status {
+      flex: 1 1 220px;
+      min-height: 44px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+      background: color-mix(in srgb, var(--panel) 88%, transparent);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .codex-status[data-state="error"] {
+      border-color: color-mix(in srgb, var(--bad) 50%, transparent);
+      background: color-mix(in srgb, var(--bad) 12%, transparent);
+      color: color-mix(in srgb, var(--bad) 80%, black);
+    }
+
+    .codex-status[data-state="success"] {
+      border-color: color-mix(in srgb, var(--good) 50%, transparent);
+      background: color-mix(in srgb, var(--good) 12%, transparent);
+      color: color-mix(in srgb, var(--good) 80%, black);
+    }
+
+    .codex-preview iframe {
+      width: 100%;
+      border: 1px solid var(--glass-stroke);
+      border-radius: 14px;
+      min-height: 260px;
+      background: color-mix(in srgb, var(--panel) 85%, transparent);
+    }
+
+    .codex-preview iframe:focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 3px;
+    }
+
+    .prompt-wrapper {
+      position: relative;
+    }
+
+    .prompt-wrapper textarea {
+      min-height: 90px;
+    }
+
+    .suggestions {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: calc(100% + 4px);
+      display: grid;
+      gap: 4px;
+      padding: 8px;
+      margin: 0;
+      list-style: none;
+      border-radius: 12px;
+      border: 1px solid var(--glass-stroke);
+      background: color-mix(in srgb, var(--panel-strong) 96%, transparent);
+      box-shadow: var(--shadow-1);
+      max-height: 220px;
+      overflow-y: auto;
+      z-index: 20;
+    }
+
+    .suggestions[hidden] { display: none; }
+
+    .suggestions button {
+      background: none;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      padding: 8px 10px;
+      text-align: left;
+      font: inherit;
+      color: inherit;
+      cursor: pointer;
+      transition: border-color 0.18s ease, background 0.18s ease;
+    }
+
+    .suggestions button:hover,
+    .suggestions button:focus-visible {
+      border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+      background: color-mix(in srgb, var(--accent) 14%, transparent);
+      outline: none;
+    }
+
+    .codex-docs ol {
+      margin: 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .codex-docs li strong { color: var(--ink); }
+
     .metrics {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -816,6 +958,43 @@
         <p class="vis-hint">Keyboard: Arrow keys pan focus · Enter opens details · T tutorial · R shuffle · E export · 0 clear</p>
       </div>
     </aside>
+    <section class="codex-suite" aria-label="Codex authoring environment">
+      <div class="panel codex-editor" aria-live="polite">
+        <h2>Codex Editor</h2>
+        <p class="vis-hint">Edit the codex descriptor, validate against the schema, and push updates directly to the live preview.</p>
+        <div class="input-field">
+          <label for="codexPrompt">Prompt helper</label>
+          <div class="prompt-wrapper">
+            <textarea id="codexPrompt" rows="3" placeholder="Describe the transformation, include target modality, scope, and success criteria."></textarea>
+            <ul id="promptSuggestions" class="suggestions" role="listbox" aria-label="Prompt suggestions" hidden></ul>
+          </div>
+          <p class="vis-hint">Start typing to receive adaptive suggestions—select one to auto-complete the prompt.</p>
+        </div>
+        <div class="input-field">
+          <label for="codexSource">Codex JSON</label>
+          <textarea id="codexSource" rows="14" spellcheck="false" aria-describedby="codexStatus"></textarea>
+        </div>
+        <div class="codex-actions">
+          <button id="codexFormat" class="btn secondary" type="button">Format JSON</button>
+          <button id="codexSave" class="btn" type="button">Save &amp; Refresh Preview</button>
+          <div id="codexStatus" class="codex-status" data-state="info" role="status">Awaiting edits. Format or save to validate.</div>
+        </div>
+      </div>
+      <div class="panel codex-preview">
+        <h2>Live Preview</h2>
+        <p class="vis-hint">The preview refreshes automatically after each successful save.</p>
+        <iframe id="codexPreview" title="Codex live preview" sandbox="allow-same-origin"></iframe>
+      </div>
+      <div class="panel codex-docs">
+        <h2>Implementation Notes</h2>
+        <p class="vis-hint">Summary of the enhancements applied to the codex environment.</p>
+        <ol id="codexChangelog">
+          <li><strong>Preview workspace</strong> — Added a dedicated codex editor and adjacent live preview iframe with auto-refresh.</li>
+          <li><strong>Schema guardrails</strong> — Implemented JSON schema validation with inline feedback for codex documents.</li>
+          <li><strong>IntelliPrompt</strong> — Wired contextual prompt suggestions and auto-completion for faster authoring.</li>
+        </ol>
+      </div>
+    </section>
     <div class="panel-overlay" id="panelOverlay" aria-hidden="true"></div>
 
     <footer>
@@ -1662,6 +1841,412 @@
       refreshListSelection();
       updateFilterSummary(view.length);
     }
+
+    /* ============================================================
+       CODEX ENVIRONMENT (editor + live preview)
+    ============================================================ */
+    const codexPromptEl = el('#codexPrompt');
+    const codexSourceEl = el('#codexSource');
+    const codexStatusEl = el('#codexStatus');
+    const codexPreviewEl = el('#codexPreview');
+    const codexFormatBtn = el('#codexFormat');
+    const codexSaveBtn = el('#codexSave');
+    const codexSuggestionsEl = el('#promptSuggestions');
+
+    const promptTemplates = [
+      'Map resonance between the selected aspect and a complementary body modality; return focus, practice, and reflection cues.',
+      'Generate an actionable daily ritual that balances energy inflow with matter-based outputs for the highlighted stage.',
+      'Outline a triadic narrative (mind, body, soul) describing how activation shifts cascade across systems.',
+      'Design a facilitation prompt that invites imaginal sensing plus somatic grounding for this developmental ring.',
+      'Summarise likely neurotransmitter shifts and recommend supportive interventions to stabilise the arc.',
+      'Craft a research vignette with hypotheses, observable markers, and follow-up probes for this aspect.'
+    ];
+
+    const defaultCodexDocument = {
+      id: 'codex-mind-resonance',
+      title: 'Mind Aspect Resonance Blueprint',
+      prompt: 'Map the current mind aspect activation to actionable practices. Provide a concise summary, the activation score, and at least two synergies to explore. Conclude with a reflection question.',
+      schema: {
+        type: 'object',
+        description: 'Structured response used to drive the codex preview workspace.',
+        properties: {
+          summary: { type: 'string', description: 'Key insight about the aspect\'s current expression.' },
+          activation: { type: 'number', description: 'Activation level between 0 and 100.', minimum: 0, maximum: 100 },
+          synergies: {
+            type: 'array',
+            description: 'Related mind/body/soul anchors to investigate next.',
+            items: { type: 'string' }
+          }
+        },
+        required: ['summary', 'activation']
+      },
+      fields: [
+        { id: 'summary', label: 'Summary', type: 'textarea', placeholder: 'Highlight resonance themes and leverage points.' },
+        { id: 'activation', label: 'Activation', type: 'number', min: 0, max: 100, description: 'Numeric activation index (0–100).' },
+        { id: 'synergies', label: 'Synergies', type: 'list', description: 'List 2–3 related patterns or practices.' }
+      ]
+    };
+
+    const cloneCodex = (value) => (typeof structuredClone === 'function'
+      ? structuredClone(value)
+      : JSON.parse(JSON.stringify(value)));
+
+    let codexModel = cloneCodex(defaultCodexDocument);
+    let promptDirty = false;
+
+    function updateCodexStatus(message, state = 'info') {
+      if (!codexStatusEl) return;
+      codexStatusEl.textContent = message;
+      if (state === 'info') {
+        codexStatusEl.removeAttribute('data-state');
+      } else {
+        codexStatusEl.setAttribute('data-state', state);
+      }
+    }
+
+    function loadCodexModel(model, options = {}) {
+      const { keepPrompt = false } = options;
+      codexModel = cloneCodex(model);
+      if (keepPrompt && codexPromptEl) {
+        codexModel.prompt = codexPromptEl.value;
+      }
+      if (codexPromptEl && !keepPrompt) {
+        promptDirty = false;
+        codexPromptEl.value = codexModel.prompt || '';
+      }
+      if (codexSourceEl) {
+        codexSourceEl.value = JSON.stringify(codexModel, null, 2);
+      }
+    }
+
+    const escapeHTML = (value) => String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+
+    function buildCodexPreviewDocument(data) {
+      const required = new Set(Array.isArray(data?.schema?.required) ? data.schema.required : []);
+      const properties = data?.schema?.properties && typeof data.schema.properties === 'object'
+        ? Object.entries(data.schema.properties)
+        : [];
+      const fields = Array.isArray(data?.fields) ? data.fields : [];
+      const propertyRows = properties.map(([key, cfg]) => {
+        const type = escapeHTML(cfg?.type || 'any');
+        const desc = escapeHTML(cfg?.description || '');
+        const limits = [];
+        if (typeof cfg?.minimum === 'number') limits.push(`min ${cfg.minimum}`);
+        if (typeof cfg?.maximum === 'number') limits.push(`max ${cfg.maximum}`);
+        if (cfg?.type === 'array' && cfg?.items?.type) {
+          limits.push(`items: ${escapeHTML(cfg.items.type)}`);
+        }
+        const limitStr = limits.length ? `<span class="limits">${limits.join(' · ')}</span>` : '';
+        const requiredBadge = required.has(key)
+          ? '<span class="req">Required</span>'
+          : '<span class="req optional">Optional</span>';
+        return `<tr><th scope="row">${escapeHTML(key)}</th><td><div class="row-head">${requiredBadge}<span class="type">${type}</span></div><p>${desc || '—'}</p>${limitStr}</td></tr>`;
+      }).join('');
+      const fieldCards = fields.map((field) => {
+        const hints = [];
+        if (field?.type) hints.push(escapeHTML(field.type));
+        if (typeof field?.min === 'number' || typeof field?.max === 'number') {
+          const min = typeof field.min === 'number' ? field.min : '—';
+          const max = typeof field.max === 'number' ? field.max : '—';
+          hints.push(`range ${min}–${max}`);
+        }
+        return `<article><h3>${escapeHTML(field?.label || field?.id || 'Field')}</h3><p>${escapeHTML(field?.description || field?.placeholder || '') || '—'}</p><footer>${hints.join(' · ') || 'input'}</footer></article>`;
+      }).join('');
+      return `<!doctype html><html lang="en"><head><meta charset="utf-8" /><title>Codex Preview</title><style>
+        :root { color-scheme: light dark; font-family: 'Inter', system-ui, sans-serif; }
+        body { margin: 0; padding: 16px; background: #111827; color: #f9fafb; font-size: 14px; line-height: 1.5; }
+        section { background: rgba(255,255,255,0.08); border: 1px solid rgba(148, 163, 233, 0.35); border-radius: 16px; padding: 16px; margin-bottom: 16px; backdrop-filter: blur(10px); }
+        h1 { margin: 0 0 6px; font-size: 20px; }
+        h2 { margin: 0 0 10px; font-size: 16px; text-transform: uppercase; letter-spacing: 0.1em; color: #a5b4fc; }
+        p { margin: 0 0 8px; }
+        .prompt { white-space: pre-wrap; background: rgba(15,23,42,0.7); border-radius: 12px; padding: 12px; border: 1px solid rgba(96,165,250,0.35); }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { text-align: left; padding: 8px 10px; width: 140px; color: #cbd5f5; vertical-align: top; }
+        td { padding: 8px 10px; border-bottom: 1px solid rgba(148, 163, 233, 0.25); }
+        tr:last-child td { border-bottom: none; }
+        .row-head { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
+        .req { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 999px; background: rgba(59,130,246,0.2); color: #bfdbfe; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; }
+        .req.optional { background: rgba(148,163,233,0.12); color: #e5e7eb; }
+        .type { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #c7d2fe; }
+        .limits { display: inline-block; margin-top: 4px; font-size: 11px; color: #e0e7ff; }
+        .fields { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+        .fields article { background: rgba(15,23,42,0.65); border-radius: 12px; padding: 12px; border: 1px solid rgba(129,140,248,0.35); display: grid; gap: 6px; }
+        .fields footer { font-size: 11px; color: #cbd5f5; text-transform: uppercase; letter-spacing: 0.08em; }
+      </style></head><body>
+        <section>
+          <h1>${escapeHTML(data?.title || 'Codex Entry')}</h1>
+          <p><strong>ID:</strong> ${escapeHTML(data?.id || '—')}</p>
+        </section>
+        <section>
+          <h2>Prompt Blueprint</h2>
+          <div class="prompt">${escapeHTML(data?.prompt || '')}</div>
+        </section>
+        <section>
+          <h2>Schema</h2>
+          ${propertyRows ? `<table>${propertyRows}</table>` : '<p>No schema properties defined.</p>'}
+        </section>
+        <section>
+          <h2>Fields</h2>
+          ${fieldCards || '<p>No structured fields configured.</p>'}
+        </section>
+      </body></html>`;
+    }
+
+    function refreshCodexPreview() {
+      if (!codexPreviewEl) return;
+      codexPreviewEl.srcdoc = buildCodexPreviewDocument(codexModel);
+    }
+
+    function parseCodexSource() {
+      if (!codexSourceEl) return { ok: false, error: 'Codex editor not available.' };
+      const raw = codexSourceEl.value.trim();
+      if (!raw) return { ok: false, error: 'Codex JSON is empty.' };
+      try {
+        return { ok: true, data: JSON.parse(raw) };
+      } catch (error) {
+        return { ok: false, error: error.message };
+      }
+    }
+
+    function validateCodexData(data) {
+      const errors = [];
+      if (!data || typeof data !== 'object' || Array.isArray(data)) {
+        errors.push('Document must be a JSON object');
+        return { valid: false, errors };
+      }
+      ['id', 'title', 'prompt'].forEach((key) => {
+        if (typeof data[key] !== 'string' || !data[key].trim()) {
+          errors.push(`${key} must be a non-empty string`);
+        }
+      });
+      const schema = data.schema;
+      if (!schema || typeof schema !== 'object' || Array.isArray(schema)) {
+        errors.push('schema must be an object');
+      } else {
+        if (schema.type !== 'object') {
+          errors.push('schema.type must be "object"');
+        }
+        if (!schema.properties || typeof schema.properties !== 'object') {
+          errors.push('schema.properties must be an object');
+        } else {
+          Object.entries(schema.properties).forEach(([key, prop]) => {
+            if (!prop || typeof prop !== 'object' || Array.isArray(prop)) {
+              errors.push(`schema.properties.${key} must be an object`);
+              return;
+            }
+            if (!prop.type) {
+              errors.push(`schema.properties.${key} requires a type`);
+            }
+          });
+        }
+        if (schema.required !== undefined) {
+          if (!Array.isArray(schema.required)) {
+            errors.push('schema.required must be an array of strings');
+          } else {
+            schema.required.forEach((req) => {
+              if (typeof req !== 'string' || !req.trim()) {
+                errors.push('schema.required values must be non-empty strings');
+              } else if (!schema.properties || !schema.properties[req]) {
+                errors.push(`schema.required contains "${req}" but no matching property was found`);
+              }
+            });
+          }
+        }
+      }
+      if (data.fields !== undefined) {
+        if (!Array.isArray(data.fields)) {
+          errors.push('fields must be an array');
+        } else {
+          data.fields.forEach((field, index) => {
+            if (!field || typeof field !== 'object') {
+              errors.push(`fields[${index}] must be an object`);
+              return;
+            }
+            if (typeof field.id !== 'string' || !field.id.trim()) {
+              errors.push(`fields[${index}].id must be a non-empty string`);
+            }
+            if (typeof field.label !== 'string' || !field.label.trim()) {
+              errors.push(`fields[${index}].label must be a non-empty string`);
+            }
+          });
+        }
+      }
+      return { valid: errors.length === 0, errors };
+    }
+
+    function hidePromptSuggestions() {
+      if (!codexSuggestionsEl) return;
+      codexSuggestionsEl.hidden = true;
+      codexSuggestionsEl.innerHTML = '';
+    }
+
+    function applyPromptSuggestion(text) {
+      if (!codexPromptEl) return;
+      codexPromptEl.value = text;
+      promptDirty = false;
+      codexModel.prompt = text;
+      hidePromptSuggestions();
+      updateCodexStatus('Applied prompt suggestion. Save to refresh preview.', 'info');
+    }
+
+    function updatePromptSuggestions(query) {
+      if (!codexSuggestionsEl) return;
+      const needle = query.trim().toLowerCase();
+      const matches = needle
+        ? promptTemplates.filter((item) => item.toLowerCase().includes(needle)).slice(0, 6)
+        : promptTemplates.slice(0, 4);
+      if (!matches.length || (!needle && !(codexPromptEl && codexPromptEl === document.activeElement))) {
+        hidePromptSuggestions();
+        return;
+      }
+      codexSuggestionsEl.innerHTML = '';
+      matches.forEach((suggestion, index) => {
+        const li = document.createElement('li');
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = suggestion;
+        btn.dataset.value = suggestion;
+        btn.setAttribute('role', 'option');
+        btn.id = `codex-suggestion-${index}`;
+        li.appendChild(btn);
+        codexSuggestionsEl.appendChild(li);
+      });
+      codexSuggestionsEl.hidden = false;
+    }
+
+    if (codexSuggestionsEl) {
+      codexSuggestionsEl.addEventListener('click', (event) => {
+        const target = event.target.closest('button[data-value]');
+        if (!target) return;
+        event.preventDefault();
+        applyPromptSuggestion(target.dataset.value);
+      });
+      codexSuggestionsEl.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          hidePromptSuggestions();
+          codexPromptEl?.focus();
+        }
+      });
+    }
+
+    if (codexPromptEl) {
+      codexPromptEl.addEventListener('focus', () => {
+        updatePromptSuggestions(codexPromptEl.value);
+      });
+      codexPromptEl.addEventListener('input', () => {
+        promptDirty = true;
+        codexModel.prompt = codexPromptEl.value;
+        updatePromptSuggestions(codexPromptEl.value);
+        updateCodexStatus('Prompt updated. Save to apply changes.', 'info');
+      });
+      codexPromptEl.addEventListener('keydown', (event) => {
+        if (!codexSuggestionsEl || codexSuggestionsEl.hidden) return;
+        if (event.key === 'ArrowDown') {
+          const first = codexSuggestionsEl.querySelector('button');
+          if (first) {
+            event.preventDefault();
+            first.focus();
+          }
+        } else if ((event.key === 'Enter' || event.key === 'Tab') && !event.shiftKey) {
+          const first = codexSuggestionsEl.querySelector('button');
+          if (first) {
+            event.preventDefault();
+            applyPromptSuggestion(first.dataset.value);
+          }
+        }
+      });
+      codexPromptEl.addEventListener('blur', () => {
+        setTimeout(() => hidePromptSuggestions(), 120);
+      });
+    }
+
+    if (codexSourceEl) {
+      let parseTimer = null;
+      codexSourceEl.addEventListener('input', () => {
+        if (parseTimer) clearTimeout(parseTimer);
+        parseTimer = setTimeout(() => {
+          const parsed = parseCodexSource();
+          if (parsed.ok) {
+            if (!promptDirty && codexPromptEl && typeof parsed.data.prompt === 'string') {
+              codexPromptEl.value = parsed.data.prompt;
+            }
+            updateCodexStatus('Draft parsed. Save to run schema validation.', 'info');
+          } else {
+            updateCodexStatus(`JSON parse error: ${parsed.error}`, 'error');
+          }
+        }, 380);
+      });
+    }
+
+    function handleCodexFormat() {
+      const parsed = parseCodexSource();
+      if (!parsed.ok) {
+        updateCodexStatus(`Cannot format: ${parsed.error}`, 'error');
+        return;
+      }
+      const next = cloneCodex(parsed.data);
+      if (codexPromptEl) {
+        next.prompt = codexPromptEl.value.trim() || next.prompt || '';
+      }
+      const validation = validateCodexData(next);
+      loadCodexModel(next);
+      updatePromptSuggestions('');
+      if (validation.valid) {
+        updateCodexStatus('Codex formatted. Validation passed.', 'success');
+      } else {
+        updateCodexStatus(`Format complete with validation issues: ${validation.errors.join(' · ')}`, 'error');
+      }
+    }
+
+    function handleCodexSave() {
+      const parsed = parseCodexSource();
+      if (!parsed.ok) {
+        updateCodexStatus(`Save failed: ${parsed.error}`, 'error');
+        return;
+      }
+      const next = cloneCodex(parsed.data);
+      if (codexPromptEl) {
+        next.prompt = codexPromptEl.value.trim() || next.prompt || '';
+      }
+      const validation = validateCodexData(next);
+      if (!validation.valid) {
+        updateCodexStatus(`Validation failed: ${validation.errors.join(' · ')}`, 'error');
+        return;
+      }
+      loadCodexModel(next);
+      refreshCodexPreview();
+      updatePromptSuggestions('');
+      updateCodexStatus('Codex saved. Preview refreshed.', 'success');
+    }
+
+    if (codexFormatBtn) codexFormatBtn.addEventListener('click', handleCodexFormat);
+    if (codexSaveBtn) codexSaveBtn.addEventListener('click', handleCodexSave);
+
+    document.addEventListener('keydown', (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
+        const active = document.activeElement;
+        if (active === codexSourceEl || active === codexPromptEl) {
+          event.preventDefault();
+          handleCodexSave();
+        }
+      }
+    });
+
+    if (codexPreviewEl) {
+      codexPreviewEl.addEventListener('load', () => {
+        codexPreviewEl.setAttribute('aria-live', 'polite');
+      });
+    }
+
+    loadCodexModel(defaultCodexDocument);
+    refreshCodexPreview();
+    updatePromptSuggestions('');
+    updateCodexStatus('Codex workspace ready. Modify the JSON and save to refresh the preview.', 'info');
 
     /* ============================================================
        MODAL (tooltip-style info + slider)
