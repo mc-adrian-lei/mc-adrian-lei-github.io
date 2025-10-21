@@ -36,6 +36,7 @@
       --shadow-1: 0 18px 32px rgba(15, 23, 42, 0.12);
       --shadow-2: 0 24px 60px rgba(15, 23, 42, 0.18);
       --glass-stroke: rgba(148, 163, 233, 0.22);
+      --visitor-overlay-text: #f8faff;
     }
 
     body[data-theme="dark"] {
@@ -61,6 +62,7 @@
       --shadow-1: 0 18px 40px rgba(3, 7, 18, 0.45);
       --shadow-2: 0 20px 60px rgba(5, 11, 32, 0.65);
       --glass-stroke: rgba(120, 150, 255, 0.18);
+      --visitor-overlay-text: #f9fbff;
     }
 
     * { box-sizing: border-box; }
@@ -354,7 +356,8 @@
 
     .input-field { display: grid; gap: 6px; }
     .input-field input,
-    .input-field select {
+    .input-field select,
+    .input-field textarea {
       width: 100%;
       border-radius: 12px;
       border: 1px solid var(--input-border);
@@ -364,9 +367,12 @@
       font: inherit;
       transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
     }
-    .input-field input::placeholder { color: color-mix(in srgb, var(--muted) 65%, transparent); }
+    .input-field textarea { min-height: 110px; resize: vertical; line-height: 1.45; }
+    .input-field input::placeholder,
+    .input-field textarea::placeholder { color: color-mix(in srgb, var(--muted) 65%, transparent); }
     .input-field input:focus-visible,
-    .input-field select:focus-visible { border-color: var(--input-border-focus); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent); outline: none; }
+    .input-field select:focus-visible,
+    .input-field textarea:focus-visible { border-color: var(--input-border-focus); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent); outline: none; }
 
     .control-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
 
@@ -891,6 +897,14 @@
         <div id="aspectList" class="aspect-list" role="listbox" aria-multiselectable="false"></div>
       </div>
 
+      <div class="panel" aria-label="Visitor canvas note">
+        <div class="input-field">
+          <label for="visitorMessage">Visitor canvas note</label>
+          <textarea id="visitorMessage" maxlength="280" placeholder="Share a prompt, invite, or insight to broadcast on the Codex canvas."></textarea>
+        </div>
+        <p id="visitorNoteStatus" class="vis-hint" role="status" aria-live="polite">Note appears above the clock for shared context.</p>
+      </div>
+
       <div class="panel" aria-label="Legend and codes">
         <div class="tags" style="margin-bottom:6px">
           <span class="tag">Brain: PFC, Limbic, Insula, Amygdala…</span>
@@ -1073,6 +1087,7 @@
     const TWO_PI = Math.PI * 2;
     const center = { x: 0, y: 0 };
     const DEV_STAGES = 12;
+    const VISITOR_NOTE_LIMIT = 280;
 
     const palette = {
       ring1: '#1a214a',
@@ -1082,7 +1097,11 @@
       focus: '#fde68a',
       nodeBorder: '#0b0f2a',
       resonanceA: '#34d399',
-      resonanceB: '#7dd3fc'
+      resonanceB: '#7dd3fc',
+      visitorBg: '#1d4ed8',
+      visitorBgAlt: '#7c3aed',
+      visitorText: '#f8faff',
+      visitorShadow: 'rgba(15, 23, 42, 0.35)'
     };
 
     function refreshPalette() {
@@ -1099,6 +1118,9 @@
       palette.nodeBorder = fetch('--glass-stroke', palette.nodeBorder);
       palette.resonanceA = fetch('--good', palette.resonanceA);
       palette.resonanceB = fetch('--accent', palette.resonanceB);
+      palette.visitorBg = fetch('--accent', palette.visitorBg);
+      palette.visitorBgAlt = fetch('--accent-2', palette.visitorBgAlt);
+      palette.visitorText = fetch('--visitor-overlay-text', palette.visitorText);
     }
 
     function detectInitialTheme() {
@@ -1126,7 +1148,19 @@
       try { localStorage.setItem('selfClockTheme', theme); } catch (_) { /* ignore */ }
       refreshPalette();
       updateThemeButton();
+      updateVisitorStatus();
       draw();
+    }
+
+    function updateVisitorStatus() {
+      if (!visitorStatus) return;
+      const value = state.visitorNote || '';
+      if (!value.trim()) {
+        visitorStatus.textContent = 'Note appears above the clock for shared context.';
+        return;
+      }
+      const remaining = Math.max(0, VISITOR_NOTE_LIMIT - value.length);
+      visitorStatus.textContent = `Broadcasting to canvas · ${remaining} characters remaining.`;
     }
 
     function updatePanelToggleLabel() {
@@ -1273,6 +1307,7 @@
       layout: 'desktop',
       panelOpen: true,
       visible: [...aspects],
+      visitorNote: '',
     };
 
     // SCI: mean / (1 + stddev) * 100
@@ -1318,6 +1353,8 @@
     const themeBtn = el('#btnTheme');
     const panelToggle = el('#panelToggle');
     const panelClose = el('#panelClose');
+    const visitorInput = el('#visitorMessage');
+    const visitorStatus = el('#visitorNoteStatus');
     const panelOverlay = el('#panelOverlay');
     const insightPanel = el('#insightPanel');
 
@@ -1746,6 +1783,105 @@
       ctx.restore();
     }
 
+    function roundRectPath(context, x, y, width, height, radius) {
+      const r = Math.max(0, Math.min(radius, Math.min(width, height) / 2));
+      context.beginPath();
+      context.moveTo(x + r, y);
+      context.lineTo(x + width - r, y);
+      context.quadraticCurveTo(x + width, y, x + width, y + r);
+      context.lineTo(x + width, y + height - r);
+      context.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+      context.lineTo(x + r, y + height);
+      context.quadraticCurveTo(x, y + height, x, y + height - r);
+      context.lineTo(x, y + r);
+      context.quadraticCurveTo(x, y, x + r, y);
+      context.closePath();
+    }
+
+    function wrapVisitorText(context, text, maxWidth) {
+      const output = [];
+      const paragraphs = text.split(/\n/);
+      paragraphs.forEach((segment, index) => {
+        const words = segment.trim().split(/\s+/).filter(Boolean);
+        if (!words.length) {
+          if (index < paragraphs.length - 1 && output.length && output[output.length - 1] !== '') {
+            output.push('');
+          }
+          return;
+        }
+        let line = '';
+        words.forEach((word) => {
+          const candidate = line ? `${line} ${word}` : word;
+          if (context.measureText(candidate).width > maxWidth && line) {
+            output.push(line);
+            line = word;
+          } else {
+            line = candidate;
+          }
+        });
+        if (line) output.push(line);
+        if (index < paragraphs.length - 1 && output[output.length - 1] !== '') {
+          output.push('');
+        }
+      });
+      return output;
+    }
+
+    function drawVisitorNote() {
+      const note = (state.visitorNote || '').trim();
+      if (!note) return;
+      const { width:w, height:h } = canvas;
+      const availableWidth = Math.min(w - 48, 560);
+      if (availableWidth <= 0) return;
+      ctx.save();
+      const fontSize = Math.max(12, Math.min(18, w / 28));
+      ctx.font = `${fontSize}px "Inter", system-ui, -apple-system, "Segoe UI", sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      const lines = wrapVisitorText(ctx, note, availableWidth - 36);
+      if (!lines.length) { ctx.restore(); return; }
+      const lineHeight = fontSize * 1.4;
+      const padX = 18;
+      const padY = 12;
+      const minWidth = Math.min(availableWidth, 220);
+      const textWidth = lines.reduce((max, line) => Math.max(max, ctx.measureText(line).width), 0);
+      const boxWidth = Math.min(availableWidth, Math.max(textWidth + padX * 2, minWidth));
+      const boxHeight = lines.length * lineHeight + padY * 2;
+      let x = (w - boxWidth) / 2;
+      let y = h - boxHeight - 28;
+      if (y < 24) y = 24;
+      const radius = 18;
+
+      ctx.shadowColor = palette.visitorShadow;
+      ctx.shadowBlur = 28;
+      ctx.shadowOffsetY = 12;
+      roundRectPath(ctx, x, y, boxWidth, boxHeight, radius);
+      const gradient = ctx.createLinearGradient(x, y, x + boxWidth, y + boxHeight);
+      gradient.addColorStop(0, palette.visitorBg);
+      gradient.addColorStop(1, palette.visitorBgAlt);
+      ctx.fillStyle = gradient;
+      ctx.fill();
+      ctx.shadowColor = 'transparent';
+      ctx.shadowBlur = 0;
+      ctx.shadowOffsetY = 0;
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+      ctx.stroke();
+
+      ctx.fillStyle = palette.visitorText;
+      let textY = y + padY;
+      const textX = x + boxWidth / 2;
+      lines.forEach((line) => {
+        if (!line) {
+          textY += lineHeight * 0.6;
+          return;
+        }
+        ctx.fillText(line, textX, textY);
+        textY += lineHeight;
+      });
+      ctx.restore();
+    }
+
     function draw() {
       const { width:w, height:h } = canvas;
       ctx.clearRect(0,0,w,h);
@@ -1755,6 +1891,7 @@
       const points = drawNodes(maxR);
       drawResonanceLinks(points);
       drawTutorialHalo(points);
+      drawVisitorNote();
     }
 
     // Animation loop for tutorial halo
@@ -1884,6 +2021,15 @@
     el('#btnRandomize').addEventListener('click', randomize);
     el('#btnDeactivate').addEventListener('click', deactivateAll);
     el('#btnExport').addEventListener('click', exportJSON);
+    visitorInput?.addEventListener('input', (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLTextAreaElement)) return;
+      const next = target.value.slice(0, VISITOR_NOTE_LIMIT);
+      if (next !== target.value) target.value = next;
+      state.visitorNote = next;
+      updateVisitorStatus();
+      draw();
+    });
 
     function setMode(newMode){
       mode = newMode;
@@ -2432,6 +2578,11 @@
     renderEnhancements();
     renderStrategy();
     updateCodexJson();
+
+    if (visitorInput) {
+      visitorInput.value = state.visitorNote;
+    }
+    updateVisitorStatus();
 
     const layoutQuery = window.matchMedia ? window.matchMedia('(max-width: 900px)') : { matches: false };
     const handleLayout = (ev) => applyLayoutMode(ev.matches);
