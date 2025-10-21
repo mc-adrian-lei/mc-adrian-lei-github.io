@@ -315,6 +315,8 @@
     .metric h3 { margin: 0; font-size: 12px; color: var(--muted); font-weight: 600; letter-spacing: 0.3px; }
     .metric .val { font-size: 20px; font-weight: 700; line-height: 1.2; color: var(--ink); }
     .metric .val small { display: block; font-size: 11px; font-weight: 500; color: var(--muted); }
+    .status-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+    .status-label { font-size: 11px; color: var(--muted); font-weight: 600; }
 
     .panel p { margin: 0; }
 
@@ -452,6 +454,38 @@
     .panel-overlay {
       display: none;
     }
+
+    .comparison-summary {
+      background: color-mix(in srgb, var(--panel-strong) 85%, transparent);
+      border: 1px dashed color-mix(in srgb, var(--accent) 30%, transparent);
+      border-radius: 14px;
+      padding: 12px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    dialog {
+      border: none;
+      border-radius: 20px;
+      padding: 0;
+      max-width: min(540px, 90vw);
+      background: var(--panel-strong);
+      color: var(--ink);
+      box-shadow: var(--shadow-2);
+    }
+    dialog::backdrop { background: rgba(15, 23, 42, 0.45); }
+
+    dialog .modal-body {
+      display: grid;
+      gap: 14px;
+      padding: 20px;
+      background: transparent;
+    }
+
+    .tutorial-list { padding-left: 18px; display: grid; gap: 8px; font-size: 13px; color: var(--muted); }
+    .tutorial-list li strong { color: var(--ink); }
+
+    .export-grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
 
     body[data-layout="mobile"] {
       padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -665,16 +699,50 @@
         <p class="vis-hint">Review metrics or fine-tune activations.</p>
       </div>
       <div class="panel metrics" aria-label="System metrics">
-        <div class="metric" aria-live="polite"><h3>SCI (Semantic Coherence Index)</h3><div class="val" id="sciVal">—</div></div>
+        <div class="metric" aria-live="polite">
+          <h3>SCI (Semantic Coherence Index)</h3>
+          <div class="val" id="sciVal">—</div>
+          <div class="status-row">
+            <span id="sciStatus" class="status-label">Awaiting activation data.</span>
+            <button id="btnSciInfo" class="btn ghost small" type="button">What is SCI?</button>
+          </div>
+        </div>
         <div class="metric" aria-live="polite"><h3>Energy–Matter</h3><div class="val" id="emVal">—</div></div>
         <div class="metric" aria-live="polite"><h3>Active Aspects</h3><div class="val" id="activeVal">—</div></div>
         <div class="metric" aria-live="polite"><h3>Peak Activation</h3><div class="val" id="peakVal">—</div></div>
       </div>
 
       <div class="panel" aria-label="Developmental stage slider">
-        <label for="devStageSlider"><strong>Developmental Stage</strong> <span id="devStageVal">1</span></label>
+        <label for="devStageSlider"><strong>Developmental Stage</strong> <span id="devStageVal">1 · Infancy</span></label>
         <input id="devStageSlider" type="range" min="0" max="11" value="0" />
         <p class="vis-hint">0 = birth/infancy ··· 12 = wisdom/end-of-life · Adjusts all activations via devProfile</p>
+      </div>
+
+      <div class="panel" aria-label="Stage weighting controls">
+        <div class="row" style="align-items: center; justify-content: space-between;">
+          <strong>Stage Emphasis</strong>
+          <button id="btnResetWeights" class="btn ghost small" type="button">Reset weights</button>
+        </div>
+        <label for="stageWeightSelect">Focus stage</label>
+        <select id="stageWeightSelect"></select>
+        <label for="stageWeightSlider">Multiplier <span id="stageWeightValue">1.00×</span></label>
+        <input id="stageWeightSlider" type="range" min="0.5" max="1.8" step="0.05" value="1" />
+        <p class="vis-hint">Emphasize specific stages beyond the base 0–12 developmental profile.</p>
+      </div>
+
+      <div class="panel" aria-label="Developmental comparison">
+        <strong>Comparative Mode</strong>
+        <div class="control-grid">
+          <div class="input-field">
+            <label for="compareStageA">Stage A</label>
+            <select id="compareStageA"></select>
+          </div>
+          <div class="input-field">
+            <label for="compareStageB">Stage B</label>
+            <select id="compareStageB"></select>
+          </div>
+        </div>
+        <div id="comparisonSummary" class="comparison-summary" aria-live="polite">Select two stages to compare their activation patterns.</div>
       </div>
 
       <div class="panel" aria-label="Aspect filters and sorting">
@@ -794,6 +862,48 @@
     </div>
   </dialog>
 
+  <dialog id="sciModal" aria-label="Semantic Coherence Index explanation">
+    <form method="dialog" class="modal-body">
+      <header class="modal-head">
+        <strong>Semantic Coherence Index</strong>
+        <button class="btn" value="cancel">Close</button>
+      </header>
+      <p>The SCI summarises how harmoniously the 32 aspect activations align. It blends three signals:</p>
+      <ol>
+        <li><strong>Activation mean</strong> — higher overall activation raises the index.</li>
+        <li><strong>Distribution balance</strong> — lower variance indicates the system is coherent.</li>
+        <li><strong>Resonance coverage</strong> — similar stages, rings, and activation levels reinforce the network.</li>
+      </ol>
+      <p>The live value is scaled to 0–100 and updates instantly as you adjust sliders, shuffle activations, or change developmental emphasis.</p>
+      <p id="sciFormula" class="vis-hint"></p>
+    </form>
+  </dialog>
+
+  <dialog id="tutorialDialog" aria-label="Interactive tutorial">
+    <form method="dialog" class="modal-body">
+      <header class="modal-head">
+        <strong>Self Clock Tutorial</strong>
+        <button class="btn" value="cancel">Close</button>
+      </header>
+      <ol id="tutorialContent" class="tutorial-list"></ol>
+    </form>
+  </dialog>
+
+  <dialog id="exportDialog" aria-label="Export options">
+    <form method="dialog" class="modal-body">
+      <header class="modal-head">
+        <strong>Export Current Map</strong>
+        <button class="btn" value="cancel">Close</button>
+      </header>
+      <p>Select a format to download the current developmental snapshot, including the SCI and resonance metrics.</p>
+      <div class="export-grid">
+        <button id="exportJson" class="btn" value="json">JSON (raw data)</button>
+        <button id="exportCsv" class="btn secondary" value="csv">CSV (spreadsheet)</button>
+        <button id="exportReport" class="btn secondary" value="html">Printable report</button>
+      </div>
+    </form>
+  </dialog>
+
   <script>
     /* ============================================================
        DATA MODEL
@@ -806,6 +916,50 @@
     const TWO_PI = Math.PI * 2;
     const center = { x: 0, y: 0 };
     const DEV_STAGES = 12;
+    const DEV_STAGE_LABELS = [
+      'Infancy', 'Attachment', 'Exploration', 'Identity', 'Competence', 'Integration',
+      'Visioning', 'Collaboration', 'Leadership', 'Stewardship', 'Legacy', 'Wisdom'
+    ];
+
+    const BIO_LIBRARY = {
+      brain: {
+        PFC: { name: 'Prefrontal Cortex', summary: 'Executive control, planning, and modulation of complex behaviours.' },
+        Limbic: { name: 'Limbic Network', summary: 'Emotional appraisal, memory tagging, and motivation coupling.' },
+        Insula: { name: 'Insular Cortex', summary: 'Interoceptive awareness and translation of body state to feeling tone.' },
+        Amygdala: { name: 'Amygdala', summary: 'Rapid salience detection, threat appraisal, and emotional tagging.' },
+        Hippocampus: { name: 'Hippocampus', summary: 'Contextual memory integration and spatial-temporal mapping.' },
+        ACC: { name: 'Anterior Cingulate Cortex', summary: 'Conflict monitoring, attention regulation, and adaptive focus.' },
+        'Basal Ganglia': { name: 'Basal Ganglia', summary: 'Sequencing of actions, habit formation, and energy gating.' },
+        Cerebellum: { name: 'Cerebellum', summary: 'Sensorimotor prediction, timing, and embodied coordination.' }
+      },
+      nt: {
+        '5-HT': { name: 'Serotonin (5-HT)', summary: 'Mood stabilisation, sensory integration, and behavioural flexibility.' },
+        DA: { name: 'Dopamine (DA)', summary: 'Reward tracking, motivation, and precision of mental models.' },
+        NE: { name: 'Norepinephrine (NE)', summary: 'Arousal, alerting, and prioritisation of salient cues.' },
+        GABA: { name: 'GABA', summary: 'Primary inhibitory tone moderating excitability and balance.' },
+        ACh: { name: 'Acetylcholine (ACh)', summary: 'Attention sharpening, neuroplasticity, and state transitions.' },
+        Oxytocin: { name: 'Oxytocin', summary: 'Social bonding, trust calibration, and affiliative safety.' },
+        Endorphins: { name: 'Endorphins', summary: 'Analgesia, euphoria, and stress recovery buffering.' }
+      },
+      modes: {
+        visual: { name: 'Visual', summary: 'Pattern and imagery channels guiding anticipatory modelling.' },
+        auditory: { name: 'Auditory', summary: 'Temporal sequencing and linguistic-phonetic attunement.' },
+        interoceptive: { name: 'Interoceptive', summary: 'Sensing internal physiology for regulation and self-awareness.' },
+        proprioceptive: { name: 'Proprioceptive', summary: 'Muscle and joint awareness for posture and embodied context.' },
+        vestibular: { name: 'Vestibular', summary: 'Balance, orientation, and gravitational reference frames.' },
+        somatic: { name: 'Somatic', summary: 'Touch, pressure, and visceral grounding of experience.' }
+      }
+    };
+
+    const TUTORIAL_STEPS = [
+      { title: 'Navigate the map', detail: 'Use the arrow keys or tap nodes to cycle the 32 aspects. Focus is highlighted on the clock and in the list.' },
+      { title: 'Inspect activations', detail: 'Press Enter or the Details buttons to open the aspect modal. Adjust activation sliders to see immediate SCI feedback.' },
+      { title: 'Semantic Coherence Index', detail: 'Watch the SCI metric for balance (variance), power (mean activation), and resonance coverage (stage/ring alignment).' },
+      { title: 'Developmental emphasis', detail: 'The stage slider loads the canonical devProfile while Stage Emphasis multipliers let you weight phases that matter now.' },
+      { title: 'Comparative mode', detail: 'Select any two stages to surface leading increases/decreases across the aspect network.' },
+      { title: 'Resonance links', detail: 'Green–blue links join aspects that co-activate or share structural placement. Denser links = higher coherence.' },
+      { title: 'Exports for research', detail: 'Press E or Export to choose JSON, CSV, or a printable briefing with SCI formula details.' }
+    ];
 
     const palette = {
       ring1: '#1a214a',
@@ -953,8 +1107,8 @@
 
     // Placeholders; replace with canonical mappings as needed
     const BRAIN = ["PFC", "Limbic", "Insula", "Amygdala", "Hippocampus", "ACC", "Basal Ganglia", "Cerebellum"];
-    const NT = ["Serotonin (5-HT)", "Dopamine (DA)", "Norepinephrine (NE)", "GABA", "Acetylcholine (ACh)", "Oxytocin", "Endorphins"];
-    const MODES = ["visual", "auditory", "somatosensory", "interoceptive", "proprioceptive", "olfactory"];
+    const NT = ["5-HT", "DA", "NE", "GABA", "ACh", "Oxytocin", "Endorphins"];
+    const MODES = ["visual", "auditory", "somatic", "interoceptive", "proprioceptive", "vestibular"];
 
     // Developmental profile generator (smooth rise → peak → taper)
     function makeDevProfile(i, stage, ring) {
@@ -1002,11 +1156,17 @@
           });
         }
         if (model === 'body') {
+          const brainKey = BRAIN[i % BRAIN.length];
+          const ntKey = NT[i % NT.length];
+          const modeKey = MODES[i % MODES.length];
           return Object.assign(base, {
             definition: "Neuro/physiology placeholder.",
-            brainRegion: BRAIN[i%8],
-            neurotransmitter: ["5-HT","DA","NE","GABA","ACh","Oxytocin","Endorphins"][i%7],
-            energyMode: MODES[i%MODES.length],
+            brainRegionKey: brainKey,
+            brainRegion: BIO_LIBRARY.brain[brainKey]?.name || brainKey,
+            neurotransmitterKey: ntKey,
+            neurotransmitter: BIO_LIBRARY.nt[ntKey]?.name || ntKey,
+            energyModeKey: modeKey,
+            energyMode: BIO_LIBRARY.modes[modeKey]?.name || modeKey,
             matterOutput: "Physiological function",
           });
         }
@@ -1042,6 +1202,7 @@
       tutorialIndex: 0,
       focusId: 1,
       devStage: 0,
+      stageWeights: Array.from({ length: DEV_STAGES }, () => 1),
       filterText: '',
       sort: 'stage',
       stageFilter: 'all',
@@ -1053,14 +1214,46 @@
       visible: [...aspects],
     };
 
-    // SCI: mean / (1 + stddev) * 100
+    function computeResonanceStats() {
+      let total = 0;
+      let supportive = 0;
+      let stageAligned = 0;
+      let ringAligned = 0;
+      let activationAligned = 0;
+      for (let i = 0; i < aspects.length; i++) {
+        for (let j = i + 1; j < aspects.length; j++) {
+          total++;
+          const ai = aspects[i];
+          const aj = aspects[j];
+          const diff = Math.abs(ai.activation - aj.activation);
+          const sim = diff <= state.resonanceThreshold;
+          const sameStage = ai.stage === aj.stage;
+          const sameRing = ai.ring === aj.ring;
+          if (sim || sameStage || sameRing) {
+            supportive++;
+            if (sim) activationAligned++;
+            if (sameStage) stageAligned++;
+            if (sameRing) ringAligned++;
+          }
+        }
+      }
+      const ratio = total ? supportive / total : 0;
+      return { total, supportive, ratio, stageAligned, ringAligned, activationAligned };
+    }
+
     function computeSCI() {
       const vals = aspects.map(a => a.activation);
       const mean = vals.reduce((a,b)=>a+b,0) / vals.length;
       const variance = vals.reduce((acc, v)=> acc + Math.pow(v-mean, 2), 0) / vals.length;
       const std = Math.sqrt(variance);
-      const sci = (mean / (1 + std)) * 100;
-      return { mean, std, sci };
+      const activationScore = mean / 100; // 0..1
+      const balance = 1 - Math.min(1, std / 35); // 0..1
+      const resonance = computeResonanceStats();
+      const resonanceScore = resonance.ratio;
+      const alignmentScore = resonance.total ? ((resonance.stageAligned + resonance.ringAligned) / (2 * resonance.total)) : 0;
+      const weighted = (activationScore * 0.35) + (balance * 0.35) + (resonanceScore * 0.2) + (alignmentScore * 0.1);
+      const sci = Math.max(0, Math.min(100, weighted * 100));
+      return { mean, std, sci, activationScore, balance, resonance, resonanceScore, alignmentScore };
     }
 
     // Energy–Matter overview (simple but informative proxy)
@@ -1084,9 +1277,20 @@
     const emEl   = el('#emVal');
     const activeEl = el('#activeVal');
     const peakEl = el('#peakVal');
+    const sciStatusEl = el('#sciStatus');
+    const sciFormulaEl = el('#sciFormula');
+    const sciInfoBtn = el('#btnSciInfo');
+    const sciModal = el('#sciModal');
     const filterSummaryEl = el('#filterSummary');
     const devSlider = el('#devStageSlider');
     const devVal = el('#devStageVal');
+    const stageWeightSelect = el('#stageWeightSelect');
+    const stageWeightSlider = el('#stageWeightSlider');
+    const stageWeightValue = el('#stageWeightValue');
+    const resetWeightsBtn = el('#btnResetWeights');
+    const compareStageA = el('#compareStageA');
+    const compareStageB = el('#compareStageB');
+    const comparisonSummaryEl = el('#comparisonSummary');
     const searchInput = el('#searchInput');
     const sortSelect = el('#sortSelect');
     const stageFilterSelect = el('#stageFilter');
@@ -1098,17 +1302,137 @@
     const panelClose = el('#panelClose');
     const panelOverlay = el('#panelOverlay');
     const insightPanel = el('#insightPanel');
+    const tutorialDialog = el('#tutorialDialog');
+    const tutorialListEl = el('#tutorialContent');
+    const exportDialog = el('#exportDialog');
+    const exportJsonBtn = el('#exportJson');
+    const exportCsvBtn = el('#exportCsv');
+    const exportReportBtn = el('#exportReport');
+    const tutorialBtn = el('#btnTutorial');
+    const exportBtn = el('#btnExport');
+
+    function describeBrain(key, fallback) {
+      if (!key) return fallback || '—';
+      const def = BIO_LIBRARY.brain[key];
+      if (!def) return fallback || key;
+      return `<strong>${def.name}</strong><br><span class="vis-hint">${def.summary}</span>`;
+    }
+
+    function describeNeurochemical(key, fallback) {
+      if (!key) return fallback || '—';
+      const def = BIO_LIBRARY.nt[key];
+      if (!def) return fallback || key;
+      return `<strong>${def.name}</strong><br><span class="vis-hint">${def.summary}</span>`;
+    }
+
+    function describeMode(key, fallback) {
+      if (!key) return fallback || '—';
+      const def = BIO_LIBRARY.modes[key];
+      if (!def) return fallback || key;
+      return `<strong>${def.name}</strong><br><span class="vis-hint">${def.summary}</span>`;
+    }
+
+    function buildTutorialList() {
+      if (!tutorialListEl) return;
+      tutorialListEl.innerHTML = TUTORIAL_STEPS.map(step => `<li><strong>${step.title}</strong> — ${step.detail}</li>`).join('');
+    }
+
+    function updateComparisonSummary() {
+      if (!comparisonSummaryEl || !compareStageA || !compareStageB) return;
+      const aIdx = Number(compareStageA.value);
+      const bIdx = Number(compareStageB.value);
+      if (!Number.isFinite(aIdx) || !Number.isFinite(bIdx)) {
+        comparisonSummaryEl.textContent = 'Select two stages to compare their activation patterns.';
+        return;
+      }
+      if (aIdx === bIdx) {
+        comparisonSummaryEl.textContent = 'Choose two distinct developmental points for comparison.';
+        return;
+      }
+      const dataset = mode === 'mind' ? mindAspects : mode === 'body' ? bodyAspects : soulAspects;
+      const mean = (vals) => vals.reduce((sum, val) => sum + val, 0) / vals.length;
+      const valuesA = dataset.map(a => a.devProfile?.[aIdx] ?? 0);
+      const valuesB = dataset.map(a => a.devProfile?.[bIdx] ?? 0);
+      const meanA = mean(valuesA);
+      const meanB = mean(valuesB);
+      const diffs = dataset.map((a, idx) => ({ name: a.name, delta: valuesB[idx] - valuesA[idx] }));
+      const topUp = diffs.filter(d => d.delta > 0).sort((a,b)=>b.delta-a.delta).slice(0,3);
+      const topDown = diffs.filter(d => d.delta < 0).sort((a,b)=>a.delta-b.delta).slice(0,3);
+      const fmt = (arr) => arr.length ? arr.map(d => `${escapeHtml(d.name)} (${d.delta > 0 ? '+' : ''}${d.delta.toFixed(0)})`).join(', ') : '—';
+      const delta = meanB - meanA;
+      comparisonSummaryEl.innerHTML = `
+        <p><strong>${stageLabel(bIdx)}</strong> mean ${(delta>=0?'+':'')}${delta.toFixed(1)} relative to <strong>${stageLabel(aIdx)}</strong>.</p>
+        <p><strong>Leading increases:</strong> ${fmt(topUp)}</p>
+        <p><strong>Leading decreases:</strong> ${fmt(topDown)}</p>`;
+    }
+
+    function stageLabel(stageIndex) {
+      const name = DEV_STAGE_LABELS[stageIndex] || '';
+      return `Stage ${stageIndex + 1}${name ? ` · ${name}` : ''}`;
+    }
 
     function applyDevStage(stage){
       state.devStage = stage;
-      if (devVal) devVal.textContent = stage + 1;
-      aspects.forEach(a => { if (a.devProfile?.length === DEV_STAGES) a.activation = a.devProfile[stage]; });
+      if (devVal) devVal.textContent = stageLabel(stage);
+      const currentWeight = state.stageWeights[stage] ?? 1;
+      if (stageWeightSelect) stageWeightSelect.value = String(stage);
+      if (stageWeightSlider) stageWeightSlider.value = String(currentWeight);
+      if (stageWeightValue) stageWeightValue.textContent = `${Number(currentWeight).toFixed(2)}×`;
+      aspects.forEach(a => {
+        if (a.devProfile?.length === DEV_STAGES) {
+          const base = a.devProfile[stage] ?? 0;
+          const weight = state.stageWeights[(a.stage - 1) % state.stageWeights.length] ?? 1;
+          const weighted = Math.max(0, Math.min(100, Math.round(base * weight)));
+          a.baseActivation = base;
+          a.activation = weighted;
+        }
+      });
       updateMetrics();
       buildList();
       draw();
+      updateComparisonSummary();
     }
 
+    function populateStageSelectors() {
+      const options = DEV_STAGE_LABELS.map((label, idx) => `<option value="${idx}">${stageLabel(idx)}</option>`).join('');
+      if (stageWeightSelect) stageWeightSelect.innerHTML = options;
+      if (compareStageA) compareStageA.innerHTML = options;
+      if (compareStageB) compareStageB.innerHTML = options;
+      if (stageWeightSelect) stageWeightSelect.value = String(state.devStage);
+      if (compareStageA) compareStageA.value = '0';
+      if (compareStageB) compareStageB.value = '6';
+      if (stageWeightSlider) stageWeightSlider.value = String(state.stageWeights[state.devStage] ?? 1);
+      if (stageWeightValue) stageWeightValue.textContent = `${Number(stageWeightSlider?.value || 1).toFixed(2)}×`;
+    }
+
+    populateStageSelectors();
+    buildTutorialList();
+    updateComparisonSummary();
+
     if (devSlider) devSlider.addEventListener('input', (e)=> applyDevStage(Number(e.target.value)));
+    if (stageWeightSelect) stageWeightSelect.addEventListener('change', (e)=> {
+      const idx = Number(e.target.value);
+      const weight = state.stageWeights[idx] ?? 1;
+      if (stageWeightSlider) stageWeightSlider.value = String(weight);
+      if (stageWeightValue) stageWeightValue.textContent = `${Number(weight).toFixed(2)}×`;
+    });
+    if (stageWeightSlider) stageWeightSlider.addEventListener('input', (e)=> {
+      const idx = Number(stageWeightSelect?.value ?? state.devStage);
+      const val = Number(e.target.value);
+      if (!Number.isFinite(idx)) return;
+      state.stageWeights[idx] = val;
+      if (stageWeightValue) stageWeightValue.textContent = `${val.toFixed(2)}×`;
+      applyDevStage(state.devStage);
+    });
+    if (resetWeightsBtn) resetWeightsBtn.addEventListener('click', ()=> {
+      state.stageWeights = Array.from({ length: DEV_STAGES }, () => 1);
+      if (stageWeightSelect) stageWeightSelect.value = String(state.devStage);
+      if (stageWeightSlider) stageWeightSlider.value = '1';
+      if (stageWeightValue) stageWeightValue.textContent = '1.00×';
+      applyDevStage(state.devStage);
+    });
+    if (compareStageA) compareStageA.addEventListener('change', updateComparisonSummary);
+    if (compareStageB) compareStageB.addEventListener('change', updateComparisonSummary);
     if (searchInput) searchInput.addEventListener('input', (e)=> { state.filterText = e.target.value || ''; buildList(); });
     if (sortSelect) sortSelect.addEventListener('change', (e)=> { state.sort = e.target.value; buildList(); });
     if (stageFilterSelect) stageFilterSelect.addEventListener('change', (e)=> { state.stageFilter = e.target.value; buildList(); });
@@ -1150,9 +1474,35 @@
     function hsl(h, s=70, l=52) { return `hsl(${h} ${s}% ${l}%)`; }
     function hslAlpha(h, a=.25, s=70, l=50) { return `hsl(${h} ${s}% ${l}% / ${a})`; }
 
+    function formatSciFormula(metrics) {
+      const act = (metrics.activationScore * 100).toFixed(1);
+      const bal = (metrics.balance * 100).toFixed(1);
+      const res = (metrics.resonanceScore * 100).toFixed(1);
+      const align = (metrics.alignmentScore * 100).toFixed(1);
+      return `SCI = (0.35×${act}% + 0.35×${bal}% + 0.20×${res}% + 0.10×${align}%) → ${metrics.sci.toFixed(1)}`;
+    }
+
     function updateMetrics() {
-      const { mean, std, sci } = computeSCI();
-      if (sciEl) sciEl.textContent = `${sci.toFixed(1)}  (μ=${mean.toFixed(1)}, σ=${std.toFixed(1)})`;
+      const metrics = computeSCI();
+      const { mean, std, sci, resonanceScore, resonance } = metrics;
+      if (sciEl) {
+        sciEl.innerHTML = `${sci.toFixed(1)}<small>μ=${mean.toFixed(1)}, σ=${std.toFixed(1)}, resonance ${(resonanceScore*100).toFixed(0)}%</small>`;
+      }
+      if (sciStatusEl) {
+        let status = 'Awaiting activation data.';
+        if (sci >= 75) {
+          status = 'High coherence — activations are harmonised and richly resonant.';
+        } else if (sci >= 55) {
+          status = 'Moderate coherence — adjust stage emphasis or balance activations.';
+        } else {
+          status = 'Fragmented network — reduce variance or strengthen shared links.';
+        }
+        const coverage = resonance.total ? ` Resonance coverage ${(resonanceScore*100).toFixed(0)}% across ${resonance.supportive}/${resonance.total} links.` : '';
+        sciStatusEl.textContent = status + coverage;
+      }
+      if (sciFormulaEl) {
+        sciFormulaEl.textContent = formatSciFormula(metrics);
+      }
       const { total, byNT, metabolic } = computeEnergyMatter();
       const top = [...byNT.entries()].sort((a,b)=>b[1]-a[1]).slice(0,2).map(([k,v])=> `${String(k).split(' ')[0]} ${Math.round(v)}` ).join(', ');
       if (emEl) emEl.textContent = `ΣE=${Math.round(total)} · NT↑ ${top || '—'} · Metabolic ${(metabolic*100).toFixed(0)}%`;
@@ -1340,9 +1690,9 @@
         mStage.textContent = `Stage ${a.stage} · Ring ${a.ring}`;
       } else if (mode==='body') {
         mDef.textContent = a.definition;
-        mBrain.textContent = a.brainRegion;
-        mNT.textContent = a.neurotransmitter;
-        mEnergy.textContent = a.energyMode;
+        mBrain.innerHTML = describeBrain(a.brainRegionKey, a.brainRegion);
+        mNT.innerHTML = describeNeurochemical(a.neurotransmitterKey, a.neurotransmitter);
+        mEnergy.innerHTML = describeMode(a.energyModeKey, a.energyMode);
         mStage.textContent = `Stage ${a.stage} · Ring ${a.ring}`;
       } else {
         mDef.textContent = a.definition;
@@ -1566,10 +1916,10 @@
     // Basic keyboard navigation
     window.addEventListener('keydown', (e)=>{
       const key = e.key.toLowerCase();
-      if (key === 't') { toggleTutorial(); }
-      if (key === 'r') { randomize(); }
-      if (key === 'e') { exportJSON(); }
-      if (key === '0') { deactivateAll(); }
+      if (key === 't') { e.preventDefault(); toggleTutorial(); }
+      if (key === 'r') { e.preventDefault(); randomize(); }
+      if (key === 'e') { e.preventDefault(); openExportDialog(); }
+      if (key === '0') { e.preventDefault(); deactivateAll(); }
       if (key === 'arrowright' || key === 'arrowdown') { e.preventDefault(); moveFocus(1); }
       if (key === 'arrowleft' || key === 'arrowup') { e.preventDefault(); moveFocus(-1); }
       if (key === 'enter') { e.preventDefault(); const a = aspects.find(x=>x.id===state.focusId); if (a) openModal(a); }
@@ -1607,13 +1957,25 @@
 
     // Build payload separately so we can unit-test it
     function buildExportPayload() {
-      const { mean, std, sci } = computeSCI();
+      const metrics = computeSCI();
       const { total, byNT, metabolic } = computeEnergyMatter();
       return {
         generatedAt: new Date().toISOString(),
         model: `32 Aspect Developmental Self Clock — ${mode}`,
         devStage: state.devStage,
-        metrics: { mean, std, sci },
+        devStageLabel: stageLabel(state.devStage),
+        stageWeights: [...state.stageWeights],
+        metrics: {
+          mean: metrics.mean,
+          std: metrics.std,
+          sci: metrics.sci,
+          activationScore: metrics.activationScore,
+          balance: metrics.balance,
+          resonanceRatio: metrics.resonanceScore,
+          alignmentScore: metrics.alignmentScore,
+          formula: formatSciFormula(metrics)
+        },
+        resonance: metrics.resonance,
         energyMatter: { total, byNT: Object.fromEntries(byNT), metabolic },
         filters: {
           search: state.filterText,
@@ -1622,46 +1984,167 @@
           ring: state.ringFilter,
           activeOnly: state.activeOnly,
         },
-        aspects: aspects
+        comparison: {
+          stageA: Number(compareStageA?.value ?? state.devStage),
+          stageB: Number(compareStageB?.value ?? state.devStage),
+          summary: comparisonSummaryEl ? comparisonSummaryEl.textContent : '',
+          summaryHtml: comparisonSummaryEl ? comparisonSummaryEl.innerHTML : ''
+        },
+        aspects: aspects.map(a => ({ ...a }))
       };
+    }
+
+    function downloadFile(content, mime, filename) {
+      const blob = new Blob([content], { type: mime });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function registerDialogBackdropClose(dialogEl, onClose) {
+      if (!dialogEl) return;
+      dialogEl.addEventListener('click', (event) => {
+        const rect = dialogEl.getBoundingClientRect();
+        if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) {
+          dialogEl.close();
+        }
+      });
+      if (typeof onClose === 'function') dialogEl.addEventListener('close', onClose);
     }
 
     function exportJSON() {
       const payload = buildExportPayload();
-      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = 'self-clock-export.json';
-      document.body.appendChild(a); a.click(); a.remove();
-      URL.revokeObjectURL(url);
+      downloadFile(JSON.stringify(payload, null, 2), 'application/json', 'self-clock-export.json');
+    }
+
+    function csvEscape(value) {
+      const str = String(value ?? '');
+      if (/[",\n]/.test(str)) {
+        return '"' + str.replace(/"/g, '""') + '"';
+      }
+      return str;
+    }
+
+    function exportCSV() {
+      const payload = buildExportPayload();
+      const header = ['Aspect', 'Stage', 'Ring', 'Activation', 'Base', 'Brain', 'Neurotransmitter', 'Mode'];
+      const rows = [header.join(',')];
+      payload.aspects.forEach(a => {
+        rows.push([
+          csvEscape(a.name),
+          csvEscape(a.stage),
+          csvEscape(a.ring),
+          csvEscape(a.activation),
+          csvEscape(a.baseActivation ?? (a.devProfile?.[state.devStage] ?? '')),
+          csvEscape(a.brainRegion || a.brainRegionKey || '—'),
+          csvEscape(a.neurotransmitter || a.neurotransmitterKey || '—'),
+          csvEscape(a.energyMode || a.energyModeKey || '—')
+        ].join(','));
+      });
+      downloadFile(rows.join('\n'), 'text/csv', 'self-clock-export.csv');
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? '').replace(/[&<>"']/g, (ch) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      }[ch]));
+    }
+
+    function exportReport() {
+      const payload = buildExportPayload();
+      const topAspects = payload.aspects.slice().sort((a,b)=>b.activation - a.activation).slice(0,8);
+      const rows = topAspects.map(a => `<tr><td>${escapeHtml(a.name)}</td><td>${a.activation}</td><td>${escapeHtml(a.brainRegion || a.brainRegionKey || '—')}</td><td>${escapeHtml(a.neurotransmitter || a.neurotransmitterKey || '—')}</td></tr>`).join('');
+      const html = `<!doctype html><html><head><meta charset="utf-8"><title>Self Clock Report</title><style>
+        body{font-family:Inter,Segoe UI,sans-serif;background:#f5f7ff;color:#111827;padding:32px;line-height:1.6;}
+        h1{margin-top:0;}
+        table{border-collapse:collapse;width:100%;margin-top:16px;}
+        th,td{border:1px solid #cbd5f5;padding:8px;text-align:left;}
+        th{background:#e0e7ff;}
+        .muted{color:#6b7280;font-size:14px;}
+      </style></head><body>
+        <h1>32 Aspect Developmental Self Clock</h1>
+        <p class="muted">Generated ${escapeHtml(new Date().toLocaleString())}</p>
+        <h2>Semantic Coherence Index</h2>
+        <p><strong>${payload.metrics.sci.toFixed(1)}</strong> · ${escapeHtml(payload.metrics.formula)}</p>
+        <p>Resonance coverage ${(payload.metrics.resonanceRatio*100).toFixed(0)}% across ${payload.resonance.supportive}/${payload.resonance.total} potential links.</p>
+        <h2>Developmental Context</h2>
+        <p>Active stage: <strong>${escapeHtml(payload.devStageLabel)}</strong>. Stage weights: ${payload.stageWeights.map((w,i)=>`Stage ${i+1} ${Number(w).toFixed(2)}×`).join(', ')}.</p>
+        <p>${payload.comparison.summaryHtml || escapeHtml(payload.comparison.summary || '')}</p>
+        <h2>Energy–Matter</h2>
+        <p>Total activation ${Math.round(payload.energyMatter.total)} · Metabolic ${(payload.energyMatter.metabolic*100).toFixed(0)}%</p>
+        <h2>Peak Activations</h2>
+        <table><thead><tr><th>Aspect</th><th>Activation</th><th>Brain</th><th>Neurochemical</th></tr></thead><tbody>${rows}</tbody></table>
+      </body></html>`;
+      downloadFile(html, 'text/html', 'self-clock-report.html');
+    }
+
+    function openExportDialog() {
+      if (exportDialog && !exportDialog.open) exportDialog.showModal();
     }
 
     /* ============================================================
        TUTORIAL / WALKTHROUGH MODE
     ============================================================ */
     let tutorialTimer = null;
-    function toggleTutorial() {
-      state.tutorial = !state.tutorial;
-      el('#btnTutorial').setAttribute('aria-pressed', String(state.tutorial));
-      el('#btnTutorial').textContent = state.tutorial ? '⏸ Tutorial' : '▶ Tutorial';
+    function toggleTutorial(forceValue) {
+      const next = typeof forceValue === 'boolean' ? forceValue : !state.tutorial;
+      if (state.tutorial === next) {
+        if (next && tutorialDialog && !tutorialDialog.open) tutorialDialog.showModal();
+        return;
+      }
+      state.tutorial = next;
+      if (tutorialBtn) {
+        tutorialBtn.setAttribute('aria-pressed', String(state.tutorial));
+        tutorialBtn.textContent = state.tutorial ? '⏸ Tutorial' : '▶ Tutorial';
+      }
       if (state.tutorial) {
         if (!tutorialTimer) tutorialTimer = setInterval(()=>{
           state.tutorialIndex = (state.tutorialIndex + 1) % aspects.length;
           state.focusId = aspects[state.tutorialIndex].id;
           refreshListSelection(); draw();
         }, 1400);
+        if (tutorialDialog && !tutorialDialog.open) tutorialDialog.showModal();
       } else {
         clearInterval(tutorialTimer); tutorialTimer = null; draw();
+        if (tutorialDialog && tutorialDialog.open) tutorialDialog.close();
       }
     }
 
     /* ============================================================
        UI WIRING
     ============================================================ */
-    el('#btnTutorial').addEventListener('click', toggleTutorial);
+    tutorialBtn?.addEventListener('click', ()=> toggleTutorial());
     el('#btnRandomize').addEventListener('click', randomize);
     el('#btnDeactivate').addEventListener('click', deactivateAll);
-    el('#btnExport').addEventListener('click', exportJSON);
+    exportBtn?.addEventListener('click', (e)=> { e.preventDefault(); openExportDialog(); });
+
+    function attachExportHandler(btn, handler) {
+      if (!btn) return;
+      btn.addEventListener('click', (event)=> {
+        event.preventDefault();
+        handler();
+        exportDialog?.close();
+      });
+    }
+
+    attachExportHandler(exportJsonBtn, exportJSON);
+    attachExportHandler(exportCsvBtn, exportCSV);
+    attachExportHandler(exportReportBtn, exportReport);
+
+    if (sciInfoBtn) sciInfoBtn.addEventListener('click', ()=> {
+      if (sciFormulaEl) sciFormulaEl.textContent = formatSciFormula(computeSCI());
+      if (sciModal && !sciModal.open) sciModal.showModal();
+    });
+
+    registerDialogBackdropClose(sciModal);
+    registerDialogBackdropClose(tutorialDialog, ()=> { if (state.tutorial) toggleTutorial(false); });
+    registerDialogBackdropClose(exportDialog);
 
     function setMode(newMode){
       mode = newMode;
@@ -1701,18 +2184,25 @@
       // Test 3: devProfile lengths
       assert('mind devProfile[0].length == 12', mindAspects[0].devProfile.length === 12);
 
-      // Test 4: SCI on uniform activations → std≈0, sci≈mean*100
+      // Test 4: SCI on uniform activations → high coherence, variance ≈ 0
       const bak = aspects;
-      aspects = [{ activation: 50 },{ activation: 50 },{ activation: 50 },{ activation: 50 }];
-      const { mean, std, sci } = computeSCI();
+      aspects = [
+        { activation: 50, stage: 1, ring: 1 },
+        { activation: 50, stage: 1, ring: 1 },
+        { activation: 50, stage: 1, ring: 1 },
+        { activation: 50, stage: 1, ring: 1 }
+      ];
+      const { mean, std, sci, resonance } = computeSCI();
       assert('SCI std == 0', Math.abs(std - 0) < 1e-9);
-      assert('SCI value', Math.abs(sci - (50/(1+0)*100)) < 1e-6);
+      assert('SCI resonance == 1', Math.abs(resonance.ratio - 1) < 1e-9);
+      assert('SCI value', Math.abs(sci - 82.5) < 1e-6);
       aspects = bak;
 
       // Test 5: export payload shape
       const payload = buildExportPayload();
       assert('payload.aspects length == 32', Array.isArray(payload.aspects) && payload.aspects.length === 32);
       assert('payload.metrics has sci', typeof payload.metrics.sci === 'number');
+      assert('payload.metrics has formula', typeof payload.metrics.formula === 'string');
 
       // Report
       const passCount = results.filter(r=>r.pass).length;
@@ -1747,7 +2237,9 @@
     /* ============================================================
        SCIENCE NOTES (for researchers inside code comments)
        ----------------------------------------------------
-       • SCI implements the user's formula: mean/(1+stddev)*100.
+       • SCI blends activation power, variance balance, and resonance/structure
+         alignment: 0.35·activation + 0.35·balance + 0.20·resonance +
+         0.10·alignment.
        • We visualize C = E × MC (concept → energy × matter × cognition) via
          the info modal's pipeline description and resonance links.
        • 12 radial cross-lines = expanded Erikson-like developmental stages; 
