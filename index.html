@@ -402,6 +402,264 @@
       display: none;
     }
 
+    dialog.codex-modal::backdrop {
+      background: rgba(6, 12, 32, 0.72);
+      backdrop-filter: blur(12px);
+    }
+
+    dialog.codex-modal {
+      border: none;
+      padding: 0;
+      width: min(980px, 94vw);
+      max-height: 90vh;
+      background: linear-gradient(160deg, color-mix(in srgb, var(--panel-strong) 92%, transparent) 0%, color-mix(in srgb, var(--bg) 75%, transparent) 100%);
+      color: var(--ink);
+      border-radius: 26px;
+      box-shadow: 0 32px 80px rgba(15, 23, 42, 0.35);
+      overflow: hidden;
+    }
+
+    dialog.codex-modal[open] {
+      display: grid;
+    }
+
+    .codex-shell {
+      display: grid;
+      gap: 20px;
+      padding: clamp(20px, 3vw, 32px);
+      overflow-y: auto;
+      max-height: 90vh;
+      background: color-mix(in srgb, var(--panel) 88%, transparent);
+    }
+
+    .codex-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .codex-header h2 {
+      margin: 0;
+      font-size: clamp(20px, 2.6vw, 26px);
+    }
+
+    .codex-header-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .codex-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 14px;
+      font-size: 12px;
+      color: var(--muted);
+      background: color-mix(in srgb, var(--panel-strong) 85%, transparent);
+      border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+    }
+
+    .codex-columns {
+      display: grid;
+      gap: 20px;
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .codex-columns.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .codex-narrative {
+      background: color-mix(in srgb, var(--panel-strong) 90%, transparent);
+      border: 1px solid var(--glass-stroke);
+      border-radius: 20px;
+      padding: clamp(16px, 2.4vw, 20px);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+      display: grid;
+      gap: 10px;
+    }
+
+    .codex-narrative h3 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .codex-narrative p,
+    .codex-narrative li {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .codex-list {
+      display: grid;
+      gap: 16px;
+    }
+
+    .codex-card {
+      background: color-mix(in srgb, var(--panel-strong) 88%, transparent);
+      border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+      border-radius: 18px;
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .codex-card:hover {
+      transform: translateY(-2px);
+      border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+      box-shadow: 0 16px 36px rgba(59, 130, 246, 0.18);
+    }
+
+    .codex-card[data-selected="true"] {
+      border-color: color-mix(in srgb, var(--focus) 65%, transparent);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--focus) 50%, transparent);
+    }
+
+    .codex-card h4 {
+      margin: 0;
+      font-size: 15px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .codex-card p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .codex-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .codex-chip {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--panel) 82%, transparent);
+      border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+      color: var(--muted);
+      letter-spacing: 0.2px;
+    }
+
+    .codex-card dl {
+      margin: 0;
+      display: grid;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .codex-card dl div {
+      display: grid;
+      gap: 4px;
+    }
+
+    .codex-card dt {
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .codex-card-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .codex-json {
+      display: grid;
+      gap: 8px;
+    }
+
+    .codex-json textarea {
+      width: 100%;
+      min-height: 180px;
+      border-radius: 16px;
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      color: var(--ink);
+      padding: 12px;
+      font-family: "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 12px;
+      line-height: 1.4;
+      resize: vertical;
+    }
+
+    .codex-json textarea:focus-visible {
+      outline: none;
+      border-color: var(--input-border-focus);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
+    }
+
+    .codex-form {
+      display: grid;
+      gap: 12px;
+      background: color-mix(in srgb, var(--panel-strong) 88%, transparent);
+      border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+      border-radius: 20px;
+      padding: 16px;
+    }
+
+    .codex-form .input-field textarea,
+    .codex-form .input-field input {
+      background: var(--input-bg);
+    }
+
+    .codex-toast {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      padding: 12px 16px;
+      border-radius: 14px;
+      background: color-mix(in srgb, var(--bad) 35%, transparent);
+      color: var(--ink);
+      border: 1px solid color-mix(in srgb, var(--bad) 45%, transparent);
+      box-shadow: 0 18px 36px rgba(15, 23, 42, 0.32);
+      display: none;
+      z-index: 200;
+      font-size: 13px;
+    }
+
+    .codex-toast[data-visible="true"] {
+      display: block;
+    }
+
+    .codex-component {
+      display: grid;
+      gap: 6px;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px dashed color-mix(in srgb, var(--accent) 25%, transparent);
+      background: color-mix(in srgb, var(--panel) 85%, transparent);
+    }
+
+    .codex-component pre {
+      margin: 0;
+      font-size: 11px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    @media (max-width: 980px) {
+      .codex-columns.two {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
     body[data-layout="mobile"] {
       padding-bottom: env(safe-area-inset-bottom, 0px);
     }
@@ -533,6 +791,7 @@
           <button id="btnDeactivate" class="btn warn" title="Set all activations to 0 (keyboard: 0)">Deactivate All</button>
         </div>
         <div class="control-cluster secondary">
+          <button id="btnCodexEnhancements" class="btn tertiary" type="button" title="Open Codex meta-enhancement studio">Codex Enhancements</button>
           <button id="btnExport" class="btn secondary" title="Export all aspect states as JSON (keyboard: E)">Export JSON</button>
           <button id="panelToggle" class="btn ghost small mobile-only" type="button" aria-controls="insightPanel" aria-expanded="false">Insights</button>
         </div>
@@ -649,6 +908,121 @@
       <div class="vis-hint">Adrian Lei Martinez-Conol, founder of the Only When Prompted Research Initiative 2018</div>
     </footer>
   </div>
+
+  <dialog id="codexModal" class="codex-modal" aria-label="Codex meta-enhancement studio">
+    <div class="codex-shell">
+      <div class="codex-header">
+        <h2>Codex Meta-Enhancement Studio</h2>
+        <div class="codex-header-actions">
+          <span id="codexStatus" class="codex-status" role="status" aria-live="polite">Ready for flow-state co-creation.</span>
+          <button type="button" class="btn ghost small" data-action="codex-close">Close</button>
+        </div>
+      </div>
+
+      <div class="codex-columns two" aria-label="Narrative framing">
+        <section class="codex-narrative" aria-labelledby="codexVisionTitle">
+          <h3 id="codexVisionTitle">Vision</h3>
+          <p>Advance the Codex environment into a research-grade collaboration studio with transparent, modular UI systems.</p>
+          <ul>
+            <li>Anchor every enhancement in open science reproducibility.</li>
+            <li>Reduce creative friction through declarative, discoverable affordances.</li>
+            <li>Support high-cognition partner workflows with seamless Git and UI composability.</li>
+          </ul>
+        </section>
+        <section class="codex-narrative" aria-labelledby="codexImplementationTitle">
+          <h3 id="codexImplementationTitle">Implementation Context</h3>
+          <p>Enhancements are orchestrated as iterative modules that can be staged, reviewed, and remixed directly inside the Codex UI.</p>
+          <ul>
+            <li>Each capsule surfaces bidirectional Git context, reusable components, or guided prompts.</li>
+            <li>Automation hooks favour JSON-driven configuration for reproducible tooling.</li>
+            <li>Visual and textual feedback keeps human–AI co-creation in a shared flow state.</li>
+          </ul>
+        </section>
+      </div>
+
+      <section class="codex-narrative codex-json" aria-labelledby="codexStrategyTitle">
+        <h3 id="codexStrategyTitle">Implementation Strategy Backlog</h3>
+        <p>Refine the cadence of deployment by editing the live checklist. Each line becomes a discrete, reviewable task.</p>
+        <textarea id="codexStrategyInput" spellcheck="false" aria-label="Implementation strategy steps"></textarea>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button type="button" class="btn secondary small" id="codexStrategyAdd">Append Selected Enhancements</button>
+          <button type="button" class="btn ghost small" id="codexReset">Reset to defaults</button>
+        </div>
+      </section>
+
+      <section class="codex-narrative" aria-labelledby="codexEnhancementTitle">
+        <h3 id="codexEnhancementTitle">Enhancement Palette</h3>
+        <p>Review, extend, and stage codex_enhancements. Cards support quick actions, component previews, and PR-ready notes.</p>
+        <div id="codexEnhancementList" class="codex-list" role="list"></div>
+      </section>
+
+      <section class="codex-form" aria-labelledby="codexAddTitle">
+        <h3 id="codexAddTitle">Add Enhancement Capsule</h3>
+        <p class="vis-hint">Fields accept comma-separated values. Components expect JSON describing name, type, and snippet.</p>
+        <form id="codexAddForm">
+          <div class="control-grid">
+            <div class="input-field">
+              <label for="codexTitle">Title</label>
+              <input id="codexTitle" name="title" type="text" required placeholder="Narrative Systems Panel" />
+            </div>
+            <div class="input-field">
+              <label for="codexSummary">Summary</label>
+              <input id="codexSummary" name="summary" type="text" required placeholder="Explain the enhancement focus" />
+            </div>
+            <div class="input-field">
+              <label for="codexActions">Actions</label>
+              <input id="codexActions" name="actions" type="text" placeholder="action_one, action_two" />
+            </div>
+            <div class="input-field">
+              <label for="codexIntegration">Integration</label>
+              <input id="codexIntegration" name="integration" type="text" placeholder="api_one, cli_two" />
+            </div>
+            <div class="input-field">
+              <label for="codexFeedback">UI Feedback</label>
+              <input id="codexFeedback" name="ui_feedback" type="text" placeholder="status_chip, toast" />
+            </div>
+            <div class="input-field">
+              <label for="codexExtension">Extension Point</label>
+              <input id="codexExtension" name="extension_point" type="text" placeholder="extendable via user JSON" />
+            </div>
+          </div>
+          <div class="input-field">
+            <label for="codexUiElement">UI Element</label>
+            <input id="codexUiElement" name="ui_element" type="text" placeholder="dropdown_selector" />
+          </div>
+          <div class="input-field">
+            <label for="codexOutput">Outputs</label>
+            <input id="codexOutput" name="output" type="text" placeholder="logs, screenshots" />
+          </div>
+          <div class="input-field">
+            <label for="codexSource">Sources</label>
+            <input id="codexSource" name="source" type="text" placeholder="json_mapping, markdown_store" />
+          </div>
+          <div class="input-field">
+            <label for="codexTrigger">Triggers</label>
+            <input id="codexTrigger" name="trigger" type="text" placeholder="hover, explicit_search" />
+          </div>
+          <div class="input-field">
+            <label for="codexPersistence">Persistence</label>
+            <input id="codexPersistence" name="persistence" type="text" placeholder="localstorage, session_array" />
+          </div>
+          <div class="input-field">
+            <label for="codexComponents">Components (JSON array)</label>
+            <textarea id="codexComponents" name="components" rows="3" placeholder='[{"name":"New Panel","type":"layout","snippet":"<section>...</section>"}]'></textarea>
+          </div>
+          <button class="btn" type="submit">Add Enhancement</button>
+        </form>
+      </section>
+
+      <section class="codex-narrative codex-json" aria-labelledby="codexJsonTitle">
+        <h3 id="codexJsonTitle">Tool Configuration JSON</h3>
+        <p>The live configuration is kept export-ready for downstream automation or AI-assisted generation.</p>
+        <textarea id="codexJsonOutput" readonly spellcheck="false"></textarea>
+      </section>
+    </div>
+  </dialog>
+
+  <div id="codexToast" class="codex-toast" role="alert" aria-live="assertive"></div>
 
   <!-- Info Modal (tooltip-like, accessible) -->
   <dialog id="infoModal" aria-label="Aspect details">
@@ -1573,6 +1947,491 @@
         console.log(`All ${passCount} self-tests passed.`);
       }
     }
+
+    /* ============================================================
+       CODEX META-ENHANCEMENT STUDIO
+    ============================================================ */
+    const CODEX_DEFAULT_PAYLOAD = JSON.parse(`{
+      "codex_enhancements": [
+        {
+          "id": "git-codex-automation",
+          "title": "Seamless Git–Codex Automation",
+          "summary": "Enable branched, reviewable, and auto-mergeable workflow directly in the Codex UI. Surface GitHub PR and comment data bi-directionally, supporting ephemeral feature testing and peer feedback in real time.",
+          "actions": ["new_feature_branch", "create_pr", "auto_merge", "inline_pr_comments"],
+          "integration": "GitHub REST API and/or backend git commands",
+          "ui_feedback": ["modal_success", "inline_status", "error_toast"]
+        },
+        {
+          "id": "component-library-panel",
+          "title": "Component Library Panel",
+          "summary": "Provide a sidebar or modal for reusable, drag-and-drop UI/code components. Accelerate prototyping and enforce visual/logic consistency. Backed by JSON or external file store.",
+          "components": [
+            { "name": "SCI Slider", "type": "input", "snippet": "<input type='range' ... />" },
+            { "name": "Heatmap Overlay", "type": "visualization", "snippet": "// heatmap function code..." }
+          ],
+          "actions": ["insert_to_editor"],
+          "extension_point": "extendable via user JSON"
+        },
+        {
+          "id": "template-enhancement-prompts",
+          "title": "Template-Driven Enhancement Prompts",
+          "summary": "Let the user prefill or select common templates for enhancement planning, speeding up best-practices adherence and repetitive task reduction.",
+          "ui_element": "dropdown_selector",
+          "extension_point": "dynamic JSON config"
+        },
+        {
+          "id": "regression-tests-visual-snapshots",
+          "title": "Automated Regression Tests with Visualization Snapshots",
+          "summary": "Trigger headless UI flows and generate before/after screenshots on change/PR. Embed test output (visual diffs, links) directly in Codex logs for instant validation.",
+          "integration": ["cypress", "puppeteer", "playwright"],
+          "output": ["screenshots", "logs", "diff_links"]
+        },
+        {
+          "id": "interaction-timeline-palette",
+          "title": "Interaction Timeline and Undo/Redo Palette",
+          "summary": "Chronologically list (and allow timeline navigation of) all edits, commits, PRs, and UI actions. Enable multi-level undo/redo using command palette or GUI.",
+          "persistence": ["localstorage", "session_array"]
+        },
+        {
+          "id": "integrated-doc-panel",
+          "title": "Integrated Documentation Panel",
+          "summary": "Attach instant documentation or guided help to any code or UI element on selection. Support Markdown/JSON/HTML-based docs and hotlinks to related patterns.",
+          "source": ["json_mapping", "markdown_store"],
+          "trigger": ["mouseup", "hover", "explicit_search"]
+        }
+      ],
+      "implementation_strategy": [
+        "Start with highest impact feature (e.g. Component Library Modal), deploy MVP, increment features.",
+        "Each new feature branched/merged cleanly using git-codex automation.",
+        "Regression and visual test suite executed on every PR.",
+        "Refine per user feedback, code analytics, and collaborative doc panel learnings."
+      ]
+    }`);
+
+    const clonePayload = (input) => JSON.parse(JSON.stringify(input));
+    const codexState = {
+      enhancements: clonePayload(CODEX_DEFAULT_PAYLOAD.codex_enhancements),
+      strategy: [...CODEX_DEFAULT_PAYLOAD.implementation_strategy],
+      selected: new Set(),
+    };
+
+    const DEFAULT_STATUS_MESSAGE = 'Ready for flow-state co-creation.';
+    const codexModal = document.getElementById('codexModal');
+    const codexOpenBtn = el('#btnCodexEnhancements');
+    const codexCloseBtn = codexModal ? codexModal.querySelector('[data-action="codex-close"]') : null;
+    const codexStatus = document.getElementById('codexStatus');
+    const codexEnhancementList = document.getElementById('codexEnhancementList');
+    const codexJsonOutput = document.getElementById('codexJsonOutput');
+    const codexStrategyInput = document.getElementById('codexStrategyInput');
+    const codexStrategyAddBtn = document.getElementById('codexStrategyAdd');
+    const codexResetBtn = document.getElementById('codexReset');
+    const codexAddForm = document.getElementById('codexAddForm');
+    const codexToast = document.getElementById('codexToast');
+
+    let codexStatusTimer = null;
+    let codexToastTimer = null;
+
+    const asArray = (value) => {
+      if (Array.isArray(value)) {
+        return value.map(v => (typeof v === 'string' ? v.trim() : v)).filter(Boolean);
+      }
+      if (value == null) return [];
+      if (typeof value === 'string') {
+        return value.split(',').map(v => v.trim()).filter(Boolean);
+      }
+      return [value];
+    };
+
+    const ensureUniqueId = (title) => {
+      const base = (title || 'enhancement').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') || 'enhancement';
+      let candidate = base;
+      let suffix = 1;
+      const existing = new Set(codexState.enhancements.map(item => item.id));
+      while (existing.has(candidate)) {
+        suffix += 1;
+        candidate = `${base}-${suffix}`;
+      }
+      return candidate;
+    };
+
+    const setCodexStatus = (message) => {
+      if (!codexStatus) return;
+      codexStatus.textContent = message;
+      if (codexStatusTimer) clearTimeout(codexStatusTimer);
+      codexStatusTimer = window.setTimeout(() => {
+        codexStatus.textContent = DEFAULT_STATUS_MESSAGE;
+      }, 4200);
+    };
+
+    const showToast = (message) => {
+      if (!codexToast) return;
+      codexToast.textContent = message;
+      codexToast.dataset.visible = 'true';
+      if (codexToastTimer) clearTimeout(codexToastTimer);
+      codexToastTimer = window.setTimeout(() => {
+        codexToast.dataset.visible = 'false';
+      }, 2800);
+    };
+
+    const updateCodexJson = () => {
+      if (!codexJsonOutput) return;
+      const payload = {
+        codex_enhancements: codexState.enhancements,
+        implementation_strategy: codexState.strategy,
+      };
+      codexJsonOutput.value = JSON.stringify(payload, null, 2);
+    };
+
+    const renderStrategy = () => {
+      if (!codexStrategyInput) return;
+      codexStrategyInput.value = codexState.strategy.join('\n');
+    };
+
+    const appendMeta = (metaEl, label, value) => {
+      const values = asArray(value);
+      if (!values.length) return;
+      const group = document.createElement('div');
+      const dt = document.createElement('dt');
+      dt.textContent = label;
+      const dd = document.createElement('dd');
+      dd.textContent = values.join(', ');
+      group.append(dt, dd);
+      metaEl.appendChild(group);
+    };
+
+    const renderEnhancements = () => {
+      if (!codexEnhancementList) return;
+      codexEnhancementList.innerHTML = '';
+      if (!codexState.enhancements.length) {
+        const empty = document.createElement('div');
+        empty.className = 'empty-state';
+        empty.textContent = 'No enhancement capsules yet. Add one to accelerate the workflow.';
+        codexEnhancementList.appendChild(empty);
+        return;
+      }
+      codexState.enhancements.forEach((item) => {
+        const card = document.createElement('article');
+        card.className = 'codex-card';
+        card.setAttribute('role', 'listitem');
+        card.dataset.id = item.id;
+        if (codexState.selected.has(item.id)) {
+          card.setAttribute('data-selected', 'true');
+        } else {
+          card.removeAttribute('data-selected');
+        }
+
+        const heading = document.createElement('h4');
+        heading.append(document.createTextNode(item.title || 'Untitled enhancement'));
+        const badge = document.createElement('span');
+        badge.className = 'badge';
+        badge.textContent = item.id;
+        heading.append(' ', badge);
+        card.appendChild(heading);
+
+        if (item.summary) {
+          const summary = document.createElement('p');
+          summary.textContent = item.summary;
+          card.appendChild(summary);
+        }
+
+        const actionChips = asArray(item.actions);
+        if (actionChips.length) {
+          const chipWrap = document.createElement('div');
+          chipWrap.className = 'codex-chips';
+          actionChips.forEach((chip) => {
+            const span = document.createElement('span');
+            span.className = 'codex-chip';
+            span.textContent = chip;
+            chipWrap.appendChild(span);
+          });
+          card.appendChild(chipWrap);
+        }
+
+        const meta = document.createElement('dl');
+        appendMeta(meta, 'Integration', item.integration);
+        appendMeta(meta, 'UI Feedback', item.ui_feedback);
+        appendMeta(meta, 'Extension', item.extension_point);
+        appendMeta(meta, 'UI Element', item.ui_element);
+        appendMeta(meta, 'Outputs', item.output);
+        appendMeta(meta, 'Persistence', item.persistence);
+        appendMeta(meta, 'Sources', item.source);
+        appendMeta(meta, 'Triggers', item.trigger);
+        if (meta.childNodes.length) {
+          card.appendChild(meta);
+        }
+
+        if (Array.isArray(item.components) && item.components.length) {
+          item.components.forEach((component) => {
+            const container = document.createElement('div');
+            container.className = 'codex-component';
+            const title = document.createElement('strong');
+            title.textContent = `${component.name || 'Component'} · ${component.type || 'snippet'}`;
+            const pre = document.createElement('pre');
+            pre.textContent = component.snippet || '';
+            const copyBtn = document.createElement('button');
+            copyBtn.type = 'button';
+            copyBtn.className = 'btn ghost small';
+            copyBtn.dataset.action = 'copy-component';
+            copyBtn.dataset.snippet = component.snippet || '';
+            copyBtn.dataset.componentName = component.name || 'Component';
+            copyBtn.textContent = 'Copy Snippet';
+            container.append(title, pre, copyBtn);
+            card.appendChild(container);
+          });
+        }
+
+        const cardActions = document.createElement('div');
+        cardActions.className = 'codex-card-actions';
+
+        const selected = codexState.selected.has(item.id);
+        const selectBtn = document.createElement('button');
+        selectBtn.type = 'button';
+        selectBtn.className = selected ? 'btn secondary small' : 'btn ghost small';
+        selectBtn.dataset.action = 'toggle-select';
+        selectBtn.dataset.id = item.id;
+        selectBtn.setAttribute('aria-pressed', String(selected));
+        selectBtn.textContent = selected ? 'Selected for strategy' : 'Stage for strategy';
+        cardActions.appendChild(selectBtn);
+
+        const copyJsonBtn = document.createElement('button');
+        copyJsonBtn.type = 'button';
+        copyJsonBtn.className = 'btn ghost small';
+        copyJsonBtn.dataset.action = 'copy-json';
+        copyJsonBtn.dataset.id = item.id;
+        copyJsonBtn.textContent = 'Copy JSON';
+        cardActions.appendChild(copyJsonBtn);
+
+        const copySummaryBtn = document.createElement('button');
+        copySummaryBtn.type = 'button';
+        copySummaryBtn.className = 'btn ghost small';
+        copySummaryBtn.dataset.action = 'copy-summary';
+        copySummaryBtn.dataset.id = item.id;
+        copySummaryBtn.textContent = 'Copy Summary';
+        cardActions.appendChild(copySummaryBtn);
+
+        card.appendChild(cardActions);
+
+        codexEnhancementList.appendChild(card);
+      });
+    };
+
+    const copyToClipboard = (text, successMessage) => {
+      if (!text) {
+        showToast('No content available to copy.');
+        return;
+      }
+      const onSuccess = () => setCodexStatus(successMessage || 'Copied to clipboard.');
+      const onError = () => showToast('Clipboard copy failed.');
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(onSuccess).catch(onError);
+        return;
+      }
+      try {
+        const area = document.createElement('textarea');
+        area.value = text;
+        area.style.position = 'fixed';
+        area.style.opacity = '0';
+        document.body.appendChild(area);
+        area.select();
+        const ok = document.execCommand('copy');
+        area.remove();
+        if (ok) { onSuccess(); } else { onError(); }
+      } catch (_) {
+        onError();
+      }
+    };
+
+    const openCodexModal = () => {
+      if (!codexModal) return;
+      if (typeof codexModal.showModal === 'function') {
+        try { codexModal.showModal(); } catch (_) { codexModal.setAttribute('open', 'true'); }
+      } else {
+        codexModal.setAttribute('open', 'true');
+      }
+      renderEnhancements();
+      renderStrategy();
+      updateCodexJson();
+      setCodexStatus('Studio synced with latest configuration.');
+    };
+
+    const closeCodexModal = () => {
+      if (!codexModal) return;
+      if (typeof codexModal.close === 'function') {
+        codexModal.close();
+      } else {
+        codexModal.removeAttribute('open');
+      }
+      codexState.selected.clear();
+      renderEnhancements();
+      setCodexStatus(DEFAULT_STATUS_MESSAGE);
+    };
+
+    const appendSelectedToStrategy = () => {
+      if (!codexState.selected.size) {
+        showToast('Select enhancements to append.');
+        return;
+      }
+      const selectedItems = codexState.enhancements.filter(item => codexState.selected.has(item.id));
+      let added = 0;
+      selectedItems.forEach((item) => {
+        const entry = `Deploy ${item.title} — ${item.summary}`;
+        if (!codexState.strategy.includes(entry)) {
+          codexState.strategy.push(entry);
+          added += 1;
+        }
+      });
+      codexState.selected.clear();
+      renderStrategy();
+      updateCodexJson();
+      renderEnhancements();
+      if (added) {
+        setCodexStatus(`Appended ${added} enhancement${added > 1 ? 's' : ''} to the backlog.`);
+      } else {
+        showToast('Selected enhancements were already listed in the backlog.');
+      }
+    };
+
+    codexOpenBtn?.addEventListener('click', openCodexModal);
+    codexCloseBtn?.addEventListener('click', closeCodexModal);
+
+    codexModal?.addEventListener('cancel', (event) => {
+      event.preventDefault();
+      closeCodexModal();
+    });
+
+    codexModal?.addEventListener('click', (event) => {
+      if (event.target === codexModal) {
+        closeCodexModal();
+      }
+    });
+
+    codexStrategyInput?.addEventListener('input', () => {
+      const lines = codexStrategyInput.value.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+      codexState.strategy = lines;
+      updateCodexJson();
+      setCodexStatus('Strategy backlog updated.');
+    });
+
+    codexStrategyAddBtn?.addEventListener('click', appendSelectedToStrategy);
+
+    codexResetBtn?.addEventListener('click', () => {
+      if (!window.confirm('Reset enhancements and strategy to the default payload?')) return;
+      codexState.enhancements = clonePayload(CODEX_DEFAULT_PAYLOAD.codex_enhancements);
+      codexState.strategy = [...CODEX_DEFAULT_PAYLOAD.implementation_strategy];
+      codexState.selected.clear();
+      renderEnhancements();
+      renderStrategy();
+      updateCodexJson();
+      setCodexStatus('Restored default Codex enhancements.');
+    });
+
+    codexEnhancementList?.addEventListener('click', (event) => {
+      const button = event.target.closest('button');
+      if (!button) return;
+      const action = button.dataset.action;
+      const id = button.dataset.id;
+      if (action === 'toggle-select' && id) {
+        if (codexState.selected.has(id)) {
+          codexState.selected.delete(id);
+          setCodexStatus('Removed from strategy queue.');
+        } else {
+          codexState.selected.add(id);
+          setCodexStatus('Queued enhancement for backlog append.');
+        }
+        renderEnhancements();
+        return;
+      }
+      const item = id ? codexState.enhancements.find(entry => entry.id === id) : undefined;
+      if (action === 'copy-json' && item) {
+        copyToClipboard(JSON.stringify(item, null, 2), 'Enhancement JSON copied.');
+        return;
+      }
+      if (action === 'copy-summary' && item) {
+        copyToClipboard(`${item.title}: ${item.summary}`, 'Enhancement summary copied.');
+        return;
+      }
+      if (action === 'copy-component') {
+        const snippet = button.dataset.snippet || '';
+        if (!snippet) {
+          showToast('Component snippet is empty.');
+          return;
+        }
+        const name = button.dataset.componentName || 'component';
+        copyToClipboard(snippet, `Snippet copied for ${name}.`);
+      }
+    });
+
+    codexAddForm?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const formData = new FormData(codexAddForm);
+      const title = (formData.get('title') || '').toString().trim();
+      const summary = (formData.get('summary') || '').toString().trim();
+      if (!title || !summary) {
+        showToast('Title and summary are required.');
+        return;
+      }
+
+      const newItem = {
+        id: ensureUniqueId(title),
+        title,
+        summary,
+      };
+
+      const actions = asArray((formData.get('actions') || '').toString().trim());
+      if (actions.length) newItem.actions = actions;
+
+      const integration = asArray((formData.get('integration') || '').toString().trim());
+      if (integration.length) newItem.integration = integration;
+
+      const uiFeedback = asArray((formData.get('ui_feedback') || '').toString().trim());
+      if (uiFeedback.length) newItem.ui_feedback = uiFeedback;
+
+      const extensionPoint = (formData.get('extension_point') || '').toString().trim();
+      if (extensionPoint) newItem.extension_point = extensionPoint;
+
+      const uiElement = (formData.get('ui_element') || '').toString().trim();
+      if (uiElement) newItem.ui_element = uiElement;
+
+      const output = asArray((formData.get('output') || '').toString().trim());
+      if (output.length) newItem.output = output;
+
+      const source = asArray((formData.get('source') || '').toString().trim());
+      if (source.length) newItem.source = source;
+
+      const trigger = asArray((formData.get('trigger') || '').toString().trim());
+      if (trigger.length) newItem.trigger = trigger;
+
+      const persistence = asArray((formData.get('persistence') || '').toString().trim());
+      if (persistence.length) newItem.persistence = persistence;
+
+      const componentsRaw = (formData.get('components') || '').toString().trim();
+      if (componentsRaw) {
+        try {
+          const parsed = JSON.parse(componentsRaw);
+          if (!Array.isArray(parsed)) throw new Error('components');
+          const normalized = parsed.map((component) => ({
+            name: component.name || 'Component',
+            type: component.type || 'snippet',
+            snippet: component.snippet || '',
+          }));
+          if (normalized.length) newItem.components = normalized;
+        } catch (_) {
+          showToast('Components JSON must be an array of objects with name, type, and snippet.');
+          return;
+        }
+      }
+
+      codexState.enhancements.push(newItem);
+      renderEnhancements();
+      updateCodexJson();
+      codexAddForm.reset();
+      setCodexStatus('Enhancement added to palette.');
+    });
+
+    // Prime the modal content so it is ready before first open
+    renderEnhancements();
+    renderStrategy();
+    updateCodexJson();
 
     const layoutQuery = window.matchMedia ? window.matchMedia('(max-width: 900px)') : { matches: false };
     const handleLayout = (ev) => applyLayoutMode(ev.matches);
