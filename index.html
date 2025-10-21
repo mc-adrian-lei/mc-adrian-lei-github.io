@@ -98,6 +98,211 @@
       margin: 0 auto;
     }
 
+    .workflow {
+      margin: 32px auto 64px;
+      max-width: 1400px;
+      padding: 0 clamp(16px, 2vw, 28px);
+      display: grid;
+      gap: 18px;
+    }
+
+    .workflow-card {
+      background: var(--panel);
+      border-radius: 22px;
+      border: 1px solid var(--glass-stroke);
+      box-shadow: var(--shadow-1);
+      padding: clamp(18px, 2.4vw, 26px);
+      display: grid;
+      gap: 18px;
+      backdrop-filter: blur(16px);
+    }
+
+    .workflow-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .workflow-header h2 {
+      margin: 0;
+      font-size: clamp(18px, 2.4vw, 24px);
+    }
+
+    .workflow-header p {
+      margin: 4px 0 0;
+      max-width: 70ch;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .workflow-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .workflow-actions label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .workflow-panels {
+      display: grid;
+      grid-template-columns: var(--editor-width, 55%) 12px 1fr;
+      gap: 0;
+      min-height: 420px;
+      background: color-mix(in srgb, var(--panel-strong) 95%, transparent);
+      border: 1px solid var(--glass-stroke);
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .workflow-pane {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      background: color-mix(in srgb, var(--panel-strong) 94%, transparent);
+    }
+
+    .workflow-pane.preview {
+      background: color-mix(in srgb, var(--panel) 96%, transparent);
+    }
+
+    .pane-resizer {
+      cursor: col-resize;
+      background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 40%, transparent), transparent);
+      position: relative;
+    }
+
+    .pane-resizer::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: 4px;
+      height: 48px;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--accent) 60%, transparent);
+    }
+
+    .editor-tabs {
+      display: flex;
+      gap: 6px;
+      padding: 12px;
+      background: color-mix(in srgb, var(--panel-strong) 88%, transparent);
+      border-bottom: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+    }
+
+    .editor-tab {
+      border: none;
+      border-radius: 12px;
+      background: transparent;
+      padding: 8px 14px;
+      font: inherit;
+      cursor: pointer;
+      color: var(--muted);
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .editor-tab.is-active {
+      background: linear-gradient(140deg, color-mix(in srgb, var(--accent) 35%, transparent), color-mix(in srgb, var(--accent-2) 40%, transparent));
+      color: var(--ink);
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.25);
+    }
+
+    .editor-surfaces {
+      position: relative;
+      flex: 1;
+    }
+
+    .editor-surface {
+      position: absolute;
+      inset: 0;
+      display: none;
+    }
+
+    .editor-surface.is-visible {
+      display: block;
+    }
+
+    .editor-surface .cm-editor {
+      height: 100%;
+      font-size: 13px;
+    }
+
+    .validation-summary {
+      padding: 12px 16px;
+      border-top: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .validation-summary strong {
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+      font-size: 13px;
+    }
+
+    .preview-header span {
+      color: var(--muted);
+    }
+
+    #workflowPreview {
+      border: none;
+      flex: 1;
+      width: 100%;
+      background: #fff;
+    }
+
+    .preview-status {
+      font-size: 12px;
+      color: var(--muted);
+      padding: 10px 16px;
+      border-top: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+    }
+
+    .validation-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 4px 10px;
+      background: color-mix(in srgb, var(--panel-strong) 85%, transparent);
+      border: 1px solid color-mix(in srgb, var(--accent) 24%, transparent);
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+
+    .validation-badge.ok { color: var(--good); border-color: color-mix(in srgb, var(--good) 45%, transparent); }
+    .validation-badge.warn { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 45%, transparent); }
+    .validation-badge.error { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 45%, transparent); }
+
+    .workflow-footer {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
     header {
       grid-area: top;
       display: flex;
@@ -859,6 +1064,53 @@
       <div class="vis-hint">Adrian Lei Martinez-Conol, founder of the Only When Prompted Research Initiative 2018</div>
     </footer>
   </div>
+
+  <section class="workflow" aria-labelledby="workflowTitle">
+    <div class="workflow-card">
+      <div class="workflow-header">
+        <div>
+          <h2 id="workflowTitle">Codex Workflow Studio</h2>
+          <p>Design and validate interface updates without leaving the page. Edit HTML, CSS, JavaScript, and data schemas with inline linting, then preview the result instantly.</p>
+        </div>
+        <div class="workflow-actions">
+          <button id="workflowSave" class="btn" type="button">Save &amp; Refresh Preview</button>
+          <label><input id="workflowAuto" type="checkbox" checked /> Auto refresh on save</label>
+        </div>
+      </div>
+      <div class="workflow-panels" id="workflowPanels">
+        <div class="workflow-pane editors" id="workflowEditors">
+          <div class="editor-tabs" role="tablist">
+            <button class="editor-tab is-active" role="tab" aria-selected="true" id="tab-html" data-target="html">HTML</button>
+            <button class="editor-tab" role="tab" aria-selected="false" id="tab-css" data-target="css">CSS</button>
+            <button class="editor-tab" role="tab" aria-selected="false" id="tab-js" data-target="js">JavaScript</button>
+            <button class="editor-tab" role="tab" aria-selected="false" id="tab-json" data-target="json">JSON Schema</button>
+          </div>
+          <div class="editor-surfaces">
+            <div id="editor-html" class="editor-surface is-visible" role="tabpanel" aria-labelledby="tab-html"></div>
+            <div id="editor-css" class="editor-surface" role="tabpanel" aria-labelledby="tab-css"></div>
+            <div id="editor-js" class="editor-surface" role="tabpanel" aria-labelledby="tab-js"></div>
+            <div id="editor-json" class="editor-surface" role="tabpanel" aria-labelledby="tab-json"></div>
+          </div>
+          <div id="validationSummary" class="validation-summary" aria-live="polite">
+            <span class="validation-badge ok">Lint clean</span>
+            <span>No issues detected.</span>
+          </div>
+        </div>
+        <div class="pane-resizer" id="workflowResizer" role="separator" aria-orientation="vertical" aria-label="Resize editor and preview" tabindex="0"></div>
+        <div class="workflow-pane preview">
+          <div class="preview-header">
+            <strong>Live Preview</strong>
+            <span id="previewMeta">Synced just now</span>
+          </div>
+          <iframe id="workflowPreview" title="Live preview workspace" sandbox="allow-scripts allow-same-origin"></iframe>
+          <div id="previewStatus" class="preview-status">Waiting for first save…</div>
+        </div>
+      </div>
+      <div class="workflow-footer">
+        <p>Tip: Press <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>S</kbd> while focused in any editor to save and refresh the preview. Lint markers highlight parse issues directly in the gutter, while the summary lists the most recent warnings.</p>
+      </div>
+    </div>
+  </section>
 
   <!-- Info Modal (tooltip-like, accessible) -->
   <dialog id="infoModal" aria-label="Aspect details">
@@ -1933,6 +2185,7 @@
     window.addEventListener('keydown', (e)=>{
       const tag = (e.target && e.target.tagName ? e.target.tagName.toLowerCase() : '');
       if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+      if (e.target && typeof e.target.closest === 'function' && e.target.closest('.cm-editor')) return;
       const key = e.key.toLowerCase();
       if (key === 't') { e.preventDefault(); toggleTutorial(); }
       if (key === 'r') { randomize(); }
@@ -2211,6 +2464,482 @@
        • Accessibility: All controls are reachable by keyboard; modal is a
          native <dialog>; listbox items are focusable and announce changes.
     ============================================================ */
+  </script>
+  <script type="module">
+    import { EditorState } from "https://esm.sh/@codemirror/state@6.2.1";
+    import { EditorView, keymap, highlightActiveLine, drawSelection } from "https://esm.sh/@codemirror/view@6.23.1";
+    import { defaultKeymap, history, historyKeymap, indentWithTab } from "https://esm.sh/@codemirror/commands@6.2.4";
+    import { autocompletion, completionKeymap, closeBrackets } from "https://esm.sh/@codemirror/autocomplete@6.10.2";
+    import { lintGutter, linter, lintState } from "https://esm.sh/@codemirror/lint@6.4.1";
+    import { html as htmlLang } from "https://esm.sh/@codemirror/lang-html@6.4.7";
+    import { css as cssLang } from "https://esm.sh/@codemirror/lang-css@6.2.1";
+    import { javascript as jsLang } from "https://esm.sh/@codemirror/lang-javascript@6.2.1";
+    import { json as jsonLang } from "https://esm.sh/@codemirror/lang-json@6.0.1";
+    import Ajv from "https://esm.sh/ajv@8.12.0";
+
+    const htmlSurface = document.getElementById('editor-html');
+    const cssSurface = document.getElementById('editor-css');
+    const jsSurface = document.getElementById('editor-js');
+    const jsonSurface = document.getElementById('editor-json');
+    const summaryEl = document.getElementById('validationSummary');
+    const previewFrame = document.getElementById('workflowPreview');
+    const previewStatus = document.getElementById('previewStatus');
+    const previewMeta = document.getElementById('previewMeta');
+    const saveButton = document.getElementById('workflowSave');
+    const autoToggle = document.getElementById('workflowAuto');
+    const resizer = document.getElementById('workflowResizer');
+    const panels = document.getElementById('workflowPanels');
+
+    if (!htmlSurface || !cssSurface || !jsSurface || !jsonSurface) {
+      console.warn('Workflow studio surfaces unavailable.');
+      return;
+    }
+
+    const ajv = new Ajv({ allErrors: true, strict: false });
+    const jsonSchema = {
+      type: 'object',
+      additionalProperties: false,
+      required: ['title', 'version', 'aspects'],
+      properties: {
+        title: { type: 'string', minLength: 1 },
+        version: { type: 'number', minimum: 1 },
+        aspects: {
+          type: 'array',
+          minItems: 1,
+          items: {
+            type: 'object',
+            required: ['id', 'name', 'stage', 'ring', 'activation'],
+            properties: {
+              id: { type: 'integer', minimum: 1 },
+              name: { type: 'string', minLength: 1 },
+              stage: { type: 'integer', minimum: 1, maximum: 12 },
+              ring: { type: 'integer', minimum: 1, maximum: 8 },
+              activation: { type: 'integer', minimum: 0, maximum: 100 },
+              brainRegion: { type: 'string' },
+              neurotransmitter: { type: 'string' }
+            },
+            additionalProperties: true
+          }
+        }
+      }
+    };
+    const validateJson = ajv.compile(jsonSchema);
+
+    const initialHTML = `<section class="demo-grid">
+  <header>
+    <h1>Stage Synergy Digest</h1>
+    <p class="lead">Summarise emergent resonance between developmental stages and neurobiological anchors.</p>
+  </header>
+  <ul class="digest" aria-label="High-synergy aspects">
+    <li data-stage="5">
+      <strong>Stage 5 · Limbic Integration</strong>
+      <span>Oxytocin + Insula feedback aligns with mindful body awareness rituals.</span>
+    </li>
+    <li data-stage="9">
+      <strong>Stage 9 · Transcendent Strategy</strong>
+      <span>PFC schema maps balance dopamine drive with reflective pause cues.</span>
+    </li>
+  </ul>
+</section>`;
+
+    const initialCSS = `.demo-grid {
+  font-family: 'Inter', system-ui, sans-serif;
+  padding: 24px;
+  background: linear-gradient(145deg, rgba(59,130,246,0.14), rgba(167,139,250,0.18));
+  border-radius: 18px;
+  color: #0f172a;
+}
+.demo-grid header { margin-bottom: 16px; }
+.demo-grid h1 { margin: 0 0 4px; font-size: 1.3rem; }
+.demo-grid .lead { margin: 0; color: #475569; max-width: 62ch; }
+.demo-grid .digest { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.demo-grid .digest li {
+  background: rgba(255,255,255,0.8);
+  border-radius: 16px;
+  padding: 12px 16px;
+  border: 1px solid rgba(148,163,233,0.35);
+  box-shadow: 0 10px 30px rgba(15,23,42,0.08);
+  display: grid;
+  gap: 4px;
+}
+.demo-grid .digest li strong { font-size: 0.95rem; }
+.demo-grid .digest li span { font-size: 0.82rem; color: #475569; }
+.demo-grid .digest li[data-stage="9"] { border-color: rgba(14,165,233,0.6); }
+@media (max-width: 680px) {
+  .demo-grid { padding: 18px; }
+}`;
+
+    const initialJS = `const focusOrder = ['5', '9'];
+const list = document.querySelector('.digest');
+if (list) {
+  focusOrder.forEach(stage => {
+    const item = list.querySelector('[data-stage="' + stage + '"]');
+    if (item) {
+      item.dataset.highlight = 'true';
+      item.style.outline = '2px solid rgba(14,165,233,0.65)';
+      item.style.outlineOffset = '2px';
+    }
+  });
+}
+console.info('Preview initialised with focus order', focusOrder);
+`;
+
+    const initialJSON = JSON.stringify({
+      title: 'Workflow Preview Payload',
+      version: 1,
+      aspects: [
+        { id: 1, name: 'Limbic Integration', stage: 5, ring: 6, activation: 78, brainRegion: 'Limbic', neurotransmitter: 'Oxytocin' },
+        { id: 2, name: 'Strategic Pause', stage: 9, ring: 7, activation: 64, brainRegion: 'PFC', neurotransmitter: 'DA' }
+      ]
+    }, null, 2);
+
+    const baseExtensions = [
+      highlightActiveLine(),
+      drawSelection(),
+      history(),
+      keymap.of([...defaultKeymap, ...historyKeymap, indentWithTab, ...completionKeymap]),
+      autocompletion(),
+      closeBrackets(),
+      lintGutter(),
+      EditorView.lineWrapping
+    ];
+
+    const diagnostics = new Map([
+      ['html', []],
+      ['css', []],
+      ['js', []],
+      ['json', []]
+    ]);
+
+    const getLineOffset = (doc, line, column) => {
+      if (!Number.isFinite(line) || line < 1) return 0;
+      const ln = doc.line(Math.max(1, Math.min(doc.lines, line)));
+      return ln.from + Math.max(0, Math.min(ln.length, column - 1));
+    };
+
+    const htmlLint = (view) => {
+      const text = view.state.doc.toString();
+      if (!text.trim()) return [];
+      const parser = new DOMParser();
+      const parsed = parser.parseFromString(text, 'text/html');
+      const error = parsed.querySelector('parsererror');
+      if (error) {
+        const msg = error.textContent?.replace(/\s+/g, ' ').trim() || 'HTML parse error';
+        return [{ from: 0, to: Math.min(1, text.length), severity: 'error', message: msg }];
+      }
+      return [];
+    };
+
+    const cssLint = (view) => {
+      const text = view.state.doc.toString();
+      if (!text.trim()) return [];
+      try {
+        const sheet = new CSSStyleSheet();
+        sheet.replaceSync(text);
+      } catch (err) {
+        const message = (err && err.message) ? String(err.message) : 'CSS syntax error';
+        const match = message.match(/:(\d+):(\d+)/);
+        if (match) {
+          const line = Number(match[1]);
+          const column = Number(match[2]);
+          const pos = getLineOffset(view.state.doc, line, column);
+          return [{ from: pos, to: pos + 1, severity: 'error', message }];
+        }
+        return [{ from: 0, to: Math.min(text.length, 1), severity: 'error', message }];
+      }
+      return [];
+    };
+
+    const jsLint = (view) => {
+      const text = view.state.doc.toString();
+      if (!text.trim()) return [];
+      try {
+        // eslint-disable-next-line no-new-func
+        new Function(text);
+      } catch (err) {
+        const message = err && err.message ? String(err.message) : 'JavaScript syntax error';
+        const match = message.match(/<anonymous>:(\d+):(\d+)/);
+        if (match) {
+          const line = Number(match[1]);
+          const column = Number(match[2]);
+          const pos = getLineOffset(view.state.doc, line, column);
+          return [{ from: pos, to: pos + 1, severity: 'error', message }];
+        }
+        return [{ from: 0, to: Math.min(text.length, 1), severity: 'error', message }];
+      }
+      return [];
+    };
+
+    const jsonLint = (view) => {
+      const text = view.state.doc.toString();
+      if (!text.trim()) return [];
+      let parsed;
+      try {
+        parsed = JSON.parse(text);
+      } catch (err) {
+        const message = err && err.message ? String(err.message) : 'JSON parse error';
+        const posMatch = message.match(/position (\d+)/i);
+        const idx = posMatch ? Number(posMatch[1]) : 0;
+        const from = Math.min(idx, text.length);
+        return [{ from, to: Math.min(from + 1, text.length), severity: 'error', message }];
+      }
+      const valid = validateJson(parsed);
+      if (!valid) {
+        const err = validateJson.errors && validateJson.errors[0];
+        if (err) {
+          const path = err.instancePath || '';
+          const key = path.split('/').filter(Boolean).pop();
+          let idx = 0;
+          if (key) {
+            const regex = new RegExp(`"${key}"`);
+            const match = regex.exec(text);
+            if (match) idx = match.index;
+          }
+          return [{
+            from: idx,
+            to: Math.min(idx + (key ? key.length + 2 : 1), text.length),
+            severity: 'error',
+            message: `${err.message || 'Schema validation error'} (${path || 'root'})`
+          }];
+        }
+      }
+      return [];
+    };
+
+    const createEditor = (element, doc, langExt, lintFn, key) => {
+      const view = new EditorView({
+        state: EditorState.create({
+          doc,
+          extensions: [
+            ...baseExtensions,
+            langExt,
+            linter(lintFn),
+            EditorView.updateListener.of((update) => {
+              if (update.docChanged) {
+                markDirty();
+                if (autoToggle && autoToggle.checked) schedulePreview();
+              }
+              diagnostics.set(key, (update.state.field(lintState, false)?.diagnostics) || []);
+              updateValidationSummary();
+            })
+          ]
+        }),
+        parent: element
+      });
+      diagnostics.set(key, (view.state.field(lintState, false)?.diagnostics) || []);
+      return view;
+    };
+
+    const htmlEditor = createEditor(htmlSurface, initialHTML, htmlLang(), htmlLint, 'html');
+    const cssEditor = createEditor(cssSurface, initialCSS, cssLang(), cssLint, 'css');
+    const jsEditor = createEditor(jsSurface, initialJS, jsLang({ typescript: false }), jsLint, 'js');
+    const jsonEditor = createEditor(jsonSurface, initialJSON, jsonLang(), jsonLint, 'json');
+
+    const editorMap = { html: htmlEditor, css: cssEditor, js: jsEditor, json: jsonEditor };
+
+    let dirty = false;
+    let refreshTimer = null;
+    let lastBroadcast = 0;
+
+    const broadcastKey = 'self-clock-workflow';
+
+    const markDirty = () => {
+      dirty = true;
+      if (previewStatus) {
+        previewStatus.textContent = 'Unsaved changes — preview will refresh on save.';
+      }
+    };
+
+    const resetDirty = () => { dirty = false; };
+
+    const getDocs = () => ({
+      html: htmlEditor.state.doc.toString(),
+      css: cssEditor.state.doc.toString(),
+      js: jsEditor.state.doc.toString(),
+      json: jsonEditor.state.doc.toString()
+    });
+
+    const escapeForScript = (text) => text.replace(/<\/(script)/gi, '<\\/$1');
+
+    const hasBlockingErrors = () => {
+      for (const list of diagnostics.values()) {
+        if (list.some(item => item.severity === 'error')) return true;
+      }
+      return false;
+    };
+
+    const buildPreviewDoc = ({ html, css, js, json }) => `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>${css}</style>
+<script>window.__workflowSchema = ${escapeForScript(json)};<\/script>
+<script>${escapeForScript(js)}<\/script>
+</head>
+<body>
+${html}
+</body>
+</html>`;
+
+    const refreshPreview = (payload = null, external = false) => {
+      if (hasBlockingErrors()) {
+        if (previewStatus) previewStatus.textContent = 'Preview blocked — fix lint errors to refresh.';
+        if (!external) broadcastDiagnostics();
+        return;
+      }
+      const docs = payload || getDocs();
+      if (previewFrame) {
+        previewFrame.srcdoc = buildPreviewDoc(docs);
+      }
+      const stamp = new Date();
+      if (previewMeta) {
+        previewMeta.textContent = `Synced ${stamp.toLocaleTimeString()}`;
+      }
+      if (previewStatus) {
+        previewStatus.textContent = external ? 'Preview auto-refreshed from watcher event.' : 'Preview refreshed.';
+      }
+      resetDirty();
+      if (!external) {
+        lastBroadcast = Date.now();
+        try {
+          localStorage.setItem(broadcastKey, JSON.stringify({ time: lastBroadcast, docs }));
+        } catch (err) {
+          console.warn('Workflow broadcast failed', err);
+        }
+      }
+    };
+
+    const schedulePreview = () => {
+      clearTimeout(refreshTimer);
+      refreshTimer = window.setTimeout(() => refreshPreview(), 500);
+    };
+
+    const broadcastDiagnostics = () => updateValidationSummary();
+
+    const updateValidationSummary = () => {
+      if (!summaryEl) return;
+      const all = [...diagnostics.entries()].flatMap(([key, list]) => list.map(item => ({ key, item })));
+      const total = all.length;
+      const worst = all.find(({ item }) => item.severity === 'error');
+      const warning = all.find(({ item }) => item.severity === 'warning');
+      const badge = document.createElement('span');
+      const message = document.createElement('span');
+      summaryEl.innerHTML = '';
+      if (worst) {
+        badge.className = 'validation-badge error';
+        badge.textContent = 'Errors';
+        message.textContent = `${worst.key.toUpperCase()} — ${worst.item.message}`;
+      } else if (warning) {
+        badge.className = 'validation-badge warn';
+        badge.textContent = 'Warnings';
+        message.textContent = `${warning.key.toUpperCase()} — ${warning.item.message}`;
+      } else {
+        badge.className = 'validation-badge ok';
+        badge.textContent = 'Lint clean';
+        message.textContent = total ? `${total} notices` : 'No issues detected.';
+      }
+      summaryEl.append(badge, message);
+    };
+
+    updateValidationSummary();
+
+    document.querySelectorAll('.editor-tab').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const target = btn.getAttribute('data-target');
+        if (!target) return;
+        document.querySelectorAll('.editor-tab').forEach((tab) => {
+          const isActive = tab === btn;
+          tab.classList.toggle('is-active', isActive);
+          tab.setAttribute('aria-selected', String(isActive));
+        });
+        document.querySelectorAll('.editor-surface').forEach((surface) => {
+          surface.classList.toggle('is-visible', surface.id === `editor-${target}`);
+        });
+        const view = editorMap[target];
+        if (view) view.focus();
+      });
+    });
+
+    const adjustBy = (delta) => {
+      if (!panels) return;
+      const bounds = panels.getBoundingClientRect();
+      const min = 240;
+      const max = bounds.width - 240;
+      const currentPercent = parseFloat(getComputedStyle(panels).getPropertyValue('--editor-width')) || 55;
+      const current = (currentPercent / 100) * bounds.width;
+      const next = Math.max(min, Math.min(max, current + delta));
+      const percent = (next / bounds.width) * 100;
+      panels.style.setProperty('--editor-width', `${percent}%`);
+    };
+
+    if (resizer && panels) {
+      resizer.addEventListener('pointerdown', (event) => {
+        event.preventDefault();
+        resizer.setPointerCapture(event.pointerId);
+        const startX = event.clientX;
+        const bounds = panels.getBoundingClientRect();
+        const startWidth = htmlSurface.getBoundingClientRect().width;
+        const move = (ev) => {
+          const delta = ev.clientX - startX;
+          const next = Math.max(240, Math.min(bounds.width - 240, startWidth + delta));
+          const percent = (next / bounds.width) * 100;
+          panels.style.setProperty('--editor-width', `${percent}%`);
+        };
+        const up = () => {
+          resizer.releasePointerCapture(event.pointerId);
+          window.removeEventListener('pointermove', move);
+        };
+        window.addEventListener('pointermove', move);
+        window.addEventListener('pointerup', up, { once: true });
+      });
+
+      resizer.addEventListener('keydown', (ev) => {
+        if (ev.key === 'ArrowLeft') { ev.preventDefault(); adjustBy(-40); }
+        if (ev.key === 'ArrowRight') { ev.preventDefault(); adjustBy(40); }
+      });
+    }
+
+    const handleSave = () => {
+      refreshPreview();
+    };
+
+    saveButton?.addEventListener('click', handleSave);
+
+    autoToggle?.addEventListener('change', (event) => {
+      if (!previewStatus) return;
+      if (event.target.checked) {
+        previewStatus.textContent = 'Auto refresh enabled.';
+        if (dirty) schedulePreview();
+      } else {
+        previewStatus.textContent = 'Auto refresh paused — use Save to update preview.';
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
+        if (event.target && event.target.closest && event.target.closest('.cm-editor')) {
+          event.preventDefault();
+          handleSave();
+        }
+      }
+    });
+
+    window.addEventListener('storage', (event) => {
+      if (event.key !== broadcastKey || !event.newValue) return;
+      try {
+        const payload = JSON.parse(event.newValue);
+        if (payload.time && payload.time === lastBroadcast) return;
+        if (payload.docs) {
+          refreshPreview(payload.docs, true);
+        }
+      } catch (err) {
+        console.warn('Failed to process workflow broadcast', err);
+      }
+    });
+
+    // Initial preview render
+    refreshPreview();
   </script>
 </body>
 </html>
