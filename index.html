@@ -149,6 +149,16 @@
       justify-content: space-between;
     }
 
+    }
+
+    .control-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
     .control-cluster {
       display: flex;
       flex-wrap: wrap;
@@ -339,6 +349,44 @@
 
     .dot { width: 12px; height: 12px; border-radius: 999px; box-shadow: 0 0 0 2px rgba(255,255,255,0.05); }
 
+    }
+    .metric h3 { margin: 0; font-size: 12px; color: var(--muted); font-weight: 600; letter-spacing: 0.3px; }
+    .metric .val { font-size: 20px; font-weight: 700; line-height: 1.2; color: var(--ink); }
+    .metric .val small { display: block; font-size: 11px; font-weight: 500; color: var(--muted); }
+
+    .panel p { margin: 0; }
+
+    .scroll { overflow: auto; min-height: 120px; max-height: 50vh; padding-right: 6px; }
+    .aspect-list { display: grid; gap: 10px; }
+
+    .aspect-item {
+      background: color-mix(in srgb, var(--panel-strong) 90%, transparent);
+      border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+      border-radius: 16px;
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
+    }
+    .aspect-item:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--accent) 45%, transparent); box-shadow: 0 12px 26px rgba(37, 99, 235, 0.18); }
+    .aspect-item[aria-selected="true"] { border-color: color-mix(in srgb, var(--focus) 60%, transparent); box-shadow: 0 16px 32px rgba(253, 230, 138, 0.28); }
+
+    .row { display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+    .row .name { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; letter-spacing: 0.25px; }
+
+    .badge {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      background: color-mix(in srgb, var(--panel) 80%, transparent);
+      border-radius: 999px;
+      padding: 4px 10px;
+      border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+    }
+
+    .dot { width: 12px; height: 12px; border-radius: 999px; box-shadow: 0 0 0 2px rgba(255,255,255,0.05); }
+
     .activation-bar { position: relative; width: 100%; height: 6px; border-radius: 999px; background: color-mix(in srgb, var(--panel) 82%, transparent); overflow: hidden; }
     .activation-bar span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, rgba(125, 211, 252, 0.85), rgba(168, 85, 247, 0.9)); transition: width 0.2s ease; }
 
@@ -367,6 +415,9 @@
     .input-field input::placeholder { color: color-mix(in srgb, var(--muted) 65%, transparent); }
     .input-field input:focus-visible,
     .input-field select:focus-visible { border-color: var(--input-border-focus); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent); outline: none; }
+
+    .control-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+
 
     .control-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
 
@@ -405,6 +456,62 @@
     body[data-layout="mobile"] {
       padding-bottom: env(safe-area-inset-bottom, 0px);
     }
+
+    body[data-layout="mobile"] .app {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      height: auto;
+      min-height: 100dvh;
+    }
+
+    body[data-layout="mobile"] header {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+    }
+
+    body[data-layout="mobile"] .vis {
+      min-height: 360px;
+    }
+
+    body[data-layout="mobile"] aside {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      max-height: 86dvh;
+      transform: translateY(100%);
+      transition: transform 0.32s ease, box-shadow 0.32s ease;
+      border-radius: 24px 24px 0 0;
+      box-shadow: 0 -18px 46px rgba(15, 23, 42, 0.16);
+      z-index: 55;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    body[data-layout="mobile"] .panel {
+      background: color-mix(in srgb, var(--panel) 96%, transparent);
+    }
+
+    body[data-layout="mobile"][data-panel="open"] aside {
+      transform: translateY(0%);
+      box-shadow: 0 -24px 60px rgba(15, 23, 42, 0.22);
+    }
+
+    body[data-layout="mobile"] .panel-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: block;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.32s ease;
+      background: rgba(15, 23, 42, 0.25);
+      backdrop-filter: blur(6px);
+    }
+
 
     body[data-layout="mobile"] .app {
       display: flex;
@@ -764,27 +871,67 @@
       panelToggle.setAttribute('aria-label', label);
     }
 
-    function setPanelState(open) {
+    function focusWithoutScroll(el) {
+      if (!el || typeof el.focus !== 'function') return;
+      try {
+        el.focus({ preventScroll: true });
+      } catch (_) {
+        el.focus();
+      }
+    }
+
+    function setInert(el, inert) {
+      if (!el) return;
+      if ('inert' in el) {
+        el.inert = inert;
+      }
+      if (inert) {
+        el.setAttribute('inert', '');
+      } else {
+        el.removeAttribute('inert');
+      }
+    }
+
+    function setPanelState(open, options = {}) {
+      const { focusToggle = true } = options;
       state.panelOpen = open;
       document.body.setAttribute('data-panel', open ? 'open' : 'closed');
+      const isMobile = state.layout === 'mobile';
       if (panelOverlay) {
-        panelOverlay.hidden = !(open && state.layout === 'mobile');
-        panelOverlay.setAttribute('aria-hidden', open && state.layout === 'mobile' ? 'false' : 'true');
+        const overlayVisible = open && isMobile;
+        panelOverlay.hidden = !overlayVisible;
+        panelOverlay.setAttribute('aria-hidden', overlayVisible ? 'false' : 'true');
       }
       updatePanelToggleLabel();
-      if (insightPanel) {
-        if (open && state.layout === 'mobile') {
+      if (!insightPanel) return;
+
+      if (open) {
+        insightPanel.removeAttribute('hidden');
+        insightPanel.setAttribute('aria-hidden', 'false');
+        setInert(insightPanel, false);
+        if (isMobile) {
           insightPanel.setAttribute('tabindex', '-1');
-          if (typeof insightPanel.focus === 'function') {
-            try {
-              insightPanel.focus({ preventScroll: true });
-            } catch (_) {
-              insightPanel.focus();
-            }
-          }
+          focusWithoutScroll(insightPanel);
         } else {
           insightPanel.removeAttribute('tabindex');
         }
+        return;
+      }
+
+      // Closing state handling
+      if (isMobile) {
+        insightPanel.setAttribute('aria-hidden', 'true');
+        insightPanel.setAttribute('hidden', '');
+        setInert(insightPanel, true);
+        insightPanel.removeAttribute('tabindex');
+        if (focusToggle && panelToggle) {
+          focusWithoutScroll(panelToggle);
+        }
+      } else {
+        insightPanel.removeAttribute('hidden');
+        insightPanel.setAttribute('aria-hidden', 'false');
+        setInert(insightPanel, false);
+        insightPanel.removeAttribute('tabindex');
       }
     }
 
@@ -792,10 +939,15 @@
       state.layout = isMobile ? 'mobile' : 'desktop';
       document.body.setAttribute('data-layout', state.layout);
       if (state.layout === 'mobile') {
-        setPanelState(false);
+        setPanelState(false, { focusToggle: false });
       } else {
-        setPanelState(true);
-        if (insightPanel) insightPanel.removeAttribute('tabindex');
+        setPanelState(true, { focusToggle: false });
+        if (insightPanel) {
+          insightPanel.removeAttribute('tabindex');
+          insightPanel.removeAttribute('hidden');
+          insightPanel.setAttribute('aria-hidden', 'false');
+          setInert(insightPanel, false);
+        }
       }
     }
 
