@@ -342,6 +342,74 @@
       flex-wrap: wrap;
     }
 
+    .visitor-feedback {
+      margin-top: 6px;
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px dashed color-mix(in srgb, var(--accent) 35%, transparent);
+      background: color-mix(in srgb, var(--panel-strong) 78%, transparent);
+      display: grid;
+      gap: 10px;
+    }
+
+    .visitor-feedback h3 {
+      margin: 0;
+      font-size: 15px;
+      letter-spacing: 0.2px;
+    }
+
+    .visitor-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--muted) 70%, var(--ink) 30%);
+    }
+
+    .visitor-message-field {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .visitor-message-field input[type="text"] {
+      flex: 1 1 200px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      color: var(--ink);
+      font: 14px/1.4 "Inter", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue", sans-serif;
+      min-height: 44px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .visitor-message-field input[type="text"]:focus-visible {
+      border-color: var(--input-border-focus);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
+      outline: none;
+    }
+
+    .visitor-message-field button {
+      flex: 0 0 auto;
+      white-space: nowrap;
+    }
+
+    .visitor-status {
+      min-height: 18px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .visitor-status[data-state="success"] {
+      color: color-mix(in srgb, var(--good) 75%, var(--ink) 25%);
+    }
+
+    .visitor-status[data-state="error"] {
+      color: color-mix(in srgb, var(--bad) 78%, var(--ink) 22%);
+    }
+
     .codex-status {
       flex: 1 1 220px;
       min-height: 44px;
@@ -979,6 +1047,18 @@
           <button id="codexSave" class="btn" type="button">Save &amp; Refresh Preview</button>
           <div id="codexStatus" class="codex-status" data-state="info" role="status">Awaiting edits. Format or save to validate.</div>
         </div>
+        <form id="visitorNoteForm" class="visitor-feedback" aria-describedby="visitorStatus">
+          <div>
+            <h3>Visitor Note</h3>
+            <p class="vis-hint">Share a quick insight to accompany Codex canvas adjustments.</p>
+          </div>
+          <label for="visitorMessage" class="visitor-label">Visitor message</label>
+          <div class="visitor-message-field">
+            <input id="visitorMessage" name="visitorMessage" type="text" maxlength="240" placeholder="Capture a reflection, request, or observation…" required />
+            <button id="visitorSubmit" class="btn secondary" type="submit">Share note</button>
+          </div>
+          <p id="visitorStatus" class="visitor-status" role="status" aria-live="polite"></p>
+        </form>
       </div>
       <div class="panel codex-preview">
         <h2>Live Preview</h2>
@@ -1852,6 +1932,22 @@
     const codexFormatBtn = el('#codexFormat');
     const codexSaveBtn = el('#codexSave');
     const codexSuggestionsEl = el('#promptSuggestions');
+    const visitorFormEl = el('#visitorNoteForm');
+    const visitorMessageEl = el('#visitorMessage');
+    const visitorStatusEl = el('#visitorStatus');
+    const visitorSubmitEl = el('#visitorSubmit');
+
+    function updateVisitorStatus(message, state = 'info') {
+      if (!visitorStatusEl) return;
+      visitorStatusEl.textContent = message;
+      if (state === 'info' || !state) {
+        visitorStatusEl.removeAttribute('data-state');
+      } else {
+        visitorStatusEl.setAttribute('data-state', state);
+      }
+    }
+
+    updateVisitorStatus('');
 
     const promptTemplates = [
       'Map resonance between the selected aspect and a complementary body modality; return focus, practice, and reflection cues.',
@@ -2226,6 +2322,34 @@
 
     if (codexFormatBtn) codexFormatBtn.addEventListener('click', handleCodexFormat);
     if (codexSaveBtn) codexSaveBtn.addEventListener('click', handleCodexSave);
+
+    if (visitorFormEl) {
+      visitorFormEl.addEventListener('submit', (event) => {
+        event.preventDefault();
+        if (!visitorMessageEl) return;
+        const note = visitorMessageEl.value.trim();
+        if (!note) {
+          updateVisitorStatus('Please add a short note before sending.', 'error');
+          visitorMessageEl.focus();
+          return;
+        }
+        updateVisitorStatus('Noting your message…');
+        const submitBtn = visitorSubmitEl || visitorFormEl.querySelector('button[type="submit"]');
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.setAttribute('aria-busy', 'true');
+        }
+        window.setTimeout(() => {
+          console.log('[Codex visitor note]', note);
+          visitorFormEl.reset();
+          updateVisitorStatus('Message received. Thanks for contributing!', 'success');
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.removeAttribute('aria-busy');
+          }
+        }, 360);
+      });
+    }
 
     document.addEventListener('keydown', (event) => {
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
