@@ -25,6 +25,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>32 Aspect Developmental Self Clock — Mind–Body–Energy Mapping</title>
   <meta name="description" content="Interactive 32‑Aspect Self Clock for mind–body–energy mapping with exportable states and accessibility support." />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <style>
     /* =============================================================
        32 Aspect Developmental Self Clock — Single File Implementation
@@ -34,26 +35,47 @@
        ============================================================= */
 
     :root {
-      --bg: #0f1220;
-      --panel: #12162a;
-      --ink: #f6f7fb;
-      --muted: #b8bfd9;
-      --accent: #7dd3fc; /* cyan */
-      --accent-2: #a78bfa; /* violet */
-      --good: #34d399; /* green */
-      --warn: #fbbf24; /* amber */
-      --bad: #f87171;  /* red */
+      --bg: #0a0c1a;
+      --panel: #10152b;
+      --ink: #e9ecf8;
+      --muted: #9ca7c5;
+      --accent: #00c6ff;   /* cyan electric */
+      --accent-2: #8b5cf6; /* violet vivid */
+      --good: #10b981;     /* emerald */
+      --warn: #fbbf24;     /* amber */
+      --bad: #ef4444;      /* red */
       --ring: #1f2543;
       --focus: #fde68a;
+      --glow: rgba(0, 198, 255, 0.2);
     }
 
     * { box-sizing: border-box; }
     html, body { height: 100%; }
+
+    @keyframes breathe {
+      0%, 100% {
+        background-position: 50% 50%;
+      }
+      50% {
+        background-position: 48% 52%;
+      }
+    }
+
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-      background: radial-gradient(1200px 1200px at 70% 20%, #1b2245 0%, var(--bg) 55%);
+      font-family: 'Inter', 'Segoe UI', Roboto, system-ui, sans-serif;
       color: var(--ink);
+      font-size: 15px;
+      line-height: 1.5;
+      letter-spacing: 0.2px;
+      background: radial-gradient(1200px 1200px at 70% 20%, #141a3a 0%, var(--bg) 60%);
+      background-size: 200% 200%;
+      animation: breathe 18s ease-in-out infinite;
+    }
+
+    h1, h2, h3, strong {
+      color: var(--ink);
+      letter-spacing: 0.4px;
     }
 
     .app {
@@ -76,11 +98,12 @@
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      background: color-mix(in oklab, var(--panel) 80%, black 20%);
-      border: 1px solid #1c2248;
+      background: linear-gradient(135deg, rgba(16, 24, 48, 0.92), rgba(12, 18, 36, 0.85));
+      border: 1px solid rgba(28, 36, 82, 0.75);
       border-radius: 14px;
       padding: 10px 12px;
-      box-shadow: 0 4px 22px rgba(0,0,0,.25);
+      box-shadow: 0 12px 35px rgba(0,0,0,0.35);
+      backdrop-filter: blur(10px);
     }
 
     header h1 { font-size: clamp(16px, 2vw, 18px); margin: 0; letter-spacing: .3px; }
@@ -88,30 +111,48 @@
     header .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 
     .btn {
-      background: linear-gradient(180deg, #22306b, #1a234a);
+      background: linear-gradient(180deg, #1a254d, #0f162f);
       color: var(--ink);
-      border: 1px solid #31407c;
+      border: 1px solid #2c3e75;
       border-radius: 10px;
-      padding: 8px 10px;
+      padding: 8px 12px;
       font-weight: 600;
       cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+    .btn:hover {
+      background: linear-gradient(180deg, #223371, #1b2754);
+      border-color: var(--accent);
+      box-shadow: 0 0 8px var(--glow);
     }
     .btn:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
-    .btn.secondary { background: #1a1f3d; border-color: #2b356a; }
+    .btn.secondary { opacity: 0.8; }
     .btn.warn { background: #3b1f1f; border-color: #6b2b2b; }
 
     .vis {
       grid-area: vis;
       position: relative;
-      background: radial-gradient(800px 800px at 50% 45%, #141a34 0%, #0e1328 60%);
+      background: radial-gradient(900px 900px at 50% 40%, rgba(16, 25, 52, 0.95) 0%, rgba(5, 9, 20, 0.95) 60%);
       border-radius: 16px;
-      border: 1px solid #1b1f3f;
+      border: 1px solid rgba(28, 36, 82, 0.85);
       display: grid;
       grid-template-rows: 1fr auto;
       overflow: clip;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.35);
     }
 
-    canvas { width: 100%; height: 100%; display: block; }
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      filter: drop-shadow(0 0 8px rgba(0, 198, 255, 0.25));
+      transition: filter 0.3s ease;
+    }
+
+    canvas:focus-visible {
+      filter: drop-shadow(0 0 12px rgba(253, 230, 138, 0.5));
+    }
 
     .legend {
       padding: 10px;
@@ -120,15 +161,26 @@
       flex-wrap: wrap;
       gap: 10px;
       align-items: center;
-      background: #0f1430;
+      background: rgba(12, 17, 38, 0.8);
+      backdrop-filter: blur(8px);
+      box-shadow: inset 0 0 10px rgba(255,255,255,0.04);
     }
 
     .legend .chip {
       display: inline-flex; align-items: center; gap: 6px;
-      border: 1px solid #2a315f; border-radius: 999px; padding: 6px 10px;
+      border: 1px solid rgba(44, 62, 117, 0.7);
+      border-radius: 999px;
+      padding: 6px 10px;
       color: var(--muted);
-      background: #12183b;
+      background: linear-gradient(135deg, rgba(17, 25, 50, 0.9), rgba(20, 35, 68, 0.75));
       font-size: 12px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    }
+
+    .legend .chip:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.35);
     }
 
     .legend .swatch { width: 12px; height: 12px; border-radius: 3px; background: var(--accent); display: inline-block; }
@@ -138,31 +190,69 @@
       display: grid;
       grid-template-rows: auto 1fr auto;
       gap: 10px;
-      background: color-mix(in oklab, var(--panel) 90%, black 10%);
-      border: 1px solid #1c2248;
+      background: linear-gradient(145deg, rgba(13, 19, 38, 0.92), rgba(9, 13, 28, 0.88));
+      border: 1px solid rgba(26, 36, 80, 0.75);
       border-radius: 16px;
       padding: 10px;
       overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+      backdrop-filter: blur(10px);
     }
 
-    .panel { background: #0f1430; border: 1px solid #1b214b; border-radius: 12px; padding: 10px; }
+    .panel {
+      background: rgba(16, 21, 43, 0.85);
+      border: 1px solid #1b214b;
+      border-radius: 14px;
+      padding: 12px;
+      backdrop-filter: blur(8px);
+      box-shadow: inset 0 0 12px rgba(255,255,255,0.03), 0 0 18px rgba(0,0,0,0.4);
+    }
 
     .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
-    .metric { background: #0c1027; border: 1px solid #18204b; border-radius: 12px; padding: 10px; }
+    .metric {
+      background: rgba(8, 12, 26, 0.8);
+      border: 1px solid #1c254b;
+      border-radius: 12px;
+      padding: 10px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.25);
+    }
     .metric h3 { margin: 0 0 6px; font-size: 12px; color: var(--muted); font-weight: 600; }
-    .metric .val { font-size: 18px; font-weight: 800; }
+    .metric .val { font-size: 18px; font-weight: 800; color: var(--accent); }
 
     .scroll { overflow: auto; min-height: 120px; max-height: 50vh; padding-right: 4px; }
     .aspect-list { display: grid; gap: 6px; }
 
-    .aspect-item { background: #0a0f24; border: 1px solid #1a2352; border-radius: 12px; padding: 8px; display: grid; gap: 6px; }
+    .aspect-item {
+      background: rgba(10, 15, 30, 0.82);
+      border: 1px solid rgba(32, 44, 96, 0.8);
+      border-radius: 12px;
+      padding: 8px;
+      display: grid;
+      gap: 6px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+    }
+    .aspect-item:hover {
+      border-color: var(--accent);
+      box-shadow: 0 10px 20px rgba(0, 198, 255, 0.15);
+      transform: translateY(-1px);
+    }
     .aspect-item[aria-selected="true"] { outline: 2px solid var(--focus); }
     .row { display: flex; gap: 8px; align-items: center; justify-content: space-between; }
     .row .name { display: flex; align-items: center; gap: 8px; font-weight: 700; }
     .dot { width: 10px; height: 10px; border-radius: 999px; }
     .tags { display: flex; gap: 6px; flex-wrap: wrap; }
-    .tag { font-size: 10px; color: var(--muted); background: #12183b; border: 1px solid #222c65; padding: 2px 6px; border-radius: 999px; }
+    .tag {
+      font-size: 10px;
+      color: var(--muted);
+      background: rgba(20, 29, 58, 0.85);
+      border: 1px solid rgba(46, 66, 132, 0.7);
+      padding: 2px 6px;
+      border-radius: 999px;
+      transition: background 0.2s ease;
+    }
+    .tag:hover { background: rgba(32, 49, 98, 0.95); }
 
     label { font-size: 12px; color: var(--muted); }
     input[type="range"] { width: 100%; }
@@ -170,19 +260,50 @@
 
     footer {
       grid-area: footer;
-      display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between;
-      background: #0e1433; border-top: 1px solid #18204b; padding: 8px 10px; border-radius: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(135deg, rgba(11, 16, 32, 0.9), rgba(8, 12, 26, 0.85));
+      border-top: 1px solid rgba(28, 40, 90, 0.6);
+      padding: 8px 10px;
+      border-radius: 12px;
+      box-shadow: 0 -2px 20px rgba(0,0,0,0.3);
+      backdrop-filter: blur(8px);
     }
 
     .vis-hint { color: var(--muted); font-size: 12px; }
 
     /* Dialog (for quick info/tooltip-like modal) */
-    dialog { border: 1px solid #24306f; border-radius: 16px; padding: 0; color: var(--ink); background: #0c1129; max-width: min(520px, 92vw); }
-    dialog::backdrop { background: rgba(0,0,0,.4); }
-    .modal-head { padding: 12px; border-bottom: 1px solid #1b214b; display: flex; align-items: center; justify-content: space-between; }
+    dialog {
+      border: 1px solid rgba(44, 62, 117, 0.7);
+      border-radius: 16px;
+      padding: 0;
+      color: var(--ink);
+      background: rgba(12, 18, 36, 0.95);
+      max-width: min(520px, 92vw);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+    }
+    dialog::backdrop { background: rgba(4, 6, 14, 0.65); }
+    .modal-head {
+      padding: 12px;
+      border-bottom: 1px solid rgba(46, 66, 132, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(135deg, rgba(18, 26, 52, 0.9), rgba(20, 34, 68, 0.8));
+    }
     .modal-body { padding: 12px; display: grid; gap: 10px; }
     .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .modal-grid > div { background: #0a0f24; border: 1px solid #1a2352; border-radius: 10px; padding: 8px; }
+    .modal-grid > div {
+      background: rgba(10, 15, 30, 0.85);
+      border: 1px solid rgba(32, 44, 96, 0.7);
+      border-radius: 10px;
+      padding: 8px;
+      box-shadow: inset 0 0 10px rgba(255,255,255,0.02);
+    }
 
     @media (max-width: 1024px) {
       .app { grid-template-columns: 1fr; grid-template-areas: "top" "vis" "side" "footer"; height: auto; min-height: 100dvh; }
@@ -462,6 +583,32 @@
     }
 
     /* ============================================================
+       NSIL FIELD VECTOR MAPPING
+       ------------------------------------------------------------
+       Adds semantic gravity metrics for each aspect.
+       Each aspect gets eight harmonics normalized to 0..1.
+    ============================================================ */
+
+    function updateNSILFields() {
+      aspects.forEach(a => {
+        const normAct = a.activation / 100;
+        const stageNorm = a.stage / 12;
+        const ringNorm = a.ring / 8;
+
+        a.nsil = {
+          G: normAct * 0.9 + 0.1 * stageNorm,
+          R: 0.6 + 0.4 * Math.sin(stageNorm * Math.PI),
+          P: 0.5 + 0.5 * Math.cos(ringNorm * Math.PI / 2),
+          A: normAct,
+          N: 0.4 + 0.6 * (1 - Math.abs(0.5 - normAct)),
+          T: 0.3 + 0.7 * (stageNorm * 0.9),
+          Cx: 0.5 + 0.5 * Math.sin(ringNorm * Math.PI),
+          Id: 0.7 + 0.3 * Math.cos(normAct * Math.PI / 2)
+        };
+      });
+    }
+
+    /* ============================================================
        DOM HELPERS
     ============================================================ */
     const el = sel => document.querySelector(sel);
@@ -475,6 +622,7 @@
       state.devStage = stage;
       if (devVal) devVal.textContent = stage + 1;
       aspects.forEach(a => { if (a.devProfile?.length === DEV_STAGES) a.activation = a.devProfile[stage]; });
+      updateNSILFields();
       draw(); updateMetrics(); syncListRanges();
     }
 
@@ -494,10 +642,20 @@
 
     function updateMetrics() {
       const { mean, std, sci } = computeSCI();
-      sciEl.textContent = `${sci.toFixed(1)}  (μ=${mean.toFixed(1)}, σ=${std.toFixed(1)})`;
+      const Cf = computeCf();
+      const phiAligned = Math.abs(Cf - 1.618) < 0.05;
+      const phiNote = phiAligned ? 'Φ-aligned' : `Δ ${(Cf - 1.618).toFixed(3)}`;
+
+      sciEl.textContent =
+        `${sci.toFixed(1)} (μ=${mean.toFixed(1)}, σ=${std.toFixed(1)}) · Cₓf=${Cf.toFixed(3)} ${phiNote}`;
+
       const { total, byNT, metabolic } = computeEnergyMatter();
       const top = [...byNT.entries()].sort((a,b)=>b[1]-a[1]).slice(0,2).map(([k,v])=> `${String(k).split(' ')[0]} ${Math.round(v)}` ).join(', ');
       emEl.textContent = `ΣE=${Math.round(total)} · NT↑ ${top || '—'} · Metabolic ${(metabolic*100).toFixed(0)}%`;
+
+      document.querySelector('.vis').style.boxShadow = phiAligned
+        ? '0 0 20px rgba(252,211,77,0.25)'
+        : 'none';
     }
 
     function createAspectRow(a) {
@@ -526,6 +684,7 @@
       range.setAttribute('aria-label', `${a.name} activation`);
       range.addEventListener('input', (e) => {
         a.activation = Number(e.target.value);
+        updateNSILFields();
         label.textContent = `Activation: ${a.activation}`;
         draw();
         updateMetrics();
@@ -625,6 +784,7 @@
       if (!currentAspect) return;
       currentAspect.activation = Number(e.target.value);
       mActVal.textContent = String(currentAspect.activation);
+      updateNSILFields();
       updateModalSummary();
       const row = listEl.querySelector(`[data-id="${currentAspect.id}"]`);
       if (row) {
@@ -699,14 +859,16 @@
         const arcSize = Math.max(0.05, a.activation/100) * (TWO_PI / N_ASPECTS);
         ctx.beginPath();
         ctx.arc(center.x, center.y, radius, angle - arcSize/2, angle + arcSize/2);
-        ctx.strokeStyle = hsl(a.hue, 70, 55);
+        const sat = 40 + (a.nsil?.G || 0) * 60;
+        const light = 30 + (a.nsil?.A || 0) * 40;
+        ctx.strokeStyle = hsl(a.hue, sat, light);
         ctx.lineWidth = 8;
         ctx.globalAlpha = 0.55;
         ctx.stroke();
         ctx.globalAlpha = 1;
 
         ctx.beginPath();
-        ctx.fillStyle = hsl(a.hue, 70, 50);
+        ctx.fillStyle = hsl(a.hue, sat, light);
         ctx.arc(p.x, p.y, nodeR, 0, TWO_PI);
         ctx.fill();
         ctx.lineWidth = (a.id === state.focusId) ? 3 : 1.5;
@@ -833,11 +995,13 @@
     ============================================================ */
     function randomize() {
       aspects.forEach(a => a.activation = Math.round(Math.random()*100));
+      updateNSILFields();
       syncListRanges(); draw(); updateMetrics();
     }
 
     function deactivateAll() {
       aspects.forEach(a => a.activation = 0);
+      updateNSILFields();
       syncListRanges(); draw(); updateMetrics();
     }
 
@@ -856,13 +1020,18 @@
     function buildExportPayload() {
       const { mean, std, sci } = computeSCI();
       const { total, byNT, metabolic } = computeEnergyMatter();
+      const Cf = computeCf();
+      const phiAlignment = Math.abs(Cf - PHI) < 0.05;
       return {
         generatedAt: new Date().toISOString(),
         model: `32 Aspect Developmental Self Clock — ${mode}`,
         devStage: state.devStage,
-        metrics: { mean, std, sci },
+        metrics: { mean, std, sci, Cf, phiAlignment },
         energyMatter: { total, byNT: Object.fromEntries(byNT), metabolic },
-        aspects: aspects
+        aspects: aspects.map(a => ({
+          ...a,
+          nsil: a.nsil
+        }))
       };
     }
 
@@ -906,6 +1075,7 @@
     function setMode(newMode){
       mode = newMode;
       aspects = (mode==='mind') ? mindAspects : (mode==='body') ? bodyAspects : soulAspects;
+      updateNSILFields();
       document.getElementById('modeMind').classList.toggle('secondary', mode!=='mind');
       document.getElementById('modeBody').classList.toggle('secondary', mode!=='body');
       document.getElementById('modeSoul').classList.toggle('secondary', mode!=='soul');
@@ -968,11 +1138,11 @@
 
     // Initial build & draw
     buildList();
+    updateNSILFields();
     updateMetrics();
     resizeCanvas();
     applyDevStage(state.devStage);
     requestAnimationFrame(tick);
-    runSelfTests();
 
     // Footer year
     document.getElementById('year').textContent = new Date().getFullYear();
@@ -994,6 +1164,69 @@
        • Accessibility: All controls are reachable by keyboard; modal is a
          native <dialog>; listbox items are focusable and announce changes.
     ============================================================ */
+
+    /* ============================================================
+       LAYER-1 Φ CONTINUUM EXTENSION
+       ------------------------------------------------------------
+       Adds φ alignment, Cf metric, and harmonic visualization overlay
+       using the same activation data from aspects[].
+    ============================================================ */
+
+    const PHI = 1.618;
+    const phiOverlay = document.createElement('canvas');
+    phiOverlay.id = 'phiOverlay';
+    phiOverlay.style.position = 'absolute';
+    phiOverlay.style.top = '0';
+    phiOverlay.style.left = '0';
+    phiOverlay.style.width = '100%';
+    phiOverlay.style.height = '100%';
+    phiOverlay.style.pointerEvents = 'none';
+    document.querySelector('.vis').appendChild(phiOverlay);
+    const phiCtx = phiOverlay.getContext('2d');
+
+    function resizePhi() {
+      const dpr = Math.max(1, window.devicePixelRatio||1);
+      phiOverlay.width = phiOverlay.clientWidth * dpr;
+      phiOverlay.height = phiOverlay.clientHeight * dpr;
+      phiCtx.setTransform(dpr,0,0,dpr,0,0);
+    }
+    window.addEventListener('resize', resizePhi);
+    resizePhi();
+
+    function computeCf() {
+      const vals = aspects.map(a=>a.activation);
+      const mean = vals.reduce((a,b)=>a+b,0)/vals.length;
+      const variance = vals.reduce((s,v)=>s+Math.pow(v-mean,2),0)/vals.length;
+      const std = Math.sqrt(variance);
+      const CI = mean/100;
+      const RL = 1 - std/100;
+      const EER = Math.abs(1 - CI);
+      return (CI*RL)/Math.max(EER,0.001);
+    }
+
+    function drawPhiOverlay(t=0) {
+      const {width:w,height:h}=phiOverlay;
+      phiCtx.clearRect(0,0,w,h);
+      const Cf = computeCf();
+      const phiAligned = Math.abs(Cf - PHI) < 0.05;
+      const radius = Math.min(w,h)/3;
+      const cx=w/2, cy=h/2;
+      const grad = phiCtx.createRadialGradient(cx,cy,0,cx,cy,radius*1.2);
+      grad.addColorStop(0, phiAligned ? 'rgba(252,211,77,0.15)' : 'rgba(124,58,237,0.05)');
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+      phiCtx.fillStyle = grad;
+      phiCtx.beginPath();
+      phiCtx.arc(cx,cy,radius,0,Math.PI*2);
+      phiCtx.fill();
+      const txt = phiAligned ? 'φ-aligned' : `Δ ${(Cf-PHI).toFixed(3)}`;
+      phiCtx.font='16px system-ui';
+      phiCtx.textAlign='center';
+      phiCtx.fillStyle=phiAligned?'#fde68a':'#94a3b8';
+      phiCtx.fillText(`Cₓf ${Cf.toFixed(3)} → ${txt}`,cx,cy+radius+24);
+      requestAnimationFrame(drawPhiOverlay);
+    }
+    requestAnimationFrame(drawPhiOverlay);
+    runSelfTests();
   </script>
 </body>
 </html>
