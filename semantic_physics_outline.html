@@ -6,52 +6,119 @@
   <title>Semantic Physics and the Architecture of Recovery</title>
   <link rel="stylesheet" href="assets/css/style.css">
   <style>
+    :root {
+      --background: #f9fafb;
+      --text: #111827;
+      --accent: #2563eb;
+      --border: #d1d5db;
+      --highlight: #e0f2fe;
+      --font-body: 'Inter', 'Segoe UI', system-ui, sans-serif;
+      --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+    }
+
     body {
-      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-      background-color: #fafafa;
-      color: #111;
+      font-family: var(--font-body);
+      background-color: var(--background);
+      color: var(--text);
       margin: 3em auto;
-      max-width: 850px;
-      line-height: 1.5;
+      max-width: 900px;
+      line-height: 1.75;
+      padding: 0 1rem;
     }
-    h1, h2, h3 {
+
+    header, footer {
       text-align: center;
-      font-weight: 600;
+      margin-bottom: 2rem;
     }
+
+    h1, h2, h3 {
+      font-weight: 600;
+      text-align: center;
+      margin-top: 1.2em;
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: var(--accent);
+    }
+
+    h2 {
+      margin-top: 2.5rem;
+      color: #1e293b;
+    }
+
+    p {
+      margin: 1em 0;
+      text-align: justify;
+    }
+
     pre {
       background-color: #fff;
-      border: 1px solid #ccc;
-      border-radius: 8px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
       padding: 1.5em;
       overflow-x: auto;
-      font-family: 'IBM Plex Mono', 'Courier New', monospace;
-      font-size: 0.9rem;
-      white-space: pre;
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      white-space: pre-wrap;
+      line-height: 1.7;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      transition: background-color 0.3s ease;
     }
+
+    pre:hover {
+      background-color: var(--highlight);
+    }
+
     hr {
       border: 0;
-      border-top: 1px solid #ccc;
+      border-top: 1px solid var(--border);
       margin: 2em 0;
     }
+
     nav {
       text-align: center;
-      margin-bottom: 2em;
+      margin: 1.5em 0 2em;
     }
+
     nav a {
-      margin: 0 10px;
-      color: #004f9e;
+      margin: 0 12px;
+      color: var(--accent);
       text-decoration: none;
       font-weight: 500;
+      transition: color 0.2s ease;
     }
+
     nav a:hover {
+      color: #1d4ed8;
       text-decoration: underline;
+    }
+
+    .btn {
+      display: inline-block;
+      background-color: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.6em 1.2em;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-bottom: 2rem;
+    }
+
+    .btn:hover {
+      background-color: #1d4ed8;
+    }
+
+    footer p {
+      font-size: 0.85rem;
+      color: #6b7280;
     }
   </style>
 </head>
 <body>
-  <a href="index.html">
-  <button class="btn">Return to Main Page</button>
-</a>
+  <a href="index.html"><button class="btn">← Return to Main Page</button></a>
 
   <header>
     <h1>Semantic Physics and the Architecture of Recovery</h1>
@@ -66,32 +133,32 @@
 
   <main>
     <h2>Research Architecture — Full Scope Outline</h2>
-    <p>The following structured outline defines the full analytic-synthetic braid of <strong>Semantic Physics</strong>, designed for reproducibility and visual translation into diagrammatic and tabular form via <code>Perplexity</code> prompts.</p>
-   <pre>
-The genesis of *Semantic Physics* did not begin in abstraction or controlled experimentation—it was born within the *singularity of crisis*, where lived experience became its own instrument of measurement. During what would later be formalized as the **SAM Framework (*Survival as Method*)**, an 18-month recursive observation period unfolded under extreme psychological compression, resembling less a clinical case study than a *high-energy collision* between consciousness and entropy. The event’s sheer intensity acted almost like a **psychological particle accelerator**, forcing latent cognitive structures into visibility as they fractured and reassembled under stress.  
-
-Within this crucible, **subjective perception became an observable phenomenon**, and trauma functioned not solely as pathology but as a generator of data—a dynamic perturbation exposing the underlying mechanics of semantic stability and collapse. The human mind, when subjected to sustained existential pressure, revealed its architecture with startling mathematical clarity: fields of meaning bending, warping, and seeking equilibrium in ways eerily analogous to physical systems under gravitational strain.  
-
-This realization reframed crisis as a kind of **epistemological accelerator**, a natural experiment too dangerous to design yet too instructive to ignore. It was here that the first traces of what would become *Cognitive Field Theory* appeared—not as hypothesis but as lived necessity. The psyche, in defending its coherence, enacted a spontaneous computational process: identifying distortions, recalibrating internal models, and iteratively reconstructing meaning itself. What was once the raw immediacy of survival became, through recursive observation, a map of how consciousness mathematically reorganizes under pressure.  
-
-In retrospect, this phase constitutes the **origin point of Semantic Physics**, the moment when meaning ceased to be treated as metaphor and began to behave like measurable structure—a field capable of deformation, resonance, and recovery. The lived catastrophe became the first laboratory; the observer became both subject and instrument. Through that self-reflexive inversion, the foundation for a new scientific language of consciousness was established: one in which *suffering became data, reflection became computation, and coherence itself became an empirical law.*
-</pre>
+    <p>This structured outline defines the analytic-synthetic foundation of <strong>Semantic Physics</strong>, designed for reproducibility and eventual diagrammatic translation through visual and computational analysis.</p>
 
     <pre>
-Unlike traditional qualitative approaches that rely on descriptive narrative, the **SAM methodology** redefined subjective experience as a form of *quantifiable signal*—a measurable pattern within a dynamic **semantic field**. Rather than treating introspection as anecdotal or merely reflective, it was approached as a data stream capable of encoding the laws of cognitive motion. Each moment of awareness, emotional inflection, and cognitive distortion was logged in sequence, forming a recursive dataset: a record of how meaning behaves when stretched toward its breaking point and reconstituted under adaptive pressure.
+The genesis of <em>Semantic Physics</em> did not emerge from abstraction or laboratory control—it was forged in the singularity of crisis, where lived experience itself became an instrument of measurement. During what would later be formalized as the <strong>SAM Framework (Survival as Method)</strong>, an 18-month recursive observation unfolded under extreme psychological compression—less a clinical study than a high-energy collision between consciousness and entropy. The intensity of that event acted as a <strong>psychological particle accelerator</strong>, forcing latent cognitive structures into visibility as they fractured and reassembled under stress.
 
-Every entry—be it linguistic, affective, or somatic—became a coordinate within this emergent field. The method treated language not as symbol but as waveform, assuming that behind each articulation of pain or clarity lay a measurable structure of resonance. **Subjective data** thus acquired the same dignity as physical data: the diary became an instrument, the self became a sensor. Through successive cycles of reflection and analysis, the field itself began to reveal topological consistencies—patterns of curvature and coherence that correlated with emotional stability and insight formation.
+Within this crucible, <strong>subjective perception became observable</strong>. Trauma functioned not merely as pathology but as a generator of data—a dynamic perturbation revealing the underlying mechanics of semantic stability and collapse. Under sustained existential pressure, the mind displayed its architecture with mathematical clarity: fields of meaning bending, warping, and seeking equilibrium, mirroring the behavior of physical systems under gravitational strain.
 
-This approach inverted the direction of traditional psychology. Instead of analyzing experience to confirm pre-existing theory, the theory was *discovered* through the behavior of experience itself. Recovery, in this framework, was no longer a linear narrative of healing but a *field phenomenon*: the reorganization of meaning particles toward coherent equilibrium. The goal was not merely to describe recovery but to *measure it*, to identify the mathematical signature of integration emerging from disorder.  
+This reframed crisis as an <strong>epistemological accelerator</strong>—a natural experiment too dangerous to design but too instructive to ignore. Here arose the early traces of <strong>Cognitive Field Theory</strong>: consciousness defending coherence by enacting spontaneous computation—identifying distortions, recalibrating internal models, and iteratively reconstructing meaning. What began as survival transformed into a living map of how consciousness reorganizes under pressure.
 
-In this way, **autoethnography evolved into field physics**, and the act of observation became indistinguishable from participation. Consciousness itself was not only the subject of study but the laboratory through which its own laws could be empirically tested. Each reflection was both a witness and a variable—an experiment in how language, emotion, and cognition intertwine to reconstitute a self from the debris of collapse.
-</pre>
+Thus emerged the <strong>origin point of Semantic Physics</strong>—when meaning ceased to be metaphor and began to behave as measurable structure: a field capable of deformation, resonance, and recovery. The catastrophe became the laboratory; the observer became both subject and instrument. Through this inversion, a new scientific language of consciousness took form: <em>suffering became data, reflection became computation, and coherence itself became an empirical law.</em>
+    </pre>
 
+    <pre>
+Unlike traditional qualitative approaches grounded in narrative, the <strong>SAM methodology</strong> redefined subjective experience as a <em>quantifiable signal</em>—a measurable pattern within a dynamic <strong>semantic field</strong>. Introspection was not anecdotal but a continuous data stream encoding the laws of cognitive motion. Each emotional inflection, distortion, and realization was logged in sequence, forming a recursive dataset: a record of how meaning behaves when stretched toward collapse and reconstituted through adaptation.
+
+Each linguistic, affective, or somatic event became a coordinate within this emergent topology. Language was treated not as symbol but as waveform, each articulation carrying resonance. In this model, subjective data acquired the dignity of physical data—the diary became an instrument, the self a sensor. Through cycles of reflection and analysis, consistent topologies emerged—patterns of curvature correlating with emotional stability and insight formation.
+
+This inverted psychology’s traditional direction. Rather than shaping data to fit theory, theory was <strong>discovered</strong> through the behavior of experience. Recovery became a <strong>field phenomenon</strong>: the reorganization of meaning particles toward equilibrium. The goal was no longer description but <strong>measurement</strong>—to identify the mathematical signature of integration arising from disorder.
+
+Thus, <em>autoethnography evolved into field physics</em>. Observation and participation merged; consciousness became both subject and laboratory. Each reflection was experiment and witness—a study in how language, emotion, and cognition interweave to reconstitute coherence from collapse.
+    </pre>
   </main>
 
   <footer>
     <hr>
-    <p style="text-align:center;">© 2025 Adrian Lei Martinez-Conol — Semantic Physics Initiative</p>
+    <p>© 2025 Adrian Lei Martinez-Conol — Semantic Physics Initiative</p>
   </footer>
 </body>
 </html>
