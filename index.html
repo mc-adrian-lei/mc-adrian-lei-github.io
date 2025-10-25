@@ -416,7 +416,68 @@ The 12-Stage, 24-Hour Model thus functions as the **dynamic computational map** 
     </header>
 
     <section class="vis">
-      <canvas id="clock" aria-label="Developmental Self Clock canvas" tabindex="0"></canvas>
+      <canvas id="clockCanvas" aria-label="Developmental Self Clock canvas" tabindex="0"></canvas>
+      <script type="module">
+        import definitions from './data/self_clock_definitions.json' assert {type: 'json'};
+
+        const canvas = document.getElementById('clockCanvas');     // your main canvas id
+        const tooltip = document.createElement('div');
+        tooltip.id = 'aspectTooltip';
+        tooltip.style.position = 'absolute';
+        tooltip.style.display = 'none';
+        tooltip.style.background = 'rgba(255,255,255,0.95)';
+        tooltip.style.border = '1px solid #ccc';
+        tooltip.style.borderRadius = '8px';
+        tooltip.style.padding = '0.75rem';
+        tooltip.style.maxWidth = '260px';
+        tooltip.style.fontSize = '0.85rem';
+        tooltip.style.lineHeight = '1.2rem';
+        tooltip.style.boxShadow = '0 2px 10px rgba(0,0,0,0.15)';
+        tooltip.style.zIndex = 50;
+        document.body.appendChild(tooltip);
+
+        // assume you already have an array of aspect objects with x, y, name
+        let aspects = window.aspects || [];  // import or generate them in your clock code
+        window.addEventListener('selfClockAspectsUpdated', () => {
+          aspects = window.aspects || [];
+        });
+
+        function showTooltip(aspect, x, y) {
+          const data = definitions[aspect.name];
+          if (!data) return;
+
+          tooltip.innerHTML = `
+            <strong>${aspect.name}</strong><br>
+            <em>${data.definition}</em><br><br>
+            <b>Functional role:</b> ${data.functional_role}<br>
+            <b>Symbolic resonance:</b> ${data.symbolic_resonance}<br>
+            <b>Example:</b> ${data.example}
+          `;
+          tooltip.style.left = `${x + 12}px`;
+          tooltip.style.top = `${y + 12}px`;
+          tooltip.style.display = 'block';
+        }
+
+        function hideTooltip() {
+          tooltip.style.display = 'none';
+        }
+
+        canvas.addEventListener('mousemove', e => {
+          const rect = canvas.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+
+          // simple hit-test; adjust radius to your aspect dot size
+          const hit = aspects.find(a => Math.hypot(a.x - x, a.y - y) < 8);
+          if (hit) {
+            showTooltip(hit, e.pageX, e.pageY);
+          } else {
+            hideTooltip();
+          }
+        });
+
+        canvas.addEventListener('mouseleave', hideTooltip);
+      </script>
       <div class="legend" aria-label="Legend">
         <div class="chip"><span class="swatch" style="background: var(--accent)"></span> Stage cross-lines (12)</div>
         <div class="chip"><span class="swatch" style="background: var(--accent-2)"></span> Concentric rings (8)</div>
@@ -838,6 +899,8 @@ The 12-Stage, 24-Hour Model thus functions as the **dynamic computational map** 
     // Active lens state
     let mode = 'mind';
     let aspects = mindAspects;
+    window.aspects = aspects;
+    window.dispatchEvent(new Event('selfClockAspectsUpdated'));
 
     /* ============================================================
        STATE + METRICS
@@ -1094,7 +1157,7 @@ The 12-Stage, 24-Hour Model thus functions as the **dynamic computational map** 
     /* ============================================================
        CANVAS RENDERING
     ============================================================ */
-    const canvas = el('#clock');
+    const canvas = el('#clockCanvas');
     const ctx = canvas.getContext('2d');
 
     function resizeCanvas() {
@@ -1369,6 +1432,8 @@ The 12-Stage, 24-Hour Model thus functions as the **dynamic computational map** 
     function setMode(newMode){
       mode = newMode;
       aspects = (mode==='mind') ? mindAspects : (mode==='body') ? bodyAspects : soulAspects;
+      window.aspects = aspects;
+      window.dispatchEvent(new Event('selfClockAspectsUpdated'));
       updateNSILFields();
       document.getElementById('modeMind').classList.toggle('secondary', mode!=='mind');
       document.getElementById('modeBody').classList.toggle('secondary', mode!=='body');
