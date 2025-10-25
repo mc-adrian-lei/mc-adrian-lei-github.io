@@ -1,0 +1,521 @@
+{
+  "timestamp": "2025-10-25T01:03:12Z",
+  "ϕ_constant": 1.618034,
+  "semantic_coherence_index_SCI": 28.692,
+  "energy_matter_sum": 39.914,
+  "codex_reference_signature": "N/A",
+  "aspects": [
+    {
+      "name": "Awareness",
+      "activation": 4.68,
+      "ring": 1,
+      "stage": 1,
+      "field_vector": {
+        "G": 0.0,
+        "R": 0.0,
+        "P": 0.593,
+        "A": 0.581,
+        "N": 0.259,
+        "T": 0.981,
+        "Cx": 0.1,
+        "Id": 0.98
+      }
+    },
+    {
+      "name": "Attention",
+      "activation": 9.35,
+      "ring": 1,
+      "stage": 2,
+      "field_vector": {
+        "G": 0.0,
+        "R": 0.091,
+        "P": 0.593,
+        "A": 0.581,
+        "N": 0.5,
+        "T": 0.981,
+        "Cx": 0.15,
+        "Id": 0.98
+      }
+    },
+    {
+      "name": "Perception (Visual)",
+      "activation": 14.03,
+      "ring": 1,
+      "stage": 3,
+      "field_vector": {
+        "G": 0.0,
+        "R": 0.182,
+        "P": 0.593,
+        "A": 0.581,
+        "N": 0.707,
+        "T": 0.981,
+        "Cx": 0.2,
+        "Id": 0.98
+      }
+    },
+    {
+      "name": "Perception (Auditory)",
+      "activation": 18.71,
+      "ring": 1,
+      "stage": 4,
+      "field_vector": {
+        "G": 0.0,
+        "R": 0.273,
+        "P": 0.593,
+        "A": 0.581,
+        "N": 0.866,
+        "T": 0.981,
+        "Cx": 0.25,
+        "Id": 0.98
+      }
+    },
+    {
+      "name": "Perception (Somatosensory)",
+      "activation": 23.53,
+      "ring": 2,
+      "stage": 5,
+      "field_vector": {
+        "G": 0.143,
+        "R": 0.364,
+        "P": 0.593,
+        "A": 0.581,
+        "N": 0.966,
+        "T": 0.924,
+        "Cx": 0.35,
+        "Id": 0.98
+      }
+    },
+    {
+      "name": "Interoception",
+      "activation": 28.23,
+      "ring": 2,
+      "stage": 6,
+      "field_vector": {
+        "G": 0.143,
+        "R": 0.455,
+        "P": 0.593,
+        "A": 0.581,
+        "N": 1.0,
+        "T": 0.924,
+        "Cx": 0.4,
+        "Id": 0.98
+      }
+    },
+    {
+      "name": "Proprioception",
+      "activation": 32.94,
+      "ring": 2,
+      "stage": 7,
+      "field_vector": {
+        "G": 0.143,
+        "R": 0.545,
+        "P": 0.593,
+        "A": 0.581,
+        "N": 0.966,
+        "T": 0.924,
+        "Cx": 0.45,
+        "Id": 0.98
+      }
+    },
+    {
+      "name": "Arousal/Vigilance",
+      "activation": 37.65,
+      "ring": 2,
+      "stage": 8,
+      "field_vector": {
+        "G": 0.143,
+        "R": 0.636,
+        "P": 0.593,
+        "A": 0.581,
+        "N": 0.866,
+        "T": 0.924,
+        "Cx": 0.5,
+        "Id": 0.98
+      }
+    },
+    {
+      "name": "Working Memory",
+      "activation": 42.61,
+      "ring": 3,
+      "stage": 9,
+      "field_vector": {
+        "G": 0.286,
+        "R": 0.727,
+        "P": 0.593,
+        "A": 0.581,
+        "N": 0.707,
+        "T": 0.831,
+        "Cx": 0.6,
+        "Id": 0.98
+      }
+    },
+    {
+      "name": "Episodic Memory",
+      "activation": 47.35,
+      "ring": 3,
+      "stage": 10,
+      "field_vector": {
+        "G": 0.286,
+        "R": 0.818,
+        "P": 0.593,
+        "A": 0.581,
+        "N": 0.5,
+        "T": 0.831,
+        "Cx": 0.65,
+        "Id": 0.98
+      }
+    },
+    {
+      "name": "Semantic Memory",
+      "activation": 52.08,
+      "ring": 3,
+      "stage": 11,
+      "field_vector": {
+        "G": 0.286,
+        "R": 0.909,
+        "P": 0.593,
+        "A": 0.581,
+        "N": 0.259,
+        "T": 0.831,
+        "Cx": 0.7,
+        "Id": 0.98
+      }
+    },
+    {
+      "name": "Language/Symbolics",
+      "activation": 56.82,
+      "ring": 3,
+      "stage": 12,
+      "field_vector": {
+        "G": 0.286,
+        "R": 1.0,
+        "P": 0.593,
+        "A": 0.581,
+        "N": 0.0,
+        "T": 0.831,
+        "Cx": 0.75,
+        "Id": 0.98
+      }
+    },
+    {
+      "name": "Imagination/Visualization",
+      "activation": 4.76,
+      "ring": 4,
+      "stage": 1,
+      "field_vector": {
+        "G": 0.429,
+        "R": 0.0,
+        "P": 0.593,
+        "A": 0.581,
+        "N": 0.259,
+        "T": 0.707,
+        "Cx": 0.25,
+        "Id": 0.98
+      }
+    },
+    {
+      "name": "Mental Time Travel",
+      "activation": 9.53,
+      "ring": 4,
+      "stage": 2,
+      "field_vector": {
+        "G": 0.429,
+        "R": 0.091,
+        "P": 0.593,
+        "A": 0.581,
+        "N": 0.5,
+        "T": 0.707,
+        "Cx": 0.3,
+        "Id": 0.98
+      }
+    },
+    {
+      "name": "Planning/Prospection",
+      "activation": 14.29,
+      "ring": 4,
+      "stage": 3,
+      "field_vector": {
+        "G": 0.429,
+        "R": 0.182,
+        "P": 0.593,
+        "A": 0.581,
+        "N": 0.707,
+        "T": 0.707,
+        "Cx": 0.35,
+        "Id": 0.98
+      }
+    },
+    {
+      "name": "Decision-Making",
+      "activation": 19.06,
+      "ring": 4,
+      "stage": 4,
+      "field_vector": {
+        "G": 0.429,
+        "R": 0.273,
+        "P": 0.593,
+        "A": 0.581,
+        "N": 0.866,
+        "T": 0.707,
+        "Cx": 0.4,
+        "Id": 0.98
+      }
+    },
+    {
+      "name": "Inhibition/Self-Control",
+      "activation": 23.96,
+      "ring": 5,
+      "stage": 5,
+      "field_vector": {
+        "G": 0.571,
+        "R": 0.364,
+        "P": 0.593,
+        "A": 0.581,
+        "N": 0.966,
+        "T": 0.556,
+        "Cx": 0.5,
+        "Id": 0.98
+      }
+    },
+    {
+      "name": "Cognitive Flexibility",
+      "activation": 28.76,
+      "ring": 5,
+      "stage": 6,
+      "field_vector": {
+        "G": 0.571,
+        "R": 0.455,
+        "P": 0.593,
+        "A": 0.581,
+        "N": 1.0,
+        "T": 0.556,
+        "Cx": 0.55,
+        "Id": 0.98
+      }
+    },
+    {
+      "name": "Meta-Awareness",
+      "activation": 33.55,
+      "ring": 5,
+      "stage": 7,
+      "field_vector": {
+        "G": 0.571,
+        "R": 0.545,
+        "P": 0.593,
+        "A": 0.581,
+        "N": 0.966,
+        "T": 0.556,
+        "Cx": 0.6,
+        "Id": 0.98
+      }
+    },
+    {
+      "name": "Self-Model/Identity",
+      "activation": 38.34,
+      "ring": 5,
+      "stage": 8,
+      "field_vector": {
+        "G": 0.571,
+        "R": 0.636,
+        "P": 0.593,
+        "A": 0.581,
+        "N": 0.866,
+        "T": 0.556,
+        "Cx": 0.65,
+        "Id": 0.98
+      }
+    },
+    {
+      "name": "Emotion Processing",
+      "activation": 43.4,
+      "ring": 6,
+      "stage": 9,
+      "field_vector": {
+        "G": 0.714,
+        "R": 0.727,
+        "P": 0.593,
+        "A": 0.581,
+        "N": 0.707,
+        "T": 0.383,
+        "Cx": 0.75,
+        "Id": 0.98
+      }
+    },
+    {
+      "name": "Motivation/Drive",
+      "activation": 48.22,
+      "ring": 6,
+      "stage": 10,
+      "field_vector": {
+        "G": 0.714,
+        "R": 0.818,
+        "P": 0.593,
+        "A": 0.581,
+        "N": 0.5,
+        "T": 0.383,
+        "Cx": 0.8,
+        "Id": 0.98
+      }
+    },
+    {
+      "name": "Reward/Valuation",
+      "activation": 53.04,
+      "ring": 6,
+      "stage": 11,
+      "field_vector": {
+        "G": 0.714,
+        "R": 0.909,
+        "P": 0.593,
+        "A": 0.581,
+        "N": 0.259,
+        "T": 0.383,
+        "Cx": 0.85,
+        "Id": 0.98
+      }
+    },
+    {
+      "name": "Empathy/Theory of Mind",
+      "activation": 57.86,
+      "ring": 6,
+      "stage": 12,
+      "field_vector": {
+        "G": 0.714,
+        "R": 1.0,
+        "P": 0.593,
+        "A": 0.581,
+        "N": 0.0,
+        "T": 0.383,
+        "Cx": 0.9,
+        "Id": 0.98
+      }
+    },
+    {
+      "name": "Social Cognition",
+      "activation": 4.85,
+      "ring": 7,
+      "stage": 1,
+      "field_vector": {
+        "G": 0.857,
+        "R": 0.0,
+        "P": 0.593,
+        "A": 0.581,
+        "N": 0.259,
+        "T": 0.195,
+        "Cx": 0.4,
+        "Id": 0.98
+      }
+    },
+    {
+      "name": "Moral Reasoning",
+      "activation": 9.7,
+      "ring": 7,
+      "stage": 2,
+      "field_vector": {
+        "G": 0.857,
+        "R": 0.091,
+        "P": 0.593,
+        "A": 0.581,
+        "N": 0.5,
+        "T": 0.195,
+        "Cx": 0.45,
+        "Id": 0.98
+      }
+    },
+    {
+      "name": "Spatial Cognition",
+      "activation": 14.55,
+      "ring": 7,
+      "stage": 3,
+      "field_vector": {
+        "G": 0.857,
+        "R": 0.182,
+        "P": 0.593,
+        "A": 0.581,
+        "N": 0.707,
+        "T": 0.195,
+        "Cx": 0.5,
+        "Id": 0.98
+      }
+    },
+    {
+      "name": "Rhythm/Timing",
+      "activation": 19.4,
+      "ring": 7,
+      "stage": 4,
+      "field_vector": {
+        "G": 0.857,
+        "R": 0.273,
+        "P": 0.593,
+        "A": 0.581,
+        "N": 0.866,
+        "T": 0.195,
+        "Cx": 0.55,
+        "Id": 0.98
+      }
+    },
+    {
+      "name": "Creativity/Divergence",
+      "activation": 24.4,
+      "ring": 8,
+      "stage": 5,
+      "field_vector": {
+        "G": 1.0,
+        "R": 0.364,
+        "P": 0.593,
+        "A": 0.581,
+        "N": 0.966,
+        "T": 0.0,
+        "Cx": 0.65,
+        "Id": 0.98
+      }
+    },
+    {
+      "name": "Learning/Plasticity",
+      "activation": 29.28,
+      "ring": 8,
+      "stage": 6,
+      "field_vector": {
+        "G": 1.0,
+        "R": 0.455,
+        "P": 0.593,
+        "A": 0.581,
+        "N": 1.0,
+        "T": 0.0,
+        "Cx": 0.7,
+        "Id": 0.98
+      }
+    },
+    {
+      "name": "Dreaming/Imagery",
+      "activation": 34.16,
+      "ring": 8,
+      "stage": 7,
+      "field_vector": {
+        "G": 1.0,
+        "R": 0.545,
+        "P": 0.593,
+        "A": 0.581,
+        "N": 0.966,
+        "T": 0.0,
+        "Cx": 0.75,
+        "Id": 0.98
+      }
+    },
+    {
+      "name": "Narrative/Meaning-Making",
+      "activation": 39.04,
+      "ring": 8,
+      "stage": 8,
+      "field_vector": {
+        "G": 1.0,
+        "R": 0.636,
+        "P": 0.593,
+        "A": 0.581,
+        "N": 0.866,
+        "T": 0.0,
+        "Cx": 0.8,
+        "Id": 0.98
+      }
+    }
+  ]
+}
