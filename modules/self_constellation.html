@@ -1,0 +1,86 @@
+<section id="reflective-constellation" class="p-6 max-w-4xl mx-auto">
+  <h2 class="text-2xl font-bold mb-4">Create Your Reflective Constellation</h2>
+
+  <form id="constellationForm" class="grid gap-3">
+    <label>Name <input name="name" class="border p-2 rounded w-full" required></label>
+    <label>Age <input type="number" name="age" class="border p-2 rounded w-full" min="10" max="120" required></label>
+    <label>What are you exploring in yourself?
+      <textarea name="intent" class="border p-2 rounded w-full" placeholder="Write a phrase or question you are carrying today."></textarea>
+    </label>
+    <label>Focus <input type="range" name="focus" min="0" max="100" value="50"></label>
+    <label>Creativity <input type="range" name="creativity" min="0" max="100" value="50"></label>
+    <label>Emotional Balance <input type="range" name="emotion" min="0" max="100" value="50"></label>
+
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Generate Constellation</button>
+  </form>
+
+  <canvas id="constellationCanvas" width="500" height="500" class="my-6 border rounded"></canvas>
+
+  <div id="aspectDescriptions" class="space-y-2 text-sm leading-relaxed"></div>
+</section>
+
+<script type="module">
+import { aspects } from '../data/self_clock_definitions.js';
+
+const form = document.getElementById('constellationForm');
+const canvas = document.getElementById('constellationCanvas');
+const ctx = canvas.getContext('2d');
+const output = document.getElementById('aspectDescriptions');
+
+function drawConstellation(name, age, modifiers) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const center = { x: canvas.width / 2, y: canvas.height / 2 };
+  const radius = 200;
+
+  aspects.forEach((aspect, i) => {
+    const angle = (i / aspects.length) * 2 * Math.PI;
+    const focusShift = (modifiers.focus - 50) / 120;
+    const creativityShift = (modifiers.creativity - 50) / 150;
+    const emotionShift = (modifiers.emotion - 50) / 180;
+    const mod = 0.8 + 0.25 * Math.sin((age / 90) + i) + focusShift * Math.cos(angle * 2) + creativityShift * Math.sin(angle * 3) + emotionShift * Math.cos(angle * 1.5);
+    const x = center.x + radius * mod * Math.cos(angle);
+    const y = center.y + radius * mod * Math.sin(angle);
+
+    ctx.beginPath();
+    ctx.arc(x, y, 4, 0, 2 * Math.PI);
+    ctx.fillStyle = `hsl(${(i * 11) % 360}, 70%, 60%)`;
+    ctx.fill();
+
+    if (i % 4 === 0) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(angle);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+      ctx.font = '10px "Inter", system-ui, sans-serif';
+      ctx.textAlign = angle > Math.PI / 2 && angle < (3 * Math.PI) / 2 ? 'right' : 'left';
+      ctx.fillText(aspect.short ?? aspect.name, angle > Math.PI / 2 && angle < (3 * Math.PI) / 2 ? -8 : 8, 0);
+      ctx.restore();
+    }
+  });
+
+  ctx.font = '14px "Inter", system-ui, sans-serif';
+  ctx.fillStyle = '#333';
+  ctx.fillText(`${name}'s Constellation`, 10, 20);
+}
+
+form.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const formData = new FormData(form);
+  const data = Object.fromEntries(formData.entries());
+  const modifiers = {
+    focus: Number(data.focus ?? 50),
+    creativity: Number(data.creativity ?? 50),
+    emotion: Number(data.emotion ?? 50)
+  };
+
+  drawConstellation(data.name, Number(data.age), modifiers);
+
+  output.innerHTML = '';
+  aspects.forEach((aspect) => {
+    const div = document.createElement('div');
+    const prompt = aspect.prompt ? `<em class="text-xs block text-slate-500">Reflection: ${aspect.prompt}</em>` : '';
+    div.innerHTML = `<strong>${aspect.name}</strong>: ${aspect.definition}${prompt}`;
+    output.appendChild(div);
+  });
+});
+</script>
