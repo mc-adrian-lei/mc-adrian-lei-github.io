@@ -130,6 +130,119 @@
     .btn.secondary { opacity: 0.8; }
     .btn.warn { background: #3b1f1f; border-color: #6b2b2b; }
 
+    body.modal-open { overflow: hidden; }
+
+    .tutorial-modal {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+      z-index: 120;
+    }
+
+    .tutorial-modal.is-visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .tutorial-modal__backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(8, 13, 30, 0.72);
+      backdrop-filter: blur(6px);
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+
+    .tutorial-modal.is-visible .tutorial-modal__backdrop {
+      opacity: 1;
+    }
+
+    .tutorial-modal__panel {
+      position: relative;
+      max-width: min(560px, 100%);
+      background: linear-gradient(150deg, rgba(22, 28, 56, 0.96), rgba(14, 18, 40, 0.94));
+      border: 1px solid rgba(64, 90, 170, 0.5);
+      border-radius: 18px;
+      padding: clamp(20px, 4vw, 32px);
+      box-shadow: 0 28px 80px rgba(0, 0, 0, 0.45);
+      color: var(--ink);
+      transform: translateY(12px) scale(0.98);
+      transition: transform 0.35s ease;
+    }
+
+    .tutorial-modal.is-visible .tutorial-modal__panel {
+      transform: translateY(0) scale(1);
+    }
+
+    .tutorial-modal__close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-size: 20px;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    .tutorial-modal__close:hover,
+    .tutorial-modal__close:focus-visible {
+      color: var(--accent);
+      outline: none;
+    }
+
+    .tutorial-modal h2 {
+      margin-top: 0;
+      font-size: clamp(22px, 3.4vw, 26px);
+      letter-spacing: 0.5px;
+    }
+
+    .tutorial-modal p {
+      margin: 0 0 12px 0;
+      color: rgba(233, 236, 248, 0.92);
+    }
+
+    .tutorial-modal__stage {
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 14px;
+      background: linear-gradient(170deg, rgba(24, 32, 64, 0.85), rgba(18, 24, 48, 0.9));
+      border: 1px solid rgba(66, 90, 170, 0.4);
+      box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.3);
+    }
+
+    .tutorial-modal__stage h3 {
+      margin-top: 0;
+      margin-bottom: 4px;
+      font-size: 18px;
+      letter-spacing: 0.4px;
+    }
+
+    .tutorial-modal__focus {
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .tutorial-modal__muted {
+      color: rgba(156, 167, 197, 0.85);
+      font-size: 13px;
+      letter-spacing: 0.3px;
+    }
+
+    .tutorial-modal__divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(138, 92, 246, 0.4), transparent);
+      margin: 16px 0;
+    }
+
     .vis {
       grid-area: vis;
       position: relative;
@@ -664,6 +777,26 @@ Whether you approach it as a scientist, a philosopher, or simply as a human bein
     </div>
   </div>
 
+  <div id="tutorialModal" class="tutorial-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="tutorial-modal__backdrop" data-dismiss="tutorial"></div>
+    <div class="tutorial-modal__panel" role="document">
+      <button type="button" class="tutorial-modal__close" data-dismiss="tutorial" aria-label="Close tutorial window">&times;</button>
+      <h2>Welcome to the Self-Clock</h2>
+      <p>Welcome to the Self-Clock. This framework maps the evolving harmony of consciousness through twelve stages of time and thirty-two aspects of awareness.</p>
+      <p>Wherever you are in life, your development reflects a unique constellation of these aspects — the interplay between attention, memory, emotion, and meaning.</p>
+      <p>Over the course of a lifetime, most people experience increasing overlap and communication between these aspects. As this happens, maturity deepens, and higher-order consciousness — insight, compassion, coherence — becomes more apparent.</p>
+      <p>The Self-Clock doesn’t measure progress by success or failure. It shows the resonance between your inner frequencies — a living mirror of your psychological rhythm.</p>
+      <div class="tutorial-modal__divider" aria-hidden="true"></div>
+      <div class="tutorial-modal__stage">
+        <h3 id="tutorialStageTitle">Stage: Imprinting (00:00–02:00)</h3>
+        <p id="tutorialAspectFocus" class="tutorial-modal__focus">Aspect Focus: Awareness</p>
+        <p id="tutorialStageSummary"></p>
+        <p id="tutorialStageNarrative"></p>
+        <p id="tutorialStageDynamic" class="tutorial-modal__muted"></p>
+      </div>
+    </div>
+  </div>
+
   <!-- Info Modal (tooltip-like, accessible) -->
   <dialog id="infoModal" aria-label="Aspect details">
     <div class="modal-head">
@@ -764,6 +897,153 @@ Whether you approach it as a scientist, a philosopher, or simply as a human bein
       "Learning / Plasticity",
       "Dreaming / Imagery",
       "Narrative / Meaning‑Making"
+    ];
+
+    const STAGE_META = [
+      {
+        name: 'Imprinting',
+        window: '00:00–02:00',
+        aspectFocus: 'Awareness',
+        aspectKey: FACULTIES[0],
+        summary(focus) {
+          return `During the Imprinting stage, consciousness is establishing its first rhythms. The ${focus} channel grounds you in immediate experience so the system can learn what safety feels like.`;
+        },
+        resonance() {
+          return 'Everything is new input — the field is soft clay taking on the imprint of experience.';
+        }
+      },
+      {
+        name: 'Autogenic',
+        window: '02:00–04:00',
+        aspectFocus: 'Interoception',
+        aspectKey: FACULTIES[5],
+        summary(focus) {
+          return `During the Autogenic stage, vitality gathers itself. The ${focus} channel helps you hear the body’s quiet signals so regulation can become self-directed.`;
+        },
+        resonance() {
+          return 'Breath, pulse, and instinct synchronize, teaching how inner life responds when given space.';
+        }
+      },
+      {
+        name: 'Intentional',
+        window: '04:00–06:00',
+        aspectFocus: 'Attention',
+        aspectKey: FACULTIES[1],
+        summary(focus) {
+          return `During the Intentional stage, will stirs awake. The ${focus} channel gives direction to emerging energy, turning impulse into aim.`;
+        },
+        resonance() {
+          return 'Choices begin to sculpt the day, and action starts to speak in the language of meaning.';
+        }
+      },
+      {
+        name: 'Competence',
+        window: '06:00–08:00',
+        aspectFocus: 'Working Memory',
+        aspectKey: FACULTIES[8],
+        summary(focus) {
+          return `During the Competence stage, practice meets structure. The ${focus} channel keeps effort coherent so skills can flow without friction.`;
+        },
+        resonance() {
+          return 'Repetition turns into reliability, and confidence grows as systems hum together.';
+        }
+      },
+      {
+        name: 'Mirror',
+        window: '08:00–10:00',
+        aspectFocus: 'Self-Model / Identity',
+        aspectKey: FACULTIES[19],
+        summary(focus) {
+          return `During the Mirror stage, consciousness looks at itself through relationship. The ${focus} channel reflects how identity is forming across every interaction.`;
+        },
+        resonance() {
+          return 'Feedback becomes illumination, revealing the stories you live inside.';
+        }
+      },
+      {
+        name: 'Bonding',
+        window: '10:00–12:00',
+        aspectFocus: 'Empathy / Theory of Mind',
+        aspectKey: FACULTIES[23],
+        summary(focus) {
+          return `During the Bonding stage, connection is the teacher. The ${focus} channel opens empathic pathways so resonance with others can settle deeply.`;
+        },
+        resonance() {
+          return 'Shared rhythm nourishes the heart of the system, reminding you that growth is communal.';
+        }
+      },
+      {
+        name: 'Generative',
+        window: '12:00–14:00',
+        aspectFocus: 'Creativity / Divergence',
+        aspectKey: FACULTIES[28],
+        summary(focus) {
+          return `During the Generative stage, momentum blooms outward. The ${focus} channel invites new combinations and ideas to spark.`;
+        },
+        resonance() {
+          return 'It is a fertile interval where possibility multiplies and invention feels natural.';
+        }
+      },
+      {
+        name: 'Integration',
+        window: '14:00–16:00',
+        aspectFocus: 'Learning / Plasticity',
+        aspectKey: FACULTIES[29],
+        summary(focus) {
+          return `During the Integration stage, patterns braid together. The ${focus} channel lets learning settle into lived wisdom.`;
+        },
+        resonance() {
+          return 'The system cross-talks with ease, weaving insight into the fabric of daily movement.';
+        }
+      },
+      {
+        name: 'Reflection',
+        window: '16:00–18:00',
+        aspectFocus: 'Meta-Awareness',
+        aspectKey: FACULTIES[18],
+        summary(focus) {
+          return `During the Reflection stage, consciousness turns inward to examine its own patterns. ${focus} heightens your ability to notice thought itself, recognizing meaning as both constructed and experienced.`;
+        },
+        resonance() {
+          return 'This stage is a resting point — not an ending, but a deep inhalation before transformation.';
+        }
+      },
+      {
+        name: 'Transcendence',
+        window: '18:00–20:00',
+        aspectFocus: 'Dreaming / Imagery',
+        aspectKey: FACULTIES[30],
+        summary(focus) {
+          return `During the Transcendence stage, awareness stretches beyond its usual frame. The ${focus} channel softens boundaries and lets symbolic imagery guide you.`;
+        },
+        resonance() {
+          return 'What feels mysterious becomes an ally, pointing to meaning larger than the moment.';
+        }
+      },
+      {
+        name: 'Unity',
+        window: '20:00–22:00',
+        aspectFocus: 'Moral Reasoning',
+        aspectKey: FACULTIES[25],
+        summary(focus) {
+          return `During the Unity stage, distinctions blur into harmony. The ${focus} channel tunes cooperative intelligence so coherence can be felt across the whole field.`;
+        },
+        resonance() {
+          return 'You sense yourself as part of a larger pattern, and collaboration feels effortless.';
+        }
+      },
+      {
+        name: 'Return',
+        window: '22:00–24:00',
+        aspectFocus: 'Narrative / Meaning-Making',
+        aspectKey: FACULTIES[31],
+        summary(focus) {
+          return `During the Return stage, consciousness circles back with new perspective. The ${focus} channel gives language to what was learned so it can be shared.`;
+        },
+        resonance() {
+          return 'It is the exhale after a long journey — integrating insight and preparing the next cycle.';
+        }
+      }
     ];
 
     const FACULTY_DETAILS = [
@@ -1223,6 +1503,77 @@ Whether you approach it as a scientist, a philosopher, or simply as a human bein
     const stageModalBody = document.getElementById('stageModalBody');
 
     let tutorialTriggerSource = null;
+    const tutorialModal = el('#tutorialModal');
+    const tutorialStageTitle = el('#tutorialStageTitle');
+    const tutorialAspectFocus = el('#tutorialAspectFocus');
+    const tutorialStageSummary = el('#tutorialStageSummary');
+    const tutorialStageNarrative = el('#tutorialStageNarrative');
+    const tutorialStageDynamic = el('#tutorialStageDynamic');
+
+    function clampStageIndex(idx) {
+      if (Number.isNaN(idx)) return 0;
+      return Math.max(0, Math.min(STAGE_META.length - 1, idx));
+    }
+
+    function findStageAspect(meta) {
+      if (!meta?.aspectKey) return null;
+      return aspects.find(a => a.name === meta.aspectKey) || null;
+    }
+
+    function updateTutorialModal() {
+      if (!tutorialModal) return;
+      const stageIndex = clampStageIndex(state.devStage || 0);
+      const meta = STAGE_META[stageIndex] || STAGE_META[0];
+      const aspect = findStageAspect(meta);
+      const focusLabel = meta.aspectFocus || aspect?.name || '—';
+
+      if (tutorialStageTitle) {
+        tutorialStageTitle.textContent = `Stage: ${meta.name} (${meta.window})`;
+      }
+      if (tutorialAspectFocus) {
+        tutorialAspectFocus.textContent = `Aspect Focus: ${focusLabel}`;
+      }
+      if (tutorialStageSummary) {
+        tutorialStageSummary.textContent = meta.summary(focusLabel);
+      }
+      if (tutorialStageNarrative) {
+        tutorialStageNarrative.textContent = meta.resonance(focusLabel);
+      }
+      if (tutorialStageDynamic) {
+        if (aspect) {
+          tutorialStageDynamic.textContent = `Right now, ${aspect.name} is resonating at ${aspect.activation}/100 (Stage ${aspect.stage}, Ring ${aspect.ring}). Notice how it dialogues with attention, memory, emotion, and meaning as you move through the cycle.`;
+        } else {
+          tutorialStageDynamic.textContent = 'Notice how attention, memory, emotion, and meaning begin to overlap here — that resonance is what the Self-Clock is tracking.';
+        }
+      }
+    }
+
+    function showTutorialModal() {
+      if (!tutorialModal) return;
+      updateTutorialModal();
+      tutorialModal.classList.add('is-visible');
+      tutorialModal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
+      const closeBtn = tutorialModal.querySelector('.tutorial-modal__close');
+      closeBtn?.focus();
+    }
+
+    function hideTutorialModal() {
+      if (!tutorialModal) return;
+      tutorialModal.classList.remove('is-visible');
+      tutorialModal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('modal-open');
+    }
+
+    if (tutorialModal) {
+      tutorialModal.addEventListener('click', (event) => {
+        const target = event.target;
+        if (!(target instanceof HTMLElement)) return;
+        if (target.dataset.dismiss === 'tutorial' || target === tutorialModal) {
+          hideTutorialModal();
+        }
+      });
+    }
 
     function applyDevStage(stage){
       state.devStage = stage;
@@ -1699,6 +2050,10 @@ Whether you approach it as a scientist, a philosopher, or simply as a human bein
       }
 
       const key = e.key.toLowerCase();
+      if (key === 'escape') {
+        if (tutorialModal?.classList.contains('is-visible')) { hideTutorialModal(); return; }
+        if (dlg?.open) { dlg.close(); return; }
+      }
       if (key === 't') { toggleTutorial(); }
       if (key === 'r') { randomize(); }
       if (key === 'e') { exportJSON(); }
@@ -1785,7 +2140,11 @@ Whether you approach it as a scientist, a philosopher, or simply as a human bein
       if (tutorialModeBtn) {
         tutorialModeBtn.textContent = state.tutorial ? '⏸ Tutorial Mode' : '▶ Tutorial Mode';
       }
+      const tutorialBtn = document.getElementById('btnTutorial');
+      tutorialBtn?.setAttribute('aria-pressed', String(state.tutorial));
+      if (tutorialBtn) tutorialBtn.textContent = state.tutorial ? '⏸ Tutorial' : '▶ Tutorial';
       if (state.tutorial) {
+        showTutorialModal();
         if (!tutorialTimer) tutorialTimer = setInterval(()=>{
           state.tutorialIndex = (state.tutorialIndex + 1) % aspects.length;
           state.focusId = aspects[state.tutorialIndex].id;
@@ -1793,6 +2152,7 @@ Whether you approach it as a scientist, a philosopher, or simply as a human bein
         }, 1400);
         syncStageFromFocus();
       } else {
+        hideTutorialModal();
         clearInterval(tutorialTimer); tutorialTimer = null; draw();
         syncStageFromFocus();
       }
@@ -1822,6 +2182,9 @@ Whether you approach it as a scientist, a philosopher, or simply as a human bein
       applyDevStage(state.devStage);
       updateMetrics();
       draw();
+      if (tutorialModal?.classList.contains('is-visible')) {
+        updateTutorialModal();
+      }
     }
 
     document.getElementById('modeMind').addEventListener('click', ()=> setMode('mind'));
