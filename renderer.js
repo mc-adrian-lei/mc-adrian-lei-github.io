@@ -1,0 +1,1 @@
+// renderer.js placeholder for Self-Clock refactor
