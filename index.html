@@ -5,81 +5,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>32 Aspect Developmental Self Clock — Mind–Body–Energy Mapping</title>
   <style>
-    /* =============================================================
-       32 Aspect Developmental Self Clock — Single File Implementation
-       • Plain HTML, CSS, and JavaScript (no external libraries)
-       • Accessible controls + Canvas visualization
-       • Keyboard navigation, high-contrast defaults, mobile-friendly
-       ============================================================= */
-
     :root {
-      color-scheme: light;
       --bg: #f6f7fc;
-      --bg-soft: rgba(255, 255, 255, 0.95);
       --panel: rgba(255, 255, 255, 0.9);
-      --panel-strong: rgba(255, 255, 255, 0.98);
-      --ink: #101327;
-      --muted: #5d6786;
       --accent: #1d4ed8;
       --accent-2: #7c3aed;
       --good: #059669;
       --warn: #d97706;
       --bad: #dc2626;
-      --ring-line-1: rgba(79, 70, 229, 0.2);
-      --ring-line-2: rgba(59, 130, 246, 0.18);
-      --stage-line: rgba(37, 99, 235, 0.28);
-      --node-label: rgba(28, 35, 64, 0.82);
       --focus: #facc15;
-      --input-bg: rgba(248, 249, 255, 0.95);
-      --input-border: rgba(148, 163, 233, 0.35);
-      --input-border-focus: rgba(37, 99, 235, 0.55);
-      --shadow-1: 0 18px 32px rgba(15, 23, 42, 0.12);
-      --shadow-2: 0 24px 60px rgba(15, 23, 42, 0.18);
       --glass-stroke: rgba(148, 163, 233, 0.22);
     }
 
     body[data-theme="dark"] {
-      color-scheme: dark;
       --bg: #050914;
-      --bg-soft: #0b1230;
       --panel: rgba(18, 22, 45, 0.85);
-      --panel-strong: rgba(17, 25, 56, 0.92);
-      --ink: #f5f7ff;
-      --muted: #b4bcdd;
       --accent: #60a5fa;
       --accent-2: #a855f7;
       --good: #34d399;
       --warn: #fbbf24;
       --bad: #f87171;
-      --ring-line-1: rgba(88, 119, 255, 0.22);
-      --ring-line-2: rgba(37, 58, 123, 0.28);
-      --stage-line: rgba(124, 196, 255, 0.35);
-      --node-label: rgba(226, 234, 255, 0.95);
-      --input-bg: rgba(20, 26, 53, 0.75);
-      --input-border: rgba(102, 126, 234, 0.35);
-      --input-border-focus: rgba(144, 160, 255, 0.75);
-      --shadow-1: 0 18px 40px rgba(3, 7, 18, 0.45);
-      --shadow-2: 0 20px 60px rgba(5, 11, 32, 0.65);
+      --focus: #fde68a;
       --glass-stroke: rgba(120, 150, 255, 0.18);
     }
 
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
     body {
       margin: 0;
-      font-family: "Inter", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue", sans-serif;
-      background:
-        radial-gradient(1200px 1200px at 72% 12%, rgba(125, 211, 252, 0.24), transparent),
-        radial-gradient(1000px 1000px at 15% 85%, rgba(196, 181, 253, 0.18), transparent),
-        linear-gradient(170deg, var(--bg-soft), var(--bg));
-      color: var(--ink);
+      font-family: "Inter", system-ui;
+      color: #111;
+      background: radial-gradient(circle at 70% 20%, rgba(125,211,252,0.24), transparent),
+        linear-gradient(160deg, var(--bg), #e2e8f0);
       transition: background 0.6s ease, color 0.4s ease;
     }
 
     body[data-theme="dark"] {
-      background:
-        radial-gradient(900px 900px at 85% 18%, rgba(59, 130, 246, 0.18), transparent),
-        radial-gradient(720px 720px at 12% 88%, rgba(129, 140, 248, 0.18), transparent),
+      background: radial-gradient(900px 900px at 85% 18%, rgba(59, 130, 246, 0.18), transparent),
         linear-gradient(160deg, rgba(9, 12, 28, 0.92), var(--bg));
     }
 
@@ -304,143 +264,42 @@
     }
 
     header {
-      grid-area: top;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
       background: var(--panel);
       border: 1px solid var(--glass-stroke);
       border-radius: 20px;
-      padding: clamp(16px, 2vw, 24px);
-      backdrop-filter: blur(18px);
-      box-shadow: var(--shadow-1);
-    }
-
-    .header-top {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
+      padding: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      text-align: center;
+      position: relative;
     }
 
     header h1 {
-      font-size: clamp(18px, 2.4vw, 26px);
-      margin: 0;
-      letter-spacing: 0.4px;
+      font-size: clamp(20px, 2.5vw, 28px);
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: hueShift 6s linear infinite;
     }
 
-    .title-block { max-width: min(640px, 100%); }
-
-    .subtitle {
-      margin: 4px 0 0;
-      color: var(--muted);
-      font-size: clamp(12px, 1.6vw, 14px);
-      max-width: 60ch;
+    @keyframes hueShift {
+      0% { filter: hue-rotate(0deg); }
+      100% { filter: hue-rotate(360deg); }
     }
-
-    .mode-toggle {
-      display: inline-flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .control-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .control-cluster {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
-    }
-    .control-cluster.secondary { margin-left: auto; justify-content: flex-end; }
-
-    button { font: inherit; }
 
     .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      border-radius: 12px;
-      border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
-      background: linear-gradient(140deg,
-        color-mix(in srgb, var(--accent) 35%, transparent) 0%,
-        color-mix(in srgb, var(--accent-2) 32%, transparent) 100%);
-      color: var(--ink);
+      background: linear-gradient(140deg, var(--accent), var(--accent-2));
+      border: none;
+      border-radius: 10px;
+      color: white;
       padding: 8px 16px;
       font-weight: 600;
       cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
-      box-shadow: 0 12px 30px rgba(37, 99, 235, 0.18);
-    }
-    .btn:hover { transform: translateY(-1px); box-shadow: 0 16px 36px rgba(59, 130, 246, 0.28); }
-    .btn:active { transform: translateY(0); }
-    .btn:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
-    .btn.secondary {
-      background: color-mix(in srgb, var(--panel-strong) 92%, transparent);
-      border-color: color-mix(in srgb, var(--accent) 25%, transparent);
-      box-shadow: none;
-    }
-    .btn.secondary:hover { background: color-mix(in srgb, var(--panel-strong) 75%, var(--accent) 25%); }
-    .btn.warn {
-      background: color-mix(in srgb, var(--bad) 45%, transparent 55%);
-      border-color: color-mix(in srgb, var(--bad) 60%, transparent);
-      box-shadow: none;
-    }
-    .btn.warn:hover { background: color-mix(in srgb, var(--bad) 60%, transparent 40%); }
-    .btn.ghost {
-      background: transparent;
-      border-color: color-mix(in srgb, var(--muted) 26%, transparent);
-      color: var(--muted);
-      box-shadow: none;
-    }
-    .btn.ghost:hover { color: var(--ink); border-color: color-mix(in srgb, var(--accent) 40%, transparent); }
-    .btn.tertiary {
-      background: color-mix(in srgb, var(--accent) 18%, transparent);
-      border-color: color-mix(in srgb, var(--accent) 35%, transparent);
-      color: var(--ink);
-      box-shadow: none;
-    }
-    .btn.small { padding: 6px 12px; font-size: 12px; }
-
-    .desktop-only {}
-    .mobile-only { display: none !important; }
-
-    body[data-layout="mobile"] .desktop-only { display: none !important; }
-    body[data-layout="mobile"] .mobile-only { display: revert !important; }
-
-    .vis {
-      grid-area: vis;
-      position: relative;
-      background: linear-gradient(165deg,
-        color-mix(in srgb, var(--panel-strong) 92%, transparent) 0%,
-        color-mix(in srgb, var(--bg) 75%, transparent) 100%);
-      border-radius: 24px;
-      border: 1px solid var(--glass-stroke);
-      display: grid;
-      grid-template-rows: 1fr auto;
-      overflow: clip;
-      backdrop-filter: blur(20px);
-      box-shadow: var(--shadow-2);
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
     }
 
-    canvas { width: 100%; height: 100%; display: block; }
-
-    .legend {
-      padding: 16px;
-      border-top: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      align-items: center;
-      background: color-mix(in srgb, var(--panel) 90%, transparent);
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(59, 130, 246, 0.35);
     }
 
     .legend .chip {
@@ -705,158 +564,36 @@
     .input-field input,
     .input-field select {
       width: 100%;
-      border-radius: 12px;
-      border: 1px solid var(--input-border);
-      background: var(--input-bg);
-      padding: 9px 12px;
-      color: var(--ink);
-      font: inherit;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      height: 100%;
+      border-radius: 16px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.2);
     }
-    .input-field input::placeholder { color: color-mix(in srgb, var(--muted) 65%, transparent); }
-    .input-field input:focus-visible,
-    .input-field select:focus-visible { border-color: var(--input-border-focus); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent); outline: none; }
-
-    .control-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
-
-    .toggle { display: inline-flex; align-items: center; gap: 10px; font-size: 12px; color: var(--muted); font-weight: 600; }
-    .toggle input { position: relative; width: 44px; height: 24px; border-radius: 999px; background: color-mix(in srgb, var(--panel) 80%, transparent); border: 1px solid var(--input-border); cursor: pointer; appearance: none; transition: background 0.2s ease, border-color 0.2s ease; }
-    .toggle input::after { content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--muted); transition: transform 0.2s ease, background 0.2s ease; }
-    .toggle input:checked { background: color-mix(in srgb, var(--accent) 45%, transparent); border-color: color-mix(in srgb, var(--accent) 60%, transparent); }
-    .toggle input:checked::after { transform: translateX(20px); background: var(--ink); }
-
-    .filter-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
-    .filter-actions .btn { box-shadow: none; }
-
-    .empty-state { text-align: center; color: var(--muted); font-size: 13px; padding: 20px; border: 1px dashed color-mix(in srgb, var(--accent) 30%, transparent); border-radius: 14px; }
 
     footer {
-      grid-area: footer;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      align-items: center;
-      justify-content: space-between;
-      background: color-mix(in srgb, var(--panel) 90%, transparent);
-      border: 1px solid var(--glass-stroke);
-      padding: 12px 16px;
-      border-radius: 18px;
-      backdrop-filter: blur(18px);
-      box-shadow: var(--shadow-1);
+      text-align: center;
+      padding: 16px;
+      color: #666;
+      font-size: 13px;
+      background: var(--panel);
+      border-radius: 16px;
+      margin: 16px auto;
+      width: 90%;
+      max-width: 800px;
     }
 
-    .vis-hint { color: var(--muted); font-size: 12px; }
-
-    .panel-overlay {
-      display: none;
+    .vis-hint {
+      font-style: italic;
+      color: var(--warn);
     }
 
-    body[data-layout="mobile"] {
-      padding-bottom: env(safe-area-inset-bottom, 0px);
+    .resonance-glow {
+      animation: pulse 3s infinite ease-in-out;
+      filter: drop-shadow(0 0 12px var(--accent));
     }
 
-    body[data-layout="mobile"] .app {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      height: auto;
-      min-height: 100dvh;
-    }
-
-    body[data-layout="mobile"] header {
-      position: sticky;
-      top: 0;
-      z-index: 60;
-      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
-    }
-
-    body[data-layout="mobile"] .vis {
-      min-height: 360px;
-    }
-
-    body[data-layout="mobile"] aside {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      max-height: 86dvh;
-      transform: translateY(100%);
-      transition: transform 0.32s ease, box-shadow 0.32s ease;
-      border-radius: 24px 24px 0 0;
-      box-shadow: 0 -18px 46px rgba(15, 23, 42, 0.16);
-      z-index: 55;
-      overflow-y: auto;
-      overscroll-behavior: contain;
-    }
-
-    body[data-layout="mobile"] .panel {
-      background: color-mix(in srgb, var(--panel) 96%, transparent);
-    }
-
-    body[data-layout="mobile"][data-panel="open"] aside {
-      transform: translateY(0%);
-      box-shadow: 0 -24px 60px rgba(15, 23, 42, 0.22);
-    }
-
-    body[data-layout="mobile"] .panel-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 50;
-      display: block;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.32s ease;
-      background: rgba(15, 23, 42, 0.25);
-      backdrop-filter: blur(6px);
-    }
-
-    body[data-layout="mobile"][data-panel="open"] .panel-overlay {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    body[data-layout="mobile"] footer {
-      padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
-    }
-
-    dialog {
-      border: 1px solid var(--glass-stroke);
-      border-radius: 20px;
-      padding: 0;
-      color: var(--ink);
-      background: var(--panel-strong);
-      max-width: min(540px, 92vw);
-      box-shadow: var(--shadow-2);
-      backdrop-filter: blur(18px);
-    }
-    dialog::backdrop { background: rgba(0,0,0,.45); }
-    .modal-head { padding: 16px; border-bottom: 1px solid color-mix(in srgb, var(--accent) 25%, transparent); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-    .modal-body { padding: 16px; display: grid; gap: 12px; }
-    .modal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
-    .modal-grid > div { background: color-mix(in srgb, var(--panel) 90%, transparent); border: 1px solid var(--glass-stroke); border-radius: 14px; padding: 10px; }
-    .modal-body .panel { box-shadow: none; }
-
-    @media (max-width: 1200px) {
-      .app {
-        grid-template-columns: 1fr;
-        grid-template-areas: "top" "vis" "side" "footer";
-        height: auto;
-        min-height: 100dvh;
-      }
-    }
-
-    @media (max-width: 860px) {
-      .control-row { flex-direction: column; align-items: flex-start; gap: 12px; }
-      .control-cluster { width: 100%; }
-      .control-cluster .btn { flex: 1 1 auto; justify-content: center; }
-      footer { justify-content: center; text-align: center; }
-    }
-
-    @media (max-width: 640px) {
-      header { padding: 16px; }
-      .legend { gap: 8px; }
-      .legend .chip { padding: 6px 10px; }
-      aside { padding: 14px; }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.8; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.02); }
     }
   </style>
 </head>
@@ -1058,12 +795,15 @@
     </aside>
     <div class="panel-overlay" id="panelOverlay" aria-hidden="true"></div>
 
-    <footer>
-      <div class="vis-hint">C = E × MC · Energy input → neural region → neurochemical output → system response</div>
-      <div class="vis-hint">Open science: Export preserves all annotations for reproducibility</div>
-      <div class="vis-hint">Adrian Lei Martinez-Conol, founder of the Only When Prompted Research Initiative 2018</div>
-    </footer>
-  </div>
+  <dialog id="tutorialDialog" aria-label="Interactive tutorial">
+    <form method="dialog" class="modal-body">
+      <header class="modal-head">
+        <strong>Self Clock Tutorial</strong>
+        <button class="btn" value="cancel">Close</button>
+      </header>
+      <ol id="tutorialContent" class="tutorial-list"></ol>
+    </form>
+  </dialog>
 
   <section class="workflow" aria-labelledby="workflowTitle">
     <div class="workflow-card">
@@ -1142,11 +882,7 @@
         <label for="mSlider"><strong>Activation</strong> <span id="mActVal" style="float:right">0</span></label>
         <input id="mSlider" type="range" min="0" max="100" value="0" />
       </div>
-      <div class="panel">
-        <strong>Matter/Energy Summary</strong>
-        <div id="mSummary"></div>
-      </div>
-    </div>
+    </form>
   </dialog>
 
   <div id="tutorialOverlay" class="tutorial-overlay is-hidden" aria-hidden="true">
@@ -2013,131 +1749,33 @@
        CANVAS RENDERING
     ============================================================ */
     const canvas = el('#clock');
+    const canvas = document.getElementById('clockCanvas');
     const ctx = canvas.getContext('2d');
-
     function resizeCanvas() {
-      const dpr = Math.max(1, window.devicePixelRatio || 1);
-      const { clientWidth:w, clientHeight:h } = canvas;
-      canvas.width = Math.floor(w * dpr);
-      canvas.height = Math.floor(h * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      center.x = w/2; center.y = h/2;
+      canvas.width = window.innerWidth * 0.9;
+      canvas.height = window.innerHeight * 0.6;
       draw();
     }
     window.addEventListener('resize', resizeCanvas);
 
-    function polar(angle, radius) {
-      return { x: center.x + Math.cos(angle)*radius, y: center.y + Math.sin(angle)*radius };
-    }
-
-    function drawRings(maxR) {
+    function draw() {
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+      const cx = w / 2;
+      const cy = h / 2;
       const rings = 8;
-      const step = maxR / rings;
-      ctx.save();
-      ctx.lineWidth = 1;
-      for (let i=1;i<=rings;i++) {
+      for (let i = 1; i <= rings; i++) {
+        const r = (i / rings) * Math.min(cx, cy) * 0.9;
         ctx.beginPath();
-        ctx.strokeStyle = (i % 2 ? palette.ring1 : palette.ring2) || '#1a214a';
-        ctx.arc(center.x, center.y, step*i, 0, TWO_PI);
+        ctx.strokeStyle = `hsla(${(i * 45) % 360},70%,60%,0.3)`;
+        ctx.lineWidth = 2;
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
         ctx.stroke();
       }
-      ctx.restore();
-    }
-
-    function drawStageLines(maxR) {
-      const count = 12;
-      ctx.save();
-      ctx.strokeStyle = palette.stage || '#24306f';
-      ctx.lineWidth = 1;
-      for (let s=0; s<count; s++) {
-        const angle = (s/count)*TWO_PI - Math.PI/2;
-        const p1 = polar(angle, 10);
-        const p2 = polar(angle, maxR);
-        ctx.beginPath();
-        ctx.moveTo(p1.x, p1.y);
-        ctx.lineTo(p2.x, p2.y);
-        ctx.stroke();
-      }
-      ctx.restore();
-    }
-
-    function drawNodes(maxR) {
-      const nodeR = 10;
-      const radius = maxR * 0.92;
-      const out = [];
-      aspects.forEach((a, i) => {
-        const angle = (i/N_ASPECTS)*TWO_PI - Math.PI/2;
-        const p = polar(angle, radius);
-        const arcSize = Math.max(0.05, a.activation/100) * (TWO_PI / N_ASPECTS);
-        ctx.beginPath();
-        ctx.arc(center.x, center.y, radius, angle - arcSize/2, angle + arcSize/2);
-        ctx.strokeStyle = hsl(a.hue, 70, 55);
-        ctx.lineWidth = 8;
-        ctx.globalAlpha = 0.55;
-        ctx.stroke();
-        ctx.globalAlpha = 1;
-
-        ctx.beginPath();
-        ctx.fillStyle = hsl(a.hue, 70, 50);
-        ctx.arc(p.x, p.y, nodeR, 0, TWO_PI);
-        ctx.fill();
-        ctx.lineWidth = (a.id === state.focusId) ? 3 : 1.5;
-        ctx.strokeStyle = (a.id === state.focusId) ? (palette.focus || '#fde68a') : (palette.nodeBorder || '#0b0f2a');
-        ctx.stroke();
-
-        ctx.fillStyle = palette.label || '#cbd5f1';
-        ctx.font = '12px "Inter", system-ui, -apple-system, Segoe UI';
-        ctx.textAlign = 'center';
-        ctx.fillText(a.name, p.x, p.y - (nodeR+8));
-
-        out.push({ id: a.id, x: p.x, y: p.y, angle });
-      });
-      return out;
-    }
-
-    function drawResonanceLinks(nodePoints) {
-      ctx.save();
-      ctx.lineCap = 'round';
-      for (let i=0;i<aspects.length;i++) {
-        for (let j=i+1;j<aspects.length;j++) {
-          const ai = aspects[i], aj = aspects[j];
-          const sim = Math.abs(ai.activation - aj.activation);
-          const sameStage = (ai.stage === aj.stage);
-          const sameRing = (ai.ring === aj.ring);
-          const shouldLink = sim <= state.resonanceThreshold || sameStage || sameRing;
-          if (!shouldLink) continue;
-          const pi = nodePoints[i], pj = nodePoints[j];
-          const d = Math.hypot(pi.x - pj.x, pi.y - pj.y);
-          const alpha = Math.min(0.35, 0.08 + (1 - sim/100) * 0.25) * (sameStage ? 1.25 : 1) * (sameRing ? 1.15 : 1);
-          ctx.beginPath();
-          const grad = ctx.createLinearGradient(pi.x, pi.y, pj.x, pj.y);
-          grad.addColorStop(0, palette.resonanceA || '#34d399');
-          grad.addColorStop(1, palette.resonanceB || '#7dd3fc');
-          ctx.globalAlpha = alpha;
-          ctx.strokeStyle = grad;
-          ctx.lineWidth = Math.max(0.5, 2.5 - (d/260));
-          ctx.moveTo(pi.x, pi.y);
-          ctx.lineTo(pj.x, pj.y);
-          ctx.stroke();
-          ctx.globalAlpha = 1;
-        }
-      }
-      ctx.restore();
-    }
-
-    function drawTutorialHalo(nodePoints) {
-      if (!state.tutorial) return;
-      const idx = (state.tutorialIndex % aspects.length);
-      const { x, y } = nodePoints[idx];
-      const t = performance.now()/1000;
-      const pulse = 10 + 6*Math.sin(t*2);
-      ctx.save();
-      const g = ctx.createRadialGradient(x, y, 2, x, y, 42+pulse);
-      g.addColorStop(0, 'rgba(245, 158, 11, 0.7)');
-      g.addColorStop(1, 'rgba(245, 158, 11, 0.0)');
-      ctx.fillStyle = g;
       ctx.beginPath();
-      ctx.arc(x, y, 42+pulse, 0, TWO_PI);
+      ctx.fillStyle = 'hsla(200,80%,70%,0.25)';
+      ctx.arc(cx, cy, 10, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
     }
@@ -2381,89 +2019,14 @@
       if (state.tutorial) updateTutorialContent();
     }
 
-    el('#modeMind').addEventListener('click', ()=> setMode('mind'));
-    el('#modeBody').addEventListener('click', ()=> setMode('body'));
-    el('#modeSoul').addEventListener('click', ()=> setMode('soul'));
-
-    /* ============================================================
-       SELF-TESTS (basic runtime checks) — shown in console
-       We add tests since none existed previously.
-    ============================================================ */
-    function runSelfTests() {
-      const results = [];
-      function assert(name, cond) { results.push({ name, pass: !!cond }); }
-
-      // Test 1: DEV_STAGES
-      assert('DEV_STAGES == 12', DEV_STAGES === 12);
-
-      // Test 2: Each dataset has 32 aspects
-      assert('mindAspects length', mindAspects.length === 32);
-      assert('bodyAspects length', bodyAspects.length === 32);
-      assert('soulAspects length', soulAspects.length === 32);
-
-      // Test 3: devProfile lengths
-      assert('mind devProfile[0].length == 12', mindAspects[0].devProfile.length === 12);
-
-      // Test 4: SCI on uniform activations → std≈0, sci≈mean*100
-      const bak = aspects;
-      aspects = [{ activation: 50 },{ activation: 50 },{ activation: 50 },{ activation: 50 }];
-      const { mean, std, sci } = computeSCI();
-      assert('SCI std == 0', Math.abs(std - 0) < 1e-9);
-      assert('SCI value', Math.abs(sci - (50/(1+0)*100)) < 1e-6);
-      aspects = bak;
-
-      // Test 5: export payload shape
-      const payload = buildExportPayload();
-      assert('payload.aspects length == 32', Array.isArray(payload.aspects) && payload.aspects.length === 32);
-      assert('payload.metrics has sci', typeof payload.metrics.sci === 'number');
-
-      // Report
-      const passCount = results.filter(r=>r.pass).length;
-      const fail = results.filter(r=>!r.pass);
-      console.log('%cSelf-tests:', 'font-weight:bold');
-      results.forEach(r=> console.log(r.pass ? '✅' : '❌', r.name));
-      if (fail.length) {
-        console.warn('Some self-tests failed:', fail);
-      } else {
-        console.log(`All ${passCount} self-tests passed.`);
-      }
-    }
-
-    const layoutQuery = window.matchMedia ? window.matchMedia('(max-width: 900px)') : { matches: false };
-    const handleLayout = (ev) => applyLayoutMode(ev.matches);
-    if (layoutQuery.addEventListener) {
-      layoutQuery.addEventListener('change', handleLayout);
-    } else if (layoutQuery.addListener) {
-      layoutQuery.addListener(handleLayout);
-    }
-    applyLayoutMode(layoutQuery.matches);
-    updatePanelToggleLabel();
-
-    // Initial build & draw
-    const initialTheme = detectInitialTheme();
-    applyTheme(initialTheme);
     resizeCanvas();
-    applyDevStage(state.devStage);
-    requestAnimationFrame(tick);
-    runSelfTests();
 
-    /* ============================================================
-       SCIENCE NOTES (for researchers inside code comments)
-       ----------------------------------------------------
-       • SCI implements the user's formula: mean/(1+stddev)*100.
-       • We visualize C = E × MC (concept → energy × matter × cognition) via
-         the info modal's pipeline description and resonance links.
-       • 12 radial cross-lines = expanded Erikson-like developmental stages; 
-         use your mapping to stage names in your dataset if available.
-       • 8 concentric rings = anatomy/energy zones; link to somatic/energetic
-         layers (e.g., brainstem → cortex, fascia layers, chakric analogues).
-       • Resonance edges connect nodes with similar activation OR sharing
-         stage/ring, encoding feedback/overlap and nonlinearity.
-       • Tutorial traces a simple loop through aspects. For research demos,
-         extend by adding causal/feedback animations (mind→body→action→mind).
-       • Accessibility: All controls are reachable by keyboard; modal is a
-         native <dialog>; listbox items are focusable and announce changes.
-    ============================================================ */
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', () => {
+      const current = document.body.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.body.setAttribute('data-theme', next);
+    });
   </script>
   <script type="module">
     import { EditorState } from "https://esm.sh/@codemirror/state@6.2.1";
