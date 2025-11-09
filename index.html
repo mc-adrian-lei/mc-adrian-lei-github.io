@@ -134,6 +134,48 @@
     <div>© Adrian Lei Martinez-Conol · Only When Prompted Research Initiative</div>
   </footer>
 
+  <dialog id="sciModal" aria-label="Semantic Coherence Index explanation">
+    <form method="dialog" class="modal-body">
+      <header class="modal-head">
+        <strong>Semantic Coherence Index</strong>
+        <button class="btn" value="cancel">Close</button>
+      </header>
+      <p>The SCI summarises how harmoniously the 32 aspect activations align. It blends three signals:</p>
+      <ol>
+        <li><strong>Activation mean</strong> — higher overall activation raises the index.</li>
+        <li><strong>Distribution balance</strong> — lower variance indicates the system is coherent.</li>
+        <li><strong>Resonance coverage</strong> — similar stages, rings, and activation levels reinforce the network.</li>
+      </ol>
+      <p>The live value is scaled to 0–100 and updates instantly as you adjust sliders, shuffle activations, or change developmental emphasis.</p>
+      <p id="sciFormula" class="vis-hint"></p>
+    </form>
+  </dialog>
+
+  <dialog id="tutorialDialog" aria-label="Interactive tutorial">
+    <form method="dialog" class="modal-body">
+      <header class="modal-head">
+        <strong>Self Clock Tutorial</strong>
+        <button class="btn" value="cancel">Close</button>
+      </header>
+      <ol id="tutorialContent" class="tutorial-list"></ol>
+    </form>
+  </dialog>
+
+  <dialog id="exportDialog" aria-label="Export options">
+    <form method="dialog" class="modal-body">
+      <header class="modal-head">
+        <strong>Export Current Map</strong>
+        <button class="btn" value="cancel">Close</button>
+      </header>
+      <p>Select a format to download the current developmental snapshot, including the SCI and resonance metrics.</p>
+      <div class="export-grid">
+        <button id="exportJson" class="btn" value="json">JSON (raw data)</button>
+        <button id="exportCsv" class="btn secondary" value="csv">CSV (spreadsheet)</button>
+        <button id="exportReport" class="btn secondary" value="html">Printable report</button>
+      </div>
+    </form>
+  </dialog>
+
   <script>
     const canvas = document.getElementById('clockCanvas');
     const ctx = canvas.getContext('2d');
