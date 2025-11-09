@@ -43,6 +43,226 @@
         linear-gradient(160deg, rgba(9, 12, 28, 0.92), var(--bg));
     }
 
+    .app {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 360px;
+      grid-template-rows: auto 1fr auto;
+      grid-template-areas:
+        "top top"
+        "vis side"
+        "footer footer";
+      gap: 16px;
+      height: 100dvh;
+      padding: clamp(16px, 2vw, 28px);
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .workflow {
+      margin: 32px auto 64px;
+      max-width: 1400px;
+      padding: 0 clamp(16px, 2vw, 28px);
+      display: grid;
+      gap: 18px;
+    }
+
+    .workflow-card {
+      background: var(--panel);
+      border-radius: 22px;
+      border: 1px solid var(--glass-stroke);
+      box-shadow: var(--shadow-1);
+      padding: clamp(18px, 2.4vw, 26px);
+      display: grid;
+      gap: 18px;
+      backdrop-filter: blur(16px);
+    }
+
+    .workflow-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .workflow-header h2 {
+      margin: 0;
+      font-size: clamp(18px, 2.4vw, 24px);
+    }
+
+    .workflow-header p {
+      margin: 4px 0 0;
+      max-width: 70ch;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .workflow-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .workflow-actions label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .workflow-panels {
+      display: grid;
+      grid-template-columns: var(--editor-width, 55%) 12px 1fr;
+      gap: 0;
+      min-height: 420px;
+      background: color-mix(in srgb, var(--panel-strong) 95%, transparent);
+      border: 1px solid var(--glass-stroke);
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .workflow-pane {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      background: color-mix(in srgb, var(--panel-strong) 94%, transparent);
+    }
+
+    .workflow-pane.preview {
+      background: color-mix(in srgb, var(--panel) 96%, transparent);
+    }
+
+    .pane-resizer {
+      cursor: col-resize;
+      background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 40%, transparent), transparent);
+      position: relative;
+    }
+
+    .pane-resizer::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: 4px;
+      height: 48px;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--accent) 60%, transparent);
+    }
+
+    .editor-tabs {
+      display: flex;
+      gap: 6px;
+      padding: 12px;
+      background: color-mix(in srgb, var(--panel-strong) 88%, transparent);
+      border-bottom: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+    }
+
+    .editor-tab {
+      border: none;
+      border-radius: 12px;
+      background: transparent;
+      padding: 8px 14px;
+      font: inherit;
+      cursor: pointer;
+      color: var(--muted);
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .editor-tab.is-active {
+      background: linear-gradient(140deg, color-mix(in srgb, var(--accent) 35%, transparent), color-mix(in srgb, var(--accent-2) 40%, transparent));
+      color: var(--ink);
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.25);
+    }
+
+    .editor-surfaces {
+      position: relative;
+      flex: 1;
+    }
+
+    .editor-surface {
+      position: absolute;
+      inset: 0;
+      display: none;
+    }
+
+    .editor-surface.is-visible {
+      display: block;
+    }
+
+    .editor-surface .cm-editor {
+      height: 100%;
+      font-size: 13px;
+    }
+
+    .validation-summary {
+      padding: 12px 16px;
+      border-top: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .validation-summary strong {
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+      font-size: 13px;
+    }
+
+    .preview-header span {
+      color: var(--muted);
+    }
+
+    #workflowPreview {
+      border: none;
+      flex: 1;
+      width: 100%;
+      background: #fff;
+    }
+
+    .preview-status {
+      font-size: 12px;
+      color: var(--muted);
+      padding: 10px 16px;
+      border-top: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+    }
+
+    .validation-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 4px 10px;
+      background: color-mix(in srgb, var(--panel-strong) 85%, transparent);
+      border: 1px solid color-mix(in srgb, var(--accent) 24%, transparent);
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+
+    .validation-badge.ok { color: var(--good); border-color: color-mix(in srgb, var(--good) 45%, transparent); }
+    .validation-badge.warn { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 45%, transparent); }
+    .validation-badge.error { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 45%, transparent); }
+
+    .workflow-footer {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
     header {
       background: var(--panel);
       border: 1px solid var(--glass-stroke);
@@ -82,8 +302,267 @@
       box-shadow: 0 6px 16px rgba(59, 130, 246, 0.35);
     }
 
-    canvas {
-      display: block;
+    .legend .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+      border-radius: 999px;
+      padding: 6px 12px;
+      color: var(--muted);
+      background: color-mix(in srgb, var(--panel-strong) 85%, transparent);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+
+    .legend .swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 4px;
+      background: var(--accent);
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 50%, transparent);
+      display: inline-block;
+    }
+
+    aside {
+      grid-area: side;
+      display: grid;
+      grid-template-rows: auto auto auto 1fr auto;
+      gap: 14px;
+      background: var(--panel-strong);
+      border: 1px solid var(--glass-stroke);
+      border-radius: 22px;
+      padding: 16px;
+      overflow: hidden;
+      backdrop-filter: blur(18px);
+      box-shadow: var(--shadow-1);
+    }
+
+    .panel {
+      background: color-mix(in srgb, var(--panel) 92%, transparent);
+      border: 1px solid var(--glass-stroke);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+      display: grid;
+      gap: 10px;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+    }
+
+    .metric {
+      background: linear-gradient(150deg,
+        color-mix(in srgb, var(--panel-strong) 92%, transparent) 0%,
+        color-mix(in srgb, var(--accent) 18%, transparent) 100%);
+      border: 1px solid color-mix(in srgb, var(--accent) 32%, transparent);
+      border-radius: 16px;
+      padding: 12px;
+      display: grid;
+      gap: 6px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+    }
+    .metric h3 { margin: 0; font-size: 12px; color: var(--muted); font-weight: 600; letter-spacing: 0.3px; }
+    .metric .val { font-size: 20px; font-weight: 700; line-height: 1.2; color: var(--ink); }
+    .metric .val small { display: block; font-size: 11px; font-weight: 500; color: var(--muted); }
+
+    .panel p { margin: 0; }
+
+    .weights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+    }
+
+    .weight-item {
+      background: color-mix(in srgb, var(--panel-strong) 88%, transparent);
+      border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+      border-radius: 14px;
+      padding: 10px;
+      display: grid;
+      gap: 6px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+    }
+
+    .weight-item header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .weight-item output {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .weights-grid input[type="range"] {
+      accent-color: var(--accent-2);
+    }
+
+    .weight-summary {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .compare-panel {
+      display: grid;
+      gap: 12px;
+    }
+
+    .compare-controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+    }
+
+    .compare-summary {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .compare-summary strong {
+      color: var(--ink);
+    }
+
+    .compare-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .sci-explainer {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .tutorial-overlay {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(16px, 4vw, 40px);
+      background: rgba(9, 12, 28, 0.65);
+      backdrop-filter: blur(10px);
+      transition: opacity 0.3s ease;
+      z-index: 20;
+    }
+
+    .tutorial-overlay.is-hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .tutorial-card {
+      background: var(--panel-strong);
+      border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+      border-radius: 20px;
+      padding: clamp(18px, 3vw, 28px);
+      max-width: min(540px, 100%);
+      width: 100%;
+      display: grid;
+      gap: 14px;
+      box-shadow: var(--shadow-2);
+      color: var(--ink);
+    }
+
+    .tutorial-card header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .tutorial-card h3 {
+      margin: 0;
+      font-size: clamp(16px, 2.4vw, 20px);
+    }
+
+    .tutorial-body {
+      display: grid;
+      gap: 10px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .tutorial-keys {
+      display: grid;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .tutorial-nav {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .tutorial-nav .btn.small {
+      padding-inline: 12px;
+      padding-block: 6px;
+      font-size: 12px;
+    }
+
+    .hidden { display: none !important; }
+
+    .scroll { overflow: auto; min-height: 120px; max-height: 50vh; padding-right: 6px; }
+    .aspect-list { display: grid; gap: 10px; }
+
+    .aspect-item {
+      background: color-mix(in srgb, var(--panel-strong) 90%, transparent);
+      border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+      border-radius: 16px;
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
+    }
+    .aspect-item:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--accent) 45%, transparent); box-shadow: 0 12px 26px rgba(37, 99, 235, 0.18); }
+    .aspect-item[aria-selected="true"] { border-color: color-mix(in srgb, var(--focus) 60%, transparent); box-shadow: 0 16px 32px rgba(253, 230, 138, 0.28); }
+
+    .row { display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+    .row .name { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; letter-spacing: 0.25px; }
+
+    .badge {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      background: color-mix(in srgb, var(--panel) 80%, transparent);
+      border-radius: 999px;
+      padding: 4px 10px;
+      border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+    }
+
+    .dot { width: 12px; height: 12px; border-radius: 999px; box-shadow: 0 0 0 2px rgba(255,255,255,0.05); }
+
+    .activation-bar { position: relative; width: 100%; height: 6px; border-radius: 999px; background: color-mix(in srgb, var(--panel) 82%, transparent); overflow: hidden; }
+    .activation-bar span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, rgba(125, 211, 252, 0.85), rgba(168, 85, 247, 0.9)); transition: width 0.2s ease; }
+
+    .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tag { font-size: 11px; color: var(--muted); background: color-mix(in srgb, var(--panel-strong) 88%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent); padding: 3px 8px; border-radius: 999px; letter-spacing: 0.2px; }
+
+    label { font-size: 12px; color: var(--muted); font-weight: 600; }
+
+    input[type="range"] { width: 100%; accent-color: var(--accent); }
+    input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--accent); border: 2px solid rgba(255,255,255,0.4); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 50%, transparent); cursor: pointer; }
+    input[type="range"]::-webkit-slider-runnable-track { height: 6px; border-radius: 999px; background: color-mix(in srgb, var(--panel) 80%, transparent); }
+    input[type="range"]:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+    .input-field { display: grid; gap: 6px; }
+    .input-field input,
+    .input-field select {
       width: 100%;
       height: 100%;
       border-radius: 16px;
@@ -118,38 +597,203 @@
     }
   </style>
 </head>
-<body>
-  <header>
-    <h1>32 Aspect Developmental Self Clock · Mind–Body–Energy Mapping</h1>
-    <p class="subtitle">An evolving atlas of coherence, proportion, and compassion — powered by recursive awareness.</p>
-    <button id="themeToggle" class="btn">Toggle Theme</button>
-  </header>
+<body data-layout="desktop" data-panel="open">
+  <div class="app" role="application" aria-label="32 Aspect Developmental Self Clock">
+    <header>
+      <div class="header-top">
+        <div class="title-block">
+          <h1>32 Aspect Self Clock · Mind–Body–Energy Mapping</h1>
+          <p class="subtitle">An interactive atlas for synchronising cognitive, somatic, and archetypal development across the lifespan.</p>
+        </div>
+        <div class="mode-toggle" role="group" aria-label="Model lenses">
+          <button id="modeMind" class="btn" aria-pressed="true" title="View Mind model (psych/semantic)">🧠 Mind</button>
+          <button id="modeBody" class="btn secondary" aria-pressed="false" title="View Body model (neuro/physiology)">🩺 Body</button>
+          <button id="modeSoul" class="btn secondary" aria-pressed="false" title="View Soul model (archetypal/transpersonal)">✨ Soul</button>
+          <button id="btnTheme" class="btn ghost small" type="button" aria-pressed="false" title="Toggle light or dark presentation">🌙 Dark</button>
+        </div>
+      </div>
+      <div class="control-row">
+        <div class="control-cluster">
+          <button id="btnTutorial" class="btn" aria-pressed="false" title="Toggle tutorial/walkthrough mode (keyboard: T)">▶ Tutorial</button>
+          <button id="btnRandomize" class="btn secondary" title="Randomize activations (keyboard: R)">Shuffle</button>
+          <button id="btnDeactivate" class="btn warn" title="Set all activations to 0 (keyboard: 0)">Deactivate All</button>
+        </div>
+        <div class="control-cluster secondary">
+          <button id="btnExport" class="btn secondary" title="Export all aspect states as JSON (keyboard: E)">Export JSON</button>
+          <button id="btnExportReport" class="btn secondary" title="Download a printable summary report (keyboard: Shift+E)">Export Report</button>
+          <button id="panelToggle" class="btn ghost small mobile-only" type="button" aria-controls="insightPanel" aria-expanded="false">Insights</button>
+        </div>
+      </div>
+    </header>
 
-  <main>
-    <canvas id="clockCanvas" class="resonance-glow"></canvas>
-  </main>
+    <section class="vis">
+      <canvas id="clock" aria-label="Developmental Self Clock canvas" tabindex="0"></canvas>
+      <div class="legend" aria-label="Legend">
+        <div class="chip"><span class="swatch" style="background: var(--accent)"></span> Stage cross-lines (12)</div>
+        <div class="chip"><span class="swatch" style="background: var(--accent-2)"></span> Concentric rings (8)</div>
+        <div class="chip"><span class="swatch" style="background: #34d399"></span> Resonance links (similar activation)</div>
+        <div class="chip"><span class="swatch" style="background: #f59e0b"></span> Tutorial highlight</div>
+      </div>
+    </section>
 
-  <footer>
-    <div class="vis-hint">Δι — The work is alive through imperfection.</div>
-    <div>© Adrian Lei Martinez-Conol · Only When Prompted Research Initiative</div>
-  </footer>
+    <aside id="insightPanel">
+      <div class="panel mobile-only">
+        <div class="row" style="justify-content: space-between; align-items: center;">
+          <strong>Insights &amp; Controls</strong>
+          <button id="panelClose" class="btn ghost small" type="button" aria-label="Close insights panel">Close</button>
+        </div>
+        <p class="vis-hint">Review metrics or fine-tune activations.</p>
+      </div>
+      <div class="panel metrics" aria-label="System metrics">
+        <div class="metric" aria-live="polite"><h3>SCI (Semantic Coherence Index)</h3><div class="val" id="sciVal">—</div></div>
+        <div class="metric" aria-live="polite"><h3>Energy–Matter</h3><div class="val" id="emVal">—</div></div>
+        <div class="metric" aria-live="polite"><h3>Active Aspects</h3><div class="val" id="activeVal">—</div></div>
+        <div class="metric" aria-live="polite"><h3>Peak Activation</h3><div class="val" id="peakVal">—</div></div>
+      </div>
 
-  <dialog id="sciModal" aria-label="Semantic Coherence Index explanation">
-    <form method="dialog" class="modal-body">
-      <header class="modal-head">
-        <strong>Semantic Coherence Index</strong>
-        <button class="btn" value="cancel">Close</button>
-      </header>
-      <p>The SCI summarises how harmoniously the 32 aspect activations align. It blends three signals:</p>
-      <ol>
-        <li><strong>Activation mean</strong> — higher overall activation raises the index.</li>
-        <li><strong>Distribution balance</strong> — lower variance indicates the system is coherent.</li>
-        <li><strong>Resonance coverage</strong> — similar stages, rings, and activation levels reinforce the network.</li>
-      </ol>
-      <p>The live value is scaled to 0–100 and updates instantly as you adjust sliders, shuffle activations, or change developmental emphasis.</p>
-      <p id="sciFormula" class="vis-hint"></p>
-    </form>
-  </dialog>
+      <div class="panel" aria-label="Semantic Coherence guidance">
+        <strong>Understanding the SCI</strong>
+        <p class="sci-explainer" id="sciExplanation">The Semantic Coherence Index (SCI) is calculated as the mean activation of all 32 aspects divided by (1 + the standard deviation) and scaled by 100. High scores indicate evenly distributed activations with shared emphasis, while lower scores reveal fragmented focus or extreme peaks.</p>
+      </div>
+
+      <div class="panel" aria-label="Developmental stage slider">
+        <label for="devStageSlider"><strong>Developmental Stage</strong> <span id="devStageVal">1</span></label>
+        <input id="devStageSlider" type="range" min="0" max="11" value="0" />
+        <p class="vis-hint">0 = birth/infancy ··· 12 = wisdom/end-of-life · Adjusts all activations via devProfile</p>
+      </div>
+
+      <div class="panel" aria-label="Stage weighting controls">
+        <div>
+          <strong>Stage Emphasis Weights</strong>
+          <p class="vis-hint">Fine-tune the relative weighting (0.5×–1.5×) applied to each developmental stage before activations are calculated.</p>
+        </div>
+        <div id="stageWeights" class="weights-grid" role="group" aria-label="Stage weighting sliders"></div>
+        <div class="filter-actions">
+          <button id="btnResetWeights" class="btn tertiary small" type="button">Reset weights</button>
+          <span id="weightSummary" class="weight-summary">All weights neutral (1.00×).</span>
+        </div>
+      </div>
+
+      <div class="panel compare-panel" aria-label="Comparative developmental mode">
+        <div>
+          <strong>Comparative Mode</strong>
+          <p class="vis-hint">Compare how the map behaves when anchored to different developmental stages. Summaries respect your current stage weights.</p>
+        </div>
+        <div class="compare-controls">
+          <div class="input-field">
+            <label for="compareStageA">Stage A</label>
+            <select id="compareStageA">
+              <option value="0">Stage 1</option>
+              <option value="1">Stage 2</option>
+              <option value="2">Stage 3</option>
+              <option value="3">Stage 4</option>
+              <option value="4">Stage 5</option>
+              <option value="5">Stage 6</option>
+              <option value="6">Stage 7</option>
+              <option value="7">Stage 8</option>
+              <option value="8">Stage 9</option>
+              <option value="9">Stage 10</option>
+              <option value="10">Stage 11</option>
+              <option value="11">Stage 12</option>
+            </select>
+          </div>
+          <div class="input-field">
+            <label for="compareStageB">Stage B</label>
+            <select id="compareStageB">
+              <option value="0">Stage 1</option>
+              <option value="1">Stage 2</option>
+              <option value="2">Stage 3</option>
+              <option value="3">Stage 4</option>
+              <option value="4">Stage 5</option>
+              <option value="5">Stage 6</option>
+              <option value="6">Stage 7</option>
+              <option value="7">Stage 8</option>
+              <option value="8">Stage 9</option>
+              <option value="9">Stage 10</option>
+              <option value="10">Stage 11</option>
+              <option value="11">Stage 12</option>
+            </select>
+          </div>
+        </div>
+        <div class="compare-actions">
+          <button id="btnPreviewA" class="btn tertiary small" type="button">Preview Stage A</button>
+          <button id="btnPreviewB" class="btn tertiary small" type="button">Preview Stage B</button>
+        </div>
+        <p id="comparisonSummary" class="compare-summary">Choose two stages to generate a comparison summary.</p>
+      </div>
+
+      <div class="panel" aria-label="Aspect filters and sorting">
+        <div class="control-grid">
+          <div class="input-field">
+            <label for="searchInput">Find aspect</label>
+            <input id="searchInput" type="search" placeholder="Search names, roles, or regions" autocomplete="off" />
+          </div>
+          <div class="input-field">
+            <label for="sortSelect">Sort by</label>
+            <select id="sortSelect">
+              <option value="stage">Stage · Ring</option>
+              <option value="activationDesc">Activation (high → low)</option>
+              <option value="activationAsc">Activation (low → high)</option>
+              <option value="name">Name (A → Z)</option>
+            </select>
+          </div>
+          <div class="input-field">
+            <label for="stageFilter">Stage focus</label>
+            <select id="stageFilter">
+              <option value="all">All stages</option>
+              <option value="1">Stage 1</option>
+              <option value="2">Stage 2</option>
+              <option value="3">Stage 3</option>
+              <option value="4">Stage 4</option>
+              <option value="5">Stage 5</option>
+              <option value="6">Stage 6</option>
+              <option value="7">Stage 7</option>
+              <option value="8">Stage 8</option>
+              <option value="9">Stage 9</option>
+              <option value="10">Stage 10</option>
+              <option value="11">Stage 11</option>
+              <option value="12">Stage 12</option>
+            </select>
+          </div>
+          <div class="input-field">
+            <label for="ringFilter">Ring focus</label>
+            <select id="ringFilter">
+              <option value="all">All rings</option>
+              <option value="1">Ring 1</option>
+              <option value="2">Ring 2</option>
+              <option value="3">Ring 3</option>
+              <option value="4">Ring 4</option>
+              <option value="5">Ring 5</option>
+              <option value="6">Ring 6</option>
+              <option value="7">Ring 7</option>
+              <option value="8">Ring 8</option>
+            </select>
+          </div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="activeOnly" />
+          <span>Show active aspects only</span>
+        </label>
+        <div class="filter-actions">
+          <button id="btnResetFilters" class="btn tertiary small" type="button">Reset</button>
+          <span id="filterSummary" class="vis-hint">All aspects visible.</span>
+        </div>
+      </div>
+
+      <div class="panel scroll" aria-label="Aspect controls">
+        <div id="aspectList" class="aspect-list" role="listbox" aria-multiselectable="false"></div>
+      </div>
+
+      <div class="panel" aria-label="Legend and codes">
+        <div class="tags" style="margin-bottom:6px">
+          <span class="tag">Brain: PFC, Limbic, Insula, Amygdala…</span>
+          <span class="tag">NT: 5-HT, DA, NE, GABA, ACh, Oxytocin</span>
+          <span class="tag">Modes: visual, auditory, interoceptive…</span>
+        </div>
+        <p class="vis-hint">Keyboard: Arrow keys pan focus · Enter opens details · T tutorial · R shuffle · E export JSON · Shift+E export report · 0 clear</p>
+      </div>
+    </aside>
+    <div class="panel-overlay" id="panelOverlay" aria-hidden="true"></div>
 
   <dialog id="tutorialDialog" aria-label="Interactive tutorial">
     <form method="dialog" class="modal-body">
@@ -161,22 +805,950 @@
     </form>
   </dialog>
 
-  <dialog id="exportDialog" aria-label="Export options">
-    <form method="dialog" class="modal-body">
-      <header class="modal-head">
-        <strong>Export Current Map</strong>
-        <button class="btn" value="cancel">Close</button>
-      </header>
-      <p>Select a format to download the current developmental snapshot, including the SCI and resonance metrics.</p>
-      <div class="export-grid">
-        <button id="exportJson" class="btn" value="json">JSON (raw data)</button>
-        <button id="exportCsv" class="btn secondary" value="csv">CSV (spreadsheet)</button>
-        <button id="exportReport" class="btn secondary" value="html">Printable report</button>
+  <section class="workflow" aria-labelledby="workflowTitle">
+    <div class="workflow-card">
+      <div class="workflow-header">
+        <div>
+          <h2 id="workflowTitle">Codex Workflow Studio</h2>
+          <p>Design and validate interface updates without leaving the page. Edit HTML, CSS, JavaScript, and data schemas with inline linting, then preview the result instantly.</p>
+        </div>
+        <div class="workflow-actions">
+          <button id="workflowSave" class="btn" type="button">Save &amp; Refresh Preview</button>
+          <label><input id="workflowAuto" type="checkbox" checked /> Auto refresh on save</label>
+        </div>
+      </div>
+      <div class="workflow-panels" id="workflowPanels">
+        <div class="workflow-pane editors" id="workflowEditors">
+          <div class="editor-tabs" role="tablist">
+            <button class="editor-tab is-active" role="tab" aria-selected="true" id="tab-html" data-target="html">HTML</button>
+            <button class="editor-tab" role="tab" aria-selected="false" id="tab-css" data-target="css">CSS</button>
+            <button class="editor-tab" role="tab" aria-selected="false" id="tab-js" data-target="js">JavaScript</button>
+            <button class="editor-tab" role="tab" aria-selected="false" id="tab-json" data-target="json">JSON Schema</button>
+          </div>
+          <div class="editor-surfaces">
+            <div id="editor-html" class="editor-surface is-visible" role="tabpanel" aria-labelledby="tab-html"></div>
+            <div id="editor-css" class="editor-surface" role="tabpanel" aria-labelledby="tab-css"></div>
+            <div id="editor-js" class="editor-surface" role="tabpanel" aria-labelledby="tab-js"></div>
+            <div id="editor-json" class="editor-surface" role="tabpanel" aria-labelledby="tab-json"></div>
+          </div>
+          <div id="validationSummary" class="validation-summary" aria-live="polite">
+            <span class="validation-badge ok">Lint clean</span>
+            <span>No issues detected.</span>
+          </div>
+        </div>
+        <div class="pane-resizer" id="workflowResizer" role="separator" aria-orientation="vertical" aria-label="Resize editor and preview" tabindex="0"></div>
+        <div class="workflow-pane preview">
+          <div class="preview-header">
+            <strong>Live Preview</strong>
+            <span id="previewMeta">Synced just now</span>
+          </div>
+          <iframe id="workflowPreview" title="Live preview workspace" sandbox="allow-scripts allow-same-origin"></iframe>
+          <div id="previewStatus" class="preview-status">Waiting for first save…</div>
+        </div>
+      </div>
+      <div class="workflow-footer">
+        <p>Tip: Press <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>S</kbd> while focused in any editor to save and refresh the preview. Lint markers highlight parse issues directly in the gutter, while the summary lists the most recent warnings.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Info Modal (tooltip-like, accessible) -->
+  <dialog id="infoModal" aria-label="Aspect details">
+    <div class="modal-head">
+      <strong id="mTitle">Aspect</strong>
+      <button class="btn" value="cancel">Close</button>
+    </div>
+    <div class="modal-body">
+      <div id="mDef" class="panel"></div>
+      <div class="modal-grid">
+        <div>
+          <div><strong>Brain Region(s)</strong></div>
+          <div id="mBrain" aria-live="polite"></div>
+        </div>
+        <div>
+          <div><strong>Neurochemistry</strong></div>
+          <div id="mNT"></div>
+        </div>
+        <div>
+          <div><strong>Energy Pathway / Sensory</strong></div>
+          <div id="mEnergy"></div>
+        </div>
+        <div>
+          <div><strong>Developmental Stage · Ring</strong></div>
+          <div id="mStage"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <label for="mSlider"><strong>Activation</strong> <span id="mActVal" style="float:right">0</span></label>
+        <input id="mSlider" type="range" min="0" max="100" value="0" />
       </div>
     </form>
   </dialog>
 
+  <div id="tutorialOverlay" class="tutorial-overlay is-hidden" aria-hidden="true">
+    <div class="tutorial-card" role="dialog" aria-modal="true" aria-labelledby="tutorialTitle">
+      <header>
+        <div>
+          <h3 id="tutorialTitle">Interactive Tutorial</h3>
+          <p id="tutorialStep" class="vis-hint" style="margin:4px 0 0;">Step 1 of 1</p>
+        </div>
+        <button id="tutorialClose" class="btn ghost small" type="button">Close</button>
+      </header>
+      <div class="tutorial-body" id="tutorialBody"></div>
+      <div class="tutorial-keys" id="tutorialKeys"></div>
+      <div class="tutorial-nav">
+        <button id="tutorialPrev" class="btn secondary small" type="button">Previous</button>
+        <button id="tutorialNext" class="btn small" type="button">Next</button>
+      </div>
+    </div>
+  </div>
+
   <script>
+    /* ============================================================
+       DATA MODEL
+       ------------------------------------------------------------
+       • Three model lenses: Mind / Body / Soul
+       • Each lens has 32 aspects with a 12-point developmental profile
+    ============================================================ */
+
+    const N_ASPECTS = 32;
+    const TWO_PI = Math.PI * 2;
+    const center = { x: 0, y: 0 };
+    const DEV_STAGES = 12;
+
+    const palette = {
+      ring1: '#1a214a',
+      ring2: '#161c3f',
+      stage: '#24306f',
+      label: '#cbd5f1',
+      focus: '#fde68a',
+      nodeBorder: '#0b0f2a',
+      resonanceA: '#34d399',
+      resonanceB: '#7dd3fc'
+    };
+
+    function refreshPalette() {
+      const styles = getComputedStyle(document.body);
+      const fetch = (name, fallback) => {
+        const val = styles.getPropertyValue(name);
+        return val ? val.trim() : fallback;
+      };
+      palette.ring1 = fetch('--ring-line-1', palette.ring1);
+      palette.ring2 = fetch('--ring-line-2', palette.ring2);
+      palette.stage = fetch('--stage-line', palette.stage);
+      palette.label = fetch('--node-label', palette.label);
+      palette.focus = fetch('--focus', palette.focus);
+      palette.nodeBorder = fetch('--glass-stroke', palette.nodeBorder);
+      palette.resonanceA = fetch('--good', palette.resonanceA);
+      palette.resonanceB = fetch('--accent', palette.resonanceB);
+    }
+
+    function detectInitialTheme() {
+      try {
+        const stored = localStorage.getItem('selfClockTheme');
+        if (stored === 'light' || stored === 'dark') return stored;
+      } catch (_) { /* ignore */ }
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        return 'dark';
+      }
+      return 'light';
+    }
+
+    function updateThemeButton() {
+      if (!themeBtn) return;
+      const next = state.theme === 'dark' ? 'light' : 'dark';
+      themeBtn.textContent = state.theme === 'dark' ? '☀️ Light' : '🌙 Dark';
+      themeBtn.setAttribute('title', `Switch to ${next} mode`);
+      themeBtn.setAttribute('aria-pressed', String(state.theme === 'light'));
+    }
+
+    function applyTheme(theme) {
+      state.theme = theme;
+      document.body.setAttribute('data-theme', theme);
+      try { localStorage.setItem('selfClockTheme', theme); } catch (_) { /* ignore */ }
+      refreshPalette();
+      updateThemeButton();
+      draw();
+    }
+
+    function updatePanelToggleLabel() {
+      if (!panelToggle) return;
+      const open = state.panelOpen;
+      const label = open ? 'Hide insights panel' : 'Show insights panel';
+      panelToggle.textContent = open ? 'Hide Panel' : 'Show Panel';
+      panelToggle.setAttribute('aria-expanded', String(open));
+      panelToggle.setAttribute('aria-label', label);
+    }
+
+    function setPanelState(open) {
+      state.panelOpen = open;
+      document.body.setAttribute('data-panel', open ? 'open' : 'closed');
+      if (panelOverlay) {
+        panelOverlay.hidden = !(open && state.layout === 'mobile');
+        panelOverlay.setAttribute('aria-hidden', open && state.layout === 'mobile' ? 'false' : 'true');
+      }
+      updatePanelToggleLabel();
+      if (insightPanel) {
+        if (open && state.layout === 'mobile') {
+          insightPanel.setAttribute('tabindex', '-1');
+          if (typeof insightPanel.focus === 'function') {
+            try {
+              insightPanel.focus({ preventScroll: true });
+            } catch (_) {
+              insightPanel.focus();
+            }
+          }
+        } else {
+          insightPanel.removeAttribute('tabindex');
+        }
+      }
+    }
+
+    function applyLayoutMode(isMobile) {
+      state.layout = isMobile ? 'mobile' : 'desktop';
+      document.body.setAttribute('data-layout', state.layout);
+      if (state.layout === 'mobile') {
+        setPanelState(false);
+      } else {
+        setPanelState(true);
+        if (insightPanel) insightPanel.removeAttribute('tabindex');
+      }
+    }
+
+    const BRAIN_REGIONS = [
+      { id: 'PFC', name: 'Prefrontal Cortex', summary: 'Coordinates executive control, planning, and integration of future-oriented developmental tasks.' },
+      { id: 'LIMBIC', name: 'Limbic Network', summary: 'Braids emotion with memory so that affective meaning guides self-organisation across stages.' },
+      { id: 'INSULA', name: 'Insular Cortex', summary: 'Maps interoceptive states, translating body energy into awareness and self-regulation cues.' },
+      { id: 'AMY', name: 'Amygdala Complex', summary: 'Flags salience and threat, calibrating safety so that developmental pushes remain coherent.' },
+      { id: 'HPC', name: 'Hippocampus', summary: 'Encodes autobiographical context, stabilising new learning as stages accumulate.' },
+      { id: 'ACC', name: 'Anterior Cingulate Cortex', summary: 'Mediates error monitoring and compassionate regulation when transitions feel tense.' },
+      { id: 'BG', name: 'Basal Ganglia Loops', summary: 'Directs initiation, momentum, and habit formation to embody newly activated capacities.' },
+      { id: 'CBLM', name: 'Cerebellar Circuits', summary: 'Smooths coordination and timing, ensuring embodied precision keeps pace with cognitive shifts.' }
+    ];
+
+    const NEUROTRANSMITTERS = [
+      { id: '5-HT', name: 'Serotonin (5-HT)', summary: 'Stabilises mood and integrates multisensory input so reflective awareness can stay grounded.' },
+      { id: 'DA', name: 'Dopamine (DA)', summary: 'Amplifies motivation and reward prediction, energising exploratory pushes into new stages.' },
+      { id: 'NE', name: 'Norepinephrine (NE)', summary: 'Sharpens alertness and prioritisation, supporting rapid shifts between energetic demands.' },
+      { id: 'GABA', name: 'Gamma-Aminobutyric Acid (GABA)', summary: 'Applies inhibitory tone that down-regulates overactivation and preserves coherence.' },
+      { id: 'ACh', name: 'Acetylcholine (ACh)', summary: 'Drives focused attention and learning plasticity for fine-grained developmental tuning.' },
+      { id: 'OXT', name: 'Oxytocin', summary: 'Nurtures social bonding and trust so collective resonance reinforces the map.' },
+      { id: 'ENDOR', name: 'Endorphins', summary: 'Provide analgesic ease and resilience, sustaining effort during demanding integrations.' }
+    ];
+
+    const SENSORY_MODES = [
+      { id: 'VIS', name: 'Visual', summary: 'Tracks symbolic imagery, spatial orientation, and pattern recognition within the rings.', output: 'Visual synthesis & spatial anticipation' },
+      { id: 'AUD', name: 'Auditory', summary: 'Tunes sequencing, rhythm, and narrative resonance across developmental cross-lines.', output: 'Rhythmic regulation & language timing' },
+      { id: 'SOMA', name: 'Somatosensory', summary: 'Anchors tactile feedback and body schemas to stabilise emergent competencies.', output: 'Embodied feedback & grounding' },
+      { id: 'INTERO', name: 'Interoceptive', summary: 'Monitors visceral energy, ensuring homeostatic clarity for the mind–body bridge.', output: 'Autonomic calibration & self-soothing' },
+      { id: 'PROP', name: 'Proprioceptive', summary: 'Supports balance and micro-adjustments as new movement patterns consolidate.', output: 'Motor precision & balance' },
+      { id: 'OLFA', name: 'Olfactory', summary: 'Links scent and memory, opening rapid access to stored affective templates.', output: 'Memory priming & instinctive responses' }
+    ];
+
+    const BRAIN_LOOKUP = Object.fromEntries(BRAIN_REGIONS.map(item => [item.id, item]));
+    const NT_LOOKUP = Object.fromEntries(NEUROTRANSMITTERS.map(item => [item.id, item]));
+    const MODE_LOOKUP = Object.fromEntries(SENSORY_MODES.map(item => [item.id, item]));
+
+    const TUTORIAL_STEPS = [
+      {
+        title: 'Reading the 32 Aspect Clock',
+        body: 'Each node represents one aspect mapped around concentric rings (body systems) and radial stages (lifespan progression). The highlighted halo shows the current tutorial focus.',
+        keys: ['Arrow keys pan focus between aspects.', 'Enter opens the detail modal for richer definitions.']
+      },
+      {
+        title: 'Interpreting Structure',
+        body: 'Stage cross-lines (12) organise development chronologically while the eight rings express matter–energy gradients. Resonance links glow between aspects that share similar activation, revealing clusters of coherence.',
+        keys: ['Resonance threshold adapts automatically as activations shift.', 'Hover or tap a node to inspect its immediate links.']
+      },
+      {
+        title: 'Developmental Profiles & Weights',
+        body: 'Use the stage slider to sweep through the default developmental profile. Adjust the weight sliders to emphasise or soften any of the 12 developmental stages before the activations are applied.',
+        keys: ['Stage slider (0–12) re-centres the entire profile.', 'Weight range 0.5×–1.5× fine-tunes emphasis while keeping context.']
+      },
+      {
+        title: 'Comparing Stages',
+        body: 'Comparative Mode summarises how two stages differ after weights are applied. Review the mean delta, top gains, and emerging synergies before committing to a new stage focus.',
+        keys: ['Preview buttons instantly load Stage A or B.', 'Use comparisons to craft developmental arcs or coaching narratives.']
+      },
+      {
+        title: 'Exports & Next Actions',
+        body: 'Generate JSON for data analysis or a printable report for guided reflection. The report captures current activations, SCI context, and highlighted differences between comparison stages.',
+        keys: ['Press E for JSON, Shift+E for the report.', 'Tutorial (T) can be reopened anytime to rehearse the workflow.']
+      }
+    ];
+
+    // Developmental profile generator (smooth rise → peak → taper)
+    function makeDevProfile(i, stage, ring) {
+      const len = DEV_STAGES;
+      const arr = [];
+      const phase = (stage-1) / 12;      // shift by nominal stage
+      const amp = 0.6 + (ring/8)*0.3;    // outer rings slightly higher
+      const noise = (seed)=> (Math.sin((i+1)*(seed+1.73))*0.04);
+      for (let s=0; s<len; s++) {
+        const t = s/(len-1);             // 0..1 lifespan
+        const bell = Math.sin(Math.PI * (t*0.85 + phase*0.12));
+        const base = Math.max(0, bell) * amp + 0.15*(1 - Math.pow(1-t, 3));
+        const val = Math.max(0, Math.min(1, base + noise(s)));
+        arr.push(Math.round(val*100));
+      }
+      return arr;
+    }
+
+    // Build a complete 32-aspect set for a given lens (mind/body/soul)
+    function makeAspectSet(model) {
+      return Array.from({ length: N_ASPECTS }, (_, i) => {
+        const hue = Math.round((i * (360 / N_ASPECTS)) % 360);
+        const stage = 1 + (i % 12);
+        const ring  = 1 + (i % 8);
+        const devProfile = makeDevProfile(i, stage, ring);
+        const base = {
+          id: i+1,
+          name: `${model[0].toUpperCase()+model.slice(1)} Aspect ${i+1}`,
+          stage, ring, hue,
+          activation: devProfile[0],
+          devProfile,
+        };
+        if (model === 'mind') {
+          return Object.assign(base, {
+            definition: "Cognitive/semantic placeholder.",
+            corePsychologicalRole: "Role placeholder",
+            nsilSemanticSignature: "nsil:placeholder",
+            semanticGravity: "attractor",
+            quantumMode: ["particle","wave","field"][i%3],
+            particleWaveFieldFunction: "propagation placeholder",
+            brainRegion: "—",
+            neurotransmitter: "—",
+            energyMode: "—",
+            matterOutput: "—",
+          });
+        }
+        if (model === 'body') {
+          const brain = BRAIN_REGIONS[i % BRAIN_REGIONS.length];
+          const nt = NEUROTRANSMITTERS[i % NEUROTRANSMITTERS.length];
+          const modeInfo = SENSORY_MODES[i % SENSORY_MODES.length];
+          return Object.assign(base, {
+            definition: `Embeds ${brain.name.toLowerCase()} signalling with ${nt.name.split(' ')[0]} modulation to support ${modeInfo.name.toLowerCase()} integration across the lifespan.`,
+            brainRegion: brain.name,
+            brainRegionKey: brain.id,
+            brainSummary: brain.summary,
+            neurotransmitter: nt.name,
+            neurotransmitterKey: nt.id,
+            neurotransmitterSummary: nt.summary,
+            energyMode: modeInfo.name,
+            energyModeKey: modeInfo.id,
+            energySummary: modeInfo.summary,
+            matterOutput: modeInfo.output,
+          });
+        }
+        // soul
+        return Object.assign(base, {
+          definition: "Archetypal/transpersonal placeholder.",
+          archetypalSymbol: "Symbol",
+          spiritualRole: "Role",
+          nsilPrincipleSignature: "nsil:principle",
+          brainRegion: "—",
+          neurotransmitter: "—",
+          energyMode: "—",
+          matterOutput: "—",
+        });
+      });
+    }
+
+    // Three parallel datasets (placeholders until you provide canonical labels)
+    const mindAspects = makeAspectSet('mind');
+    const bodyAspects = makeAspectSet('body');
+    const soulAspects = makeAspectSet('soul');
+
+    // Active lens state
+    let mode = 'mind';
+    let aspects = mindAspects;
+
+    /* ============================================================
+       STATE + METRICS
+    ============================================================ */
+    const state = {
+      resonanceThreshold: 18, // activation similarity to link nodes
+      tutorial: false,
+      tutorialIndex: 0,
+      focusId: 1,
+      devStage: 0,
+      devWeights: Array.from({ length: DEV_STAGES }, () => 1),
+      filterText: '',
+      sort: 'stage',
+      stageFilter: 'all',
+      ringFilter: 'all',
+      activeOnly: false,
+      theme: 'dark',
+      layout: 'desktop',
+      panelOpen: true,
+      visible: [...aspects],
+      compareA: 0,
+      compareB: 6,
+    };
+
+    // SCI: mean / (1 + stddev) * 100
+    function computeSCI() {
+      const vals = aspects.map(a => a.activation);
+      const mean = vals.reduce((a,b)=>a+b,0) / vals.length;
+      const variance = vals.reduce((acc, v)=> acc + Math.pow(v-mean, 2), 0) / vals.length;
+      const std = Math.sqrt(variance);
+      const sci = (mean / (1 + std)) * 100;
+      return { mean, std, sci };
+    }
+
+    // Energy–Matter overview (simple but informative proxy)
+    function computeEnergyMatter() {
+      const total = aspects.reduce((s,a)=> s + a.activation, 0);
+      const byNT = new Map();
+      for (const a of aspects) {
+        const k = a.neurotransmitter || '—';
+        byNT.set(k, (byNT.get(k)||0) + a.activation);
+      }
+      const metabolic = total / (N_ASPECTS * 100);
+      return { total, byNT, metabolic };
+    }
+
+    const clamp = (value, min = 0, max = 100) => Math.min(max, Math.max(min, value));
+
+    /* ============================================================
+       DOM HELPERS
+    ============================================================ */
+    const el = sel => document.querySelector(sel);
+    const listEl = el('#aspectList');
+    const sciEl  = el('#sciVal');
+    const emEl   = el('#emVal');
+    const activeEl = el('#activeVal');
+    const peakEl = el('#peakVal');
+    const filterSummaryEl = el('#filterSummary');
+    const devSlider = el('#devStageSlider');
+    const devVal = el('#devStageVal');
+    const searchInput = el('#searchInput');
+    const sortSelect = el('#sortSelect');
+    const stageFilterSelect = el('#stageFilter');
+    const ringFilterSelect = el('#ringFilter');
+    const activeOnlyToggle = el('#activeOnly');
+    const resetFiltersBtn = el('#btnResetFilters');
+    const themeBtn = el('#btnTheme');
+    const panelToggle = el('#panelToggle');
+    const panelClose = el('#panelClose');
+    const panelOverlay = el('#panelOverlay');
+    const insightPanel = el('#insightPanel');
+    const weightsContainer = el('#stageWeights');
+    const weightSummaryEl = el('#weightSummary');
+    const resetWeightsBtn = el('#btnResetWeights');
+    const compareStageASelect = el('#compareStageA');
+    const compareStageBSelect = el('#compareStageB');
+    const compareSummaryEl = el('#comparisonSummary');
+    const previewAButton = el('#btnPreviewA');
+    const previewBButton = el('#btnPreviewB');
+    const sciExplanationEl = el('#sciExplanation');
+    const tutorialOverlay = el('#tutorialOverlay');
+    const tutorialTitleEl = el('#tutorialTitle');
+    const tutorialBody = el('#tutorialBody');
+    const tutorialKeys = el('#tutorialKeys');
+    const tutorialStepLabel = el('#tutorialStep');
+    const tutorialClose = el('#tutorialClose');
+    const tutorialPrev = el('#tutorialPrev');
+    const tutorialNext = el('#tutorialNext');
+
+    function getWeightedActivation(a, stageIndex) {
+      const base = a.devProfile?.[stageIndex] ?? 0;
+      const weight = state.devWeights?.[stageIndex] ?? 1;
+      return clamp(Math.round(base * weight));
+    }
+
+    function applyDevStage(stage){
+      state.devStage = stage;
+      if (devVal) devVal.textContent = stage + 1;
+      if (devSlider && Number(devSlider.value) !== stage) {
+        devSlider.value = String(stage);
+      }
+      aspects.forEach(a => {
+        if (a.devProfile?.length === DEV_STAGES) {
+          a.activation = getWeightedActivation(a, stage);
+        }
+      });
+      updateMetrics();
+      buildList();
+      draw();
+      updateComparisonSummary();
+    }
+
+    if (devSlider) devSlider.addEventListener('input', (e)=> applyDevStage(Number(e.target.value)));
+    if (searchInput) searchInput.addEventListener('input', (e)=> { state.filterText = e.target.value || ''; buildList(); });
+    if (sortSelect) sortSelect.addEventListener('change', (e)=> { state.sort = e.target.value; buildList(); });
+    if (stageFilterSelect) stageFilterSelect.addEventListener('change', (e)=> { state.stageFilter = e.target.value; buildList(); });
+    if (ringFilterSelect) ringFilterSelect.addEventListener('change', (e)=> { state.ringFilter = e.target.value; buildList(); });
+    if (activeOnlyToggle) activeOnlyToggle.addEventListener('change', (e)=> { state.activeOnly = e.target.checked; buildList(); });
+    if (resetFiltersBtn) resetFiltersBtn.addEventListener('click', ()=> {
+      state.filterText = '';
+      state.sort = 'stage';
+      state.stageFilter = 'all';
+      state.ringFilter = 'all';
+      state.activeOnly = false;
+      if (searchInput) searchInput.value = '';
+      if (sortSelect) sortSelect.value = 'stage';
+      if (stageFilterSelect) stageFilterSelect.value = 'all';
+      if (ringFilterSelect) ringFilterSelect.value = 'all';
+      if (activeOnlyToggle) activeOnlyToggle.checked = false;
+      buildList();
+    });
+    if (themeBtn) themeBtn.addEventListener('click', ()=> applyTheme(state.theme === 'dark' ? 'light' : 'dark'));
+    if (panelToggle) panelToggle.addEventListener('click', ()=> setPanelState(!state.panelOpen));
+    if (panelClose) panelClose.addEventListener('click', ()=> setPanelState(false));
+    if (panelOverlay) panelOverlay.addEventListener('click', ()=> setPanelState(false));
+    if (resetWeightsBtn) resetWeightsBtn.addEventListener('click', ()=> {
+      state.devWeights = Array.from({ length: DEV_STAGES }, () => 1);
+      buildWeightsUI();
+      applyDevStage(state.devStage);
+    });
+    if (compareStageASelect) {
+      compareStageASelect.value = String(state.compareA);
+      compareStageASelect.addEventListener('change', (e)=> {
+        state.compareA = Number(e.target.value);
+        updateComparisonSummary();
+      });
+    }
+    if (compareStageBSelect) {
+      compareStageBSelect.value = String(state.compareB);
+      compareStageBSelect.addEventListener('change', (e)=> {
+        state.compareB = Number(e.target.value);
+        updateComparisonSummary();
+      });
+    }
+    if (previewAButton) previewAButton.addEventListener('click', ()=> applyDevStage(state.compareA));
+    if (previewBButton) previewBButton.addEventListener('click', ()=> applyDevStage(state.compareB));
+    if (tutorialPrev) tutorialPrev.addEventListener('click', ()=> adjustTutorialFocus(-1));
+    if (tutorialNext) tutorialNext.addEventListener('click', ()=> adjustTutorialFocus(1));
+    if (tutorialOverlay) tutorialOverlay.addEventListener('click', (event)=> {
+      if (event.target === tutorialOverlay) toggleTutorial(false);
+    });
+    if (tutorialClose) tutorialClose.addEventListener('click', ()=> toggleTutorial(false));
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        if (state.tutorial) {
+          toggleTutorial(false);
+          return;
+        }
+        if (state.layout === 'mobile' && state.panelOpen) {
+          setPanelState(false);
+        }
+      }
+    });
+
+    function updateWeightSummary() {
+      if (!weightSummaryEl) return;
+      const weights = state.devWeights || [];
+      if (!weights.length) {
+        weightSummaryEl.textContent = 'Weights unavailable.';
+        return;
+      }
+      const avg = weights.reduce((sum, val) => sum + val, 0) / weights.length;
+      const emphasised = weights
+        .map((w, idx) => ({ w, label: `S${idx + 1}` }))
+        .filter(item => item.w > 1.05)
+        .map(item => `${item.label} ${item.w.toFixed(2)}×`);
+      const softened = weights
+        .map((w, idx) => ({ w, label: `S${idx + 1}` }))
+        .filter(item => item.w < 0.95)
+        .map(item => `${item.label} ${item.w.toFixed(2)}×`);
+      const parts = [`Mean ${avg.toFixed(2)}×`];
+      if (emphasised.length) parts.push(`Emphasis ${emphasised.join(', ')}`);
+      if (softened.length) parts.push(`Softened ${softened.join(', ')}`);
+      if (!emphasised.length && !softened.length) parts.push('All neutral (1.00×)');
+      weightSummaryEl.textContent = parts.join(' · ');
+    }
+
+    function buildWeightsUI() {
+      if (!weightsContainer) return;
+      weightsContainer.innerHTML = '';
+      const weights = state.devWeights || [];
+      weights.forEach((weight, idx) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'weight-item';
+        const header = document.createElement('header');
+        const label = document.createElement('span');
+        label.textContent = `Stage ${idx + 1}`;
+        label.id = `weight-label-${idx}`;
+        const output = document.createElement('output');
+        output.id = `weight-output-${idx}`;
+        output.textContent = `${weight.toFixed(2)}×`;
+        header.append(label, output);
+        const slider = document.createElement('input');
+        slider.type = 'range';
+        slider.min = '0.5';
+        slider.max = '1.5';
+        slider.step = '0.05';
+        slider.value = String(weight);
+        slider.setAttribute('aria-labelledby', label.id);
+        slider.addEventListener('input', (e) => {
+          const val = Number(e.target.value);
+          state.devWeights[idx] = val;
+          output.textContent = `${val.toFixed(2)}×`;
+          updateWeightSummary();
+          applyDevStage(state.devStage);
+        });
+        wrapper.append(header, slider);
+        weightsContainer.appendChild(wrapper);
+      });
+      updateWeightSummary();
+    }
+
+    function formatDelta(val) {
+      return `${val >= 0 ? '+' : ''}${val.toFixed(1)}`;
+    }
+
+    function updateComparisonSummary() {
+      if (!compareSummaryEl) return;
+      const stageA = Number.isFinite(state.compareA) ? state.compareA : 0;
+      const stageB = Number.isFinite(state.compareB) ? state.compareB : 0;
+      if (stageA === stageB) {
+        compareSummaryEl.textContent = 'Select two different stages to compare their weighted profiles.';
+        return;
+      }
+      const profileA = aspects.map(a => getWeightedActivation(a, stageA));
+      const profileB = aspects.map(a => getWeightedActivation(a, stageB));
+      const mean = arr => arr.reduce((sum, val) => sum + val, 0) / arr.length;
+      const meanA = mean(profileA);
+      const meanB = mean(profileB);
+      const diffMean = meanB - meanA;
+      const diffs = profileB.map((val, idx) => ({
+        name: aspects[idx].name,
+        delta: val - profileA[idx],
+      }));
+      const gains = diffs.filter(d => d.delta > 0.5).sort((a, b) => b.delta - a.delta).slice(0, 3);
+      const reductions = diffs.filter(d => d.delta < -0.5).sort((a, b) => a.delta - b.delta).slice(0, 3);
+      const gainText = gains.length ? gains.map(g => `${g.name} (${formatDelta(g.delta)})`).join(', ') : '—';
+      const lossText = reductions.length ? reductions.map(g => `${g.name} (${formatDelta(g.delta)})`).join(', ') : '—';
+      compareSummaryEl.innerHTML = `<strong>Stage ${stageA + 1}</strong> μ ${meanA.toFixed(1)} → <strong>Stage ${stageB + 1}</strong> μ ${meanB.toFixed(1)} (Δ ${formatDelta(diffMean)})<br>Largest gains: ${gainText}<br>Softened nodes: ${lossText}`;
+    }
+
+    if (weightsContainer) buildWeightsUI();
+
+    function setTutorialOverlayVisible(visible) {
+      if (!tutorialOverlay) return;
+      tutorialOverlay.classList.toggle('is-hidden', !visible);
+      tutorialOverlay.setAttribute('aria-hidden', visible ? 'false' : 'true');
+    }
+
+    function updateTutorialContent() {
+      if (!tutorialOverlay) return;
+      const totalAspects = aspects.length || 1;
+      const stride = Math.max(1, Math.round(totalAspects / TUTORIAL_STEPS.length));
+      const normalizedIndex = ((state.tutorialIndex % totalAspects) + totalAspects) % totalAspects;
+      const stepIndex = Math.min(TUTORIAL_STEPS.length - 1, Math.floor(normalizedIndex / stride));
+      const step = TUTORIAL_STEPS[stepIndex];
+      if (tutorialTitleEl) tutorialTitleEl.textContent = step.title;
+      if (tutorialStepLabel) tutorialStepLabel.textContent = `Step ${stepIndex + 1} of ${TUTORIAL_STEPS.length}`;
+      if (tutorialBody) {
+        tutorialBody.innerHTML = '';
+        const p = document.createElement('p');
+        p.textContent = step.body;
+        tutorialBody.appendChild(p);
+      }
+      if (tutorialKeys) {
+        tutorialKeys.innerHTML = '';
+        step.keys.forEach(text => {
+          const div = document.createElement('div');
+          div.textContent = text;
+          tutorialKeys.appendChild(div);
+        });
+      }
+    }
+
+    function adjustTutorialFocus(deltaSteps) {
+      const totalAspects = aspects.length || 1;
+      const stride = Math.max(1, Math.round(totalAspects / TUTORIAL_STEPS.length));
+      state.tutorialIndex = (state.tutorialIndex + deltaSteps * stride + totalAspects) % totalAspects;
+      state.focusId = aspects[state.tutorialIndex].id;
+      refreshListSelection();
+      draw();
+      updateTutorialContent();
+    }
+    function tagHTML(a){
+      if (mode==='mind') {
+        return `<span class="tag">${a.quantumMode}</span><span class="tag">NSIL</span><span class="tag">${a.semanticGravity}</span>`;
+      } else if (mode==='body') {
+        const brainTag = a.brainRegionKey ? `${a.brainRegionKey}` : `${a.brainRegion}`;
+        const ntTag = a.neurotransmitterKey || String(a.neurotransmitter||'—').split(' ')[0];
+        const modeTag = a.energyModeKey || a.energyMode;
+        return `<span class="tag" title="${a.brainRegion}">${brainTag}</span><span class="tag" title="${a.neurotransmitter}">${ntTag}</span><span class="tag" title="${a.energyMode}">${modeTag}</span>`;
+      }
+      return `<span class="tag">${a.archetypalSymbol}</span><span class="tag">${a.spiritualRole}</span><span class="tag">NSIL</span>`;
+    }
+
+    function hsl(h, s=70, l=52) { return `hsl(${h} ${s}% ${l}%)`; }
+    function hslAlpha(h, a=.25, s=70, l=50) { return `hsl(${h} ${s}% ${l}% / ${a})`; }
+
+    function updateMetrics() {
+      const { mean, std, sci } = computeSCI();
+      if (sciEl) sciEl.textContent = `${sci.toFixed(1)}  (μ=${mean.toFixed(1)}, σ=${std.toFixed(1)})`;
+      const { total, byNT, metabolic } = computeEnergyMatter();
+      const top = [...byNT.entries()].sort((a,b)=>b[1]-a[1]).slice(0,2).map(([k,v])=> `${String(k).split(' ')[0]} ${Math.round(v)}` ).join(', ');
+      if (emEl) emEl.textContent = `ΣE=${Math.round(total)} · NT↑ ${top || '—'} · Metabolic ${(metabolic*100).toFixed(0)}%`;
+      const activeCount = aspects.filter(a => a.activation > 0).length;
+      if (activeEl) activeEl.textContent = `${activeCount}/${N_ASPECTS}`;
+      if (peakEl) {
+        const peak = aspects.reduce((best, cand) => (cand.activation > (best?.activation ?? -1) ? cand : best), null);
+        peakEl.innerHTML = peak ? `${peak.activation}<small>${peak.name}</small>` : '—';
+      }
+      if (sciExplanationEl) {
+        let insight = 'Balanced focus across the map.';
+        if (sci >= 75) insight = 'High semantic harmony — activations are tightly integrated.';
+        else if (sci <= 40) insight = 'Fragmented emphasis — consider smoothing extreme peaks or raising quiet aspects.';
+        else insight = 'Moderate coherence — explore resonance links or weights to refine alignment.';
+        sciExplanationEl.textContent = `The Semantic Coherence Index (mean ÷ (1 + σ) × 100) updates live as activations shift. ${insight}`;
+      }
+    }
+
+    function createAspectRow(a) {
+      const item = document.createElement('div');
+      item.className = 'aspect-item';
+      item.setAttribute('role', 'option');
+      item.tabIndex = 0;
+      item.dataset.id = a.id;
+      item.setAttribute('aria-selected', a.id === state.focusId ? 'true' : 'false');
+
+      const r1 = document.createElement('div');
+      r1.className = 'row';
+      r1.innerHTML = `<div class="name"><span class="dot" style="background:${hsl(a.hue)}"></span>${a.name}</div>
+                      <span class="badge">Stage ${a.stage} · Ring ${a.ring}</span>`;
+
+      const bar = document.createElement('div');
+      bar.className = 'activation-bar';
+      const barFill = document.createElement('span');
+      barFill.style.width = `${a.activation}%`;
+      barFill.style.background = `linear-gradient(90deg, ${hsl(a.hue, 70, 55)}, ${hslAlpha(a.hue, 0.45, 70, 55)})`;
+      bar.appendChild(barFill);
+
+      const r2 = document.createElement('div');
+      r2.className = 'row';
+      const label = document.createElement('label');
+      label.textContent = `Activation: ${a.activation}`;
+      label.style.flex = '1';
+      label.htmlFor = `rng-${a.id}`;
+
+      const range = document.createElement('input');
+      range.type = 'range';
+      range.min = 0;
+      range.max = 100;
+      range.value = a.activation;
+      range.id = `rng-${a.id}`;
+      range.style.flex = '1';
+      range.setAttribute('aria-label', `${a.name} activation`);
+      range.addEventListener('input', (e) => {
+        a.activation = Number(e.target.value);
+        label.textContent = `Activation: ${a.activation}`;
+        barFill.style.width = `${a.activation}%`;
+        draw();
+        updateMetrics();
+      });
+      range.addEventListener('change', () => { state.focusId = a.id; buildList(); });
+
+      const detailsBtn = document.createElement('button');
+      detailsBtn.className = 'btn tertiary small';
+      detailsBtn.type = 'button';
+      detailsBtn.textContent = 'Details';
+      detailsBtn.addEventListener('click', () => openModal(a));
+
+      r2.append(label, range, detailsBtn);
+
+      const r3 = document.createElement('div');
+      r3.className = 'tags';
+      r3.innerHTML = `${tagHTML(a)}`;
+
+      item.append(r1, bar, r2, r3);
+
+      item.addEventListener('click', () => { state.focusId = a.id; refreshListSelection(); draw(); });
+      item.addEventListener('focus', () => { state.focusId = a.id; refreshListSelection(); draw(); });
+      item.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); openModal(a); }
+      });
+
+      return item;
+    }
+
+    function refreshListSelection() {
+      if (!listEl) return;
+      listEl.querySelectorAll('[data-id]').forEach(ch => ch.setAttribute('aria-selected', ch.dataset.id == state.focusId ? 'true':'false'));
+    }
+
+    function matchesFilter(a, needle) {
+      if (!needle) return true;
+      const hay = [
+        a.name,
+        a.definition,
+        a.brainRegion,
+        a.neurotransmitter,
+        a.energyMode,
+        a.semanticGravity,
+        a.archetypalSymbol,
+        a.spiritualRole,
+        a.matterOutput
+      ].filter(Boolean).join(' ').toLowerCase();
+      return hay.includes(needle);
+    }
+
+    function getVisibleAspects() {
+      const needle = state.filterText.trim().toLowerCase();
+      const stageFilter = state.stageFilter;
+      const ringFilter = state.ringFilter;
+      const filtered = aspects.filter(a => {
+        if (stageFilter !== 'all' && String(a.stage) !== stageFilter) return false;
+        if (ringFilter !== 'all' && String(a.ring) !== ringFilter) return false;
+        if (state.activeOnly && a.activation <= 0) return false;
+        return matchesFilter(a, needle);
+      });
+      const sorted = [...filtered];
+      sorted.sort((a, b) => {
+        switch (state.sort) {
+          case 'activationDesc':
+            return (b.activation - a.activation) || a.name.localeCompare(b.name);
+          case 'activationAsc':
+            return (a.activation - b.activation) || a.name.localeCompare(b.name);
+          case 'name':
+            return a.name.localeCompare(b.name);
+          default:
+            return (a.stage - b.stage) || (a.ring - b.ring) || (a.id - b.id);
+        }
+      });
+      return sorted;
+    }
+
+    function updateFilterSummary(count) {
+      if (!filterSummaryEl) return;
+      if (!count) {
+        filterSummaryEl.textContent = 'No aspects match the current filters.';
+        return;
+      }
+      const parts = [`${count} of ${aspects.length} aspects shown`];
+      if (state.filterText.trim()) parts.push(`“${state.filterText.trim()}”`);
+      if (state.stageFilter !== 'all') parts.push(`Stage ${state.stageFilter}`);
+      if (state.ringFilter !== 'all') parts.push(`Ring ${state.ringFilter}`);
+      if (state.activeOnly) parts.push('Active > 0');
+      filterSummaryEl.textContent = parts.join(' · ');
+    }
+
+    function buildList() {
+      if (!listEl) return;
+      const view = getVisibleAspects();
+      state.visible = view;
+      listEl.innerHTML = '';
+      if (!view.length) {
+        const empty = document.createElement('div');
+        empty.className = 'empty-state';
+        empty.textContent = 'No aspects match the current filters.';
+        listEl.appendChild(empty);
+        updateFilterSummary(0);
+        return;
+      }
+      if (!view.some(a => a.id === state.focusId)) {
+        state.focusId = view[0].id;
+      }
+      view.forEach(a => listEl.appendChild(createAspectRow(a)));
+      refreshListSelection();
+      updateFilterSummary(view.length);
+    }
+
+    /* ============================================================
+       MODAL (tooltip-style info + slider)
+    ============================================================ */
+    const dlg = el('#infoModal');
+    const mTitle = el('#mTitle');
+    const mDef = el('#mDef');
+    const mBrain = el('#mBrain');
+    const mNT = el('#mNT');
+    const mEnergy = el('#mEnergy');
+    const mStage = el('#mStage');
+    const mSlider = el('#mSlider');
+    const mActVal = el('#mActVal');
+    const mSummary = el('#mSummary');
+
+    let currentAspect = null;
+
+    function openModal(a) {
+      currentAspect = a;
+      mTitle.textContent = a.name;
+      if (mode==='mind') {
+        mDef.textContent = a.definition;
+        mBrain.textContent = a.nsilSemanticSignature || '—';
+        mNT.textContent = `${a.quantumMode || '—'} · ${a.particleWaveFieldFunction || ''}`;
+        mEnergy.textContent = `${a.semanticGravity || '—'}`;
+        mStage.textContent = `Stage ${a.stage} · Ring ${a.ring}`;
+      } else if (mode==='body') {
+        mDef.textContent = a.definition;
+        const brain = a.brainRegionKey ? BRAIN_LOOKUP[a.brainRegionKey] : null;
+        const nt = a.neurotransmitterKey ? NT_LOOKUP[a.neurotransmitterKey] : null;
+        const modeInfo = a.energyModeKey ? MODE_LOOKUP[a.energyModeKey] : null;
+        if (brain) {
+          mBrain.innerHTML = `<strong>${brain.name} (${brain.id})</strong><p>${brain.summary}</p>`;
+        } else {
+          mBrain.textContent = a.brainRegion || '—';
+        }
+        if (nt) {
+          mNT.innerHTML = `<strong>${nt.name}</strong><p>${nt.summary}</p>`;
+        } else {
+          mNT.textContent = a.neurotransmitter || '—';
+        }
+        if (modeInfo) {
+          mEnergy.innerHTML = `<strong>${modeInfo.name}</strong><p>${modeInfo.summary}</p>`;
+        } else {
+          mEnergy.textContent = a.energyMode || '—';
+        }
+        mStage.textContent = `Stage ${a.stage} · Ring ${a.ring}`;
+      } else {
+        mDef.textContent = a.definition;
+        mBrain.textContent = a.archetypalSymbol || '—';
+        mNT.textContent = a.spiritualRole || '—';
+        mEnergy.textContent = a.nsilPrincipleSignature || '—';
+        mStage.textContent = `Stage ${a.stage} · Ring ${a.ring}`;
+      }
+      mSlider.value = String(a.activation);
+      mActVal.textContent = String(a.activation);
+      updateModalSummary();
+      dlg.showModal();
+    }
+
+    function updateModalSummary() {
+      if (!currentAspect) return;
+      const energyIn = currentAspect.activation;
+      const region = currentAspect.brainRegion || '—';
+      const ntStr = String(currentAspect.neurotransmitter || '—');
+      const neuroOut = ntStr.split(' ')[0];
+      const metabolic = Math.round((energyIn/100) * 100);
+      const energyNote = currentAspect.energySummary ? ` ${currentAspect.energySummary}` : '';
+      mSummary.textContent = `Energy in: ${energyIn} → ${region} → NT: ${neuroOut} → functional output: ${currentAspect.matterOutput || '—'} (metabolic load ≈ ${metabolic}%).${energyNote}`;
+    }
+
+    dlg.addEventListener('close', ()=>{ currentAspect = null; });
+    dlg.addEventListener('click', (e)=>{
+      const rect = dlg.getBoundingClientRect();
+      if (e.clientY < rect.top || e.clientY > rect.bottom || e.clientX < rect.left || e.clientX > rect.right) dlg.close();
+    });
+    dlg.querySelector('button[value="cancel"]').addEventListener('click', ()=> dlg.close());
+    mSlider.addEventListener('input', (e) => {
+      if (!currentAspect) return;
+      currentAspect.activation = Number(e.target.value);
+      mActVal.textContent = String(currentAspect.activation);
+      updateModalSummary();
+      const row = listEl.querySelector(`[data-id="${currentAspect.id}"]`);
+      if (row) {
+        const label = row.querySelector('label');
+        const range = row.querySelector('input[type="range"]');
+        const bar = row.querySelector('.activation-bar span');
+        if (range) range.value = String(currentAspect.activation);
+        if (label) label.textContent = `Activation: ${currentAspect.activation}`;
+        if (bar) bar.style.width = `${currentAspect.activation}%`;
+      }
+      draw();
+      updateMetrics();
+    });
+
+    /* ============================================================
+       CANVAS RENDERING
+    ============================================================ */
+    const canvas = el('#clock');
     const canvas = document.getElementById('clockCanvas');
     const ctx = canvas.getContext('2d');
     function resizeCanvas() {
@@ -205,6 +1777,246 @@
       ctx.fillStyle = 'hsla(200,80%,70%,0.25)';
       ctx.arc(cx, cy, 10, 0, Math.PI * 2);
       ctx.fill();
+      ctx.restore();
+    }
+
+    function draw() {
+      const { width:w, height:h } = canvas;
+      ctx.clearRect(0,0,w,h);
+      const maxR = Math.min(w, h)/2 - 30;
+      drawRings(maxR);
+      drawStageLines(maxR);
+      const points = drawNodes(maxR);
+      drawResonanceLinks(points);
+      drawTutorialHalo(points);
+    }
+
+    // Animation loop for tutorial halo
+    function tick() { if (state.tutorial) draw(); requestAnimationFrame(tick); }
+
+    /* ============================================================
+       HIT TEST & INTERACTION (mouse/touch)
+    ============================================================ */
+    function getMousePos(evt) {
+      const rect = canvas.getBoundingClientRect();
+      return { x: evt.clientX - rect.left, y: evt.clientY - rect.top };
+    }
+
+    function nodeAt(x, y) {
+      const { width:w, height:h } = canvas;
+      const maxR = Math.min(w, h)/2 - 30; const radius = maxR * 0.92; const nodeR = 12;
+      for (let i=0;i<aspects.length;i++) {
+        const angle = (i/N_ASPECTS)*TWO_PI - Math.PI/2;
+        const p = polar(angle, radius);
+        if (Math.hypot(x - p.x, y - p.y) <= nodeR+2) return aspects[i];
+      }
+      return null;
+    }
+
+    canvas.addEventListener('click', (e)=>{
+      const p = getMousePos(e);
+      const a = nodeAt(p.x, p.y);
+      if (a) { state.focusId = a.id; refreshListSelection(); draw(); openModal(a); }
+    });
+
+    // Basic keyboard navigation
+    window.addEventListener('keydown', (e)=>{
+      const tag = (e.target && e.target.tagName ? e.target.tagName.toLowerCase() : '');
+      if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+      if (e.target && typeof e.target.closest === 'function' && e.target.closest('.cm-editor')) return;
+      const key = e.key.toLowerCase();
+      if (key === 't') { e.preventDefault(); toggleTutorial(); }
+      if (key === 'r') { randomize(); }
+      if (key === 'e') {
+        e.preventDefault();
+        if (e.shiftKey) {
+          exportReport();
+        } else {
+          exportJSON();
+        }
+      }
+      if (key === '0') { deactivateAll(); }
+      if (key === 'arrowright' || key === 'arrowdown') { e.preventDefault(); moveFocus(1); }
+      if (key === 'arrowleft' || key === 'arrowup') { e.preventDefault(); moveFocus(-1); }
+      if (key === 'enter') { e.preventDefault(); const a = aspects.find(x=>x.id===state.focusId); if (a) openModal(a); }
+    });
+
+    function moveFocus(delta) {
+      const pool = (state.visible && state.visible.length) ? state.visible : aspects;
+      if (!pool.length) return;
+      let idx = pool.findIndex(a => a.id === state.focusId);
+      if (idx === -1) idx = 0;
+      const next = (idx + delta + pool.length) % pool.length;
+      state.focusId = pool[next].id;
+      refreshListSelection();
+      draw();
+      const row = listEl.querySelector(`[data-id="${state.focusId}"]`);
+      row?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    /* ============================================================
+       COMMANDS & EXPORT
+    ============================================================ */
+    function randomize() {
+      aspects.forEach(a => a.activation = Math.round(Math.random()*100));
+      updateMetrics();
+      buildList();
+      draw();
+    }
+
+    function deactivateAll() {
+      aspects.forEach(a => a.activation = 0);
+      updateMetrics();
+      buildList();
+      draw();
+    }
+
+    // Build payload separately so we can unit-test it
+    function buildExportPayload() {
+      const { mean, std, sci } = computeSCI();
+      const { total, byNT, metabolic } = computeEnergyMatter();
+      return {
+        generatedAt: new Date().toISOString(),
+        model: `32 Aspect Developmental Self Clock — ${mode}`,
+        devStage: state.devStage,
+        devWeights: Array.from(state.devWeights || []),
+        metrics: { mean, std, sci },
+        energyMatter: { total, byNT: Object.fromEntries(byNT), metabolic },
+        filters: {
+          search: state.filterText,
+          sort: state.sort,
+          stage: state.stageFilter,
+          ring: state.ringFilter,
+          activeOnly: state.activeOnly,
+        },
+        comparison: {
+          stageA: state.compareA,
+          stageB: state.compareB,
+          summary: compareSummaryEl ? compareSummaryEl.textContent : ''
+        },
+        aspects: aspects
+      };
+    }
+
+    function buildReportMarkdown(payload) {
+      const lines = [];
+      const modeLabel = payload.model.split('—').pop().trim();
+      const weightsLine = (payload.devWeights && payload.devWeights.length)
+        ? payload.devWeights.map((w, idx) => `S${idx + 1}=${Number(w).toFixed(2)}×`).join(', ')
+        : '—';
+      const ntEntries = Object.entries(payload.energyMatter.byNT || {}).sort((a, b) => b[1] - a[1]);
+      const topAspects = [...payload.aspects].sort((a, b) => (b.activation - a.activation)).slice(0, 8);
+      lines.push('# 32 Aspect Developmental Self Clock — Report');
+      lines.push('');
+      lines.push(`Generated: ${payload.generatedAt}`);
+      lines.push(`Mode: ${payload.model}`);
+      lines.push('');
+      lines.push('## Developmental Profile');
+      lines.push(`- Active stage focus: Stage ${payload.devStage + 1}`);
+      lines.push(`- Stage weights: ${weightsLine}`);
+      lines.push(`- Comparison summary (${modeLabel}): ${payload.comparison?.summary || '—'}`);
+      lines.push('');
+      lines.push('## Semantic Coherence');
+      lines.push(`- SCI: ${payload.metrics.sci.toFixed(1)} (μ=${payload.metrics.mean.toFixed(1)}, σ=${payload.metrics.std.toFixed(1)})`);
+      lines.push('');
+      lines.push('## Energy–Matter Snapshot');
+      lines.push(`- Total activation energy: ${Math.round(payload.energyMatter.total)}`);
+      lines.push(`- Metabolic load: ${(payload.energyMatter.metabolic * 100).toFixed(0)}%`);
+      if (ntEntries.length) {
+        const ntLine = ntEntries.slice(0, 4).map(([name, value]) => `${name} ${Math.round(value)}`).join(', ');
+        lines.push(`- Dominant neurotransmitter balance: ${ntLine}`);
+      }
+      lines.push('');
+      lines.push('## Top Activations');
+      topAspects.forEach((a, idx) => {
+        const details = [`Stage ${a.stage}`, `Ring ${a.ring}`];
+        if (a.brainRegion) details.push(a.brainRegion);
+        if (a.neurotransmitter && a.neurotransmitter !== '—') details.push(a.neurotransmitter);
+        if (a.energyMode && a.energyMode !== '—') details.push(a.energyMode);
+        lines.push(`${idx + 1}. ${a.name} — ${a.activation} (${details.join(' · ')})`);
+      });
+      lines.push('');
+      lines.push('## Notes');
+      lines.push('- JSON export retains all 32 aspect records for archival analysis.');
+      lines.push('- Adjust stage weights to rehearse developmental emphasis scenarios before coaching or reflection sessions.');
+      return lines.join('\n');
+    }
+
+    function exportJSON() {
+      const payload = buildExportPayload();
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'self-clock-export.json';
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function exportReport() {
+      const payload = buildExportPayload();
+      const markdown = buildReportMarkdown(payload);
+      const blob = new Blob([markdown], { type: 'text/markdown' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'self-clock-report.md';
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    /* ============================================================
+       TUTORIAL / WALKTHROUGH MODE
+    ============================================================ */
+    let tutorialTimer = null;
+    function toggleTutorial(forceState) {
+      const next = typeof forceState === 'boolean' ? forceState : !state.tutorial;
+      state.tutorial = next;
+      const btn = el('#btnTutorial');
+      if (btn) {
+        btn.setAttribute('aria-pressed', String(state.tutorial));
+        btn.textContent = state.tutorial ? '⏸ Tutorial' : '▶ Tutorial';
+      }
+      if (state.tutorial) {
+        updateTutorialContent();
+        setTutorialOverlayVisible(true);
+        draw();
+        if (!tutorialTimer) tutorialTimer = setInterval(()=>{
+          state.tutorialIndex = (state.tutorialIndex + 1) % aspects.length;
+          state.focusId = aspects[state.tutorialIndex].id;
+          refreshListSelection();
+          draw();
+          updateTutorialContent();
+        }, 1400);
+      } else {
+        setTutorialOverlayVisible(false);
+        clearInterval(tutorialTimer);
+        tutorialTimer = null;
+        draw();
+      }
+    }
+
+    /* ============================================================
+       UI WIRING
+    ============================================================ */
+    el('#btnTutorial').addEventListener('click', toggleTutorial);
+    el('#btnRandomize').addEventListener('click', randomize);
+    el('#btnDeactivate').addEventListener('click', deactivateAll);
+    el('#btnExport').addEventListener('click', exportJSON);
+    el('#btnExportReport').addEventListener('click', exportReport);
+
+    function setMode(newMode){
+      mode = newMode;
+      aspects = (mode==='mind') ? mindAspects : (mode==='body') ? bodyAspects : soulAspects;
+      el('#modeMind').classList.toggle('secondary', mode!=='mind');
+      el('#modeBody').classList.toggle('secondary', mode!=='body');
+      el('#modeSoul').classList.toggle('secondary', mode!=='soul');
+      el('#modeMind').setAttribute('aria-pressed', String(mode==='mind'));
+      el('#modeBody').setAttribute('aria-pressed', String(mode==='body'));
+      el('#modeSoul').setAttribute('aria-pressed', String(mode==='soul'));
+      buildList();
+      applyDevStage(state.devStage);
+      updateMetrics();
+      draw();
+      if (state.tutorial) updateTutorialContent();
     }
 
     resizeCanvas();
@@ -216,6 +2028,481 @@
       document.body.setAttribute('data-theme', next);
     });
   </script>
+  <script type="module">
+    import { EditorState } from "https://esm.sh/@codemirror/state@6.2.1";
+    import { EditorView, keymap, highlightActiveLine, drawSelection } from "https://esm.sh/@codemirror/view@6.23.1";
+    import { defaultKeymap, history, historyKeymap, indentWithTab } from "https://esm.sh/@codemirror/commands@6.2.4";
+    import { autocompletion, completionKeymap, closeBrackets } from "https://esm.sh/@codemirror/autocomplete@6.10.2";
+    import { lintGutter, linter, lintState } from "https://esm.sh/@codemirror/lint@6.4.1";
+    import { html as htmlLang } from "https://esm.sh/@codemirror/lang-html@6.4.7";
+    import { css as cssLang } from "https://esm.sh/@codemirror/lang-css@6.2.1";
+    import { javascript as jsLang } from "https://esm.sh/@codemirror/lang-javascript@6.2.1";
+    import { json as jsonLang } from "https://esm.sh/@codemirror/lang-json@6.0.1";
+    import Ajv from "https://esm.sh/ajv@8.12.0";
 
+    const htmlSurface = document.getElementById('editor-html');
+    const cssSurface = document.getElementById('editor-css');
+    const jsSurface = document.getElementById('editor-js');
+    const jsonSurface = document.getElementById('editor-json');
+    const summaryEl = document.getElementById('validationSummary');
+    const previewFrame = document.getElementById('workflowPreview');
+    const previewStatus = document.getElementById('previewStatus');
+    const previewMeta = document.getElementById('previewMeta');
+    const saveButton = document.getElementById('workflowSave');
+    const autoToggle = document.getElementById('workflowAuto');
+    const resizer = document.getElementById('workflowResizer');
+    const panels = document.getElementById('workflowPanels');
+
+    if (!htmlSurface || !cssSurface || !jsSurface || !jsonSurface) {
+      console.warn('Workflow studio surfaces unavailable.');
+      return;
+    }
+
+    const ajv = new Ajv({ allErrors: true, strict: false });
+    const jsonSchema = {
+      type: 'object',
+      additionalProperties: false,
+      required: ['title', 'version', 'aspects'],
+      properties: {
+        title: { type: 'string', minLength: 1 },
+        version: { type: 'number', minimum: 1 },
+        aspects: {
+          type: 'array',
+          minItems: 1,
+          items: {
+            type: 'object',
+            required: ['id', 'name', 'stage', 'ring', 'activation'],
+            properties: {
+              id: { type: 'integer', minimum: 1 },
+              name: { type: 'string', minLength: 1 },
+              stage: { type: 'integer', minimum: 1, maximum: 12 },
+              ring: { type: 'integer', minimum: 1, maximum: 8 },
+              activation: { type: 'integer', minimum: 0, maximum: 100 },
+              brainRegion: { type: 'string' },
+              neurotransmitter: { type: 'string' }
+            },
+            additionalProperties: true
+          }
+        }
+      }
+    };
+    const validateJson = ajv.compile(jsonSchema);
+
+    const initialHTML = `<section class="demo-grid">
+  <header>
+    <h1>Stage Synergy Digest</h1>
+    <p class="lead">Summarise emergent resonance between developmental stages and neurobiological anchors.</p>
+  </header>
+  <ul class="digest" aria-label="High-synergy aspects">
+    <li data-stage="5">
+      <strong>Stage 5 · Limbic Integration</strong>
+      <span>Oxytocin + Insula feedback aligns with mindful body awareness rituals.</span>
+    </li>
+    <li data-stage="9">
+      <strong>Stage 9 · Transcendent Strategy</strong>
+      <span>PFC schema maps balance dopamine drive with reflective pause cues.</span>
+    </li>
+  </ul>
+</section>`;
+
+    const initialCSS = `.demo-grid {
+  font-family: 'Inter', system-ui, sans-serif;
+  padding: 24px;
+  background: linear-gradient(145deg, rgba(59,130,246,0.14), rgba(167,139,250,0.18));
+  border-radius: 18px;
+  color: #0f172a;
+}
+.demo-grid header { margin-bottom: 16px; }
+.demo-grid h1 { margin: 0 0 4px; font-size: 1.3rem; }
+.demo-grid .lead { margin: 0; color: #475569; max-width: 62ch; }
+.demo-grid .digest { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.demo-grid .digest li {
+  background: rgba(255,255,255,0.8);
+  border-radius: 16px;
+  padding: 12px 16px;
+  border: 1px solid rgba(148,163,233,0.35);
+  box-shadow: 0 10px 30px rgba(15,23,42,0.08);
+  display: grid;
+  gap: 4px;
+}
+.demo-grid .digest li strong { font-size: 0.95rem; }
+.demo-grid .digest li span { font-size: 0.82rem; color: #475569; }
+.demo-grid .digest li[data-stage="9"] { border-color: rgba(14,165,233,0.6); }
+@media (max-width: 680px) {
+  .demo-grid { padding: 18px; }
+}`;
+
+    const initialJS = `const focusOrder = ['5', '9'];
+const list = document.querySelector('.digest');
+if (list) {
+  focusOrder.forEach(stage => {
+    const item = list.querySelector('[data-stage="' + stage + '"]');
+    if (item) {
+      item.dataset.highlight = 'true';
+      item.style.outline = '2px solid rgba(14,165,233,0.65)';
+      item.style.outlineOffset = '2px';
+    }
+  });
+}
+console.info('Preview initialised with focus order', focusOrder);
+`;
+
+    const initialJSON = JSON.stringify({
+      title: 'Workflow Preview Payload',
+      version: 1,
+      aspects: [
+        { id: 1, name: 'Limbic Integration', stage: 5, ring: 6, activation: 78, brainRegion: 'Limbic', neurotransmitter: 'Oxytocin' },
+        { id: 2, name: 'Strategic Pause', stage: 9, ring: 7, activation: 64, brainRegion: 'PFC', neurotransmitter: 'DA' }
+      ]
+    }, null, 2);
+
+    const baseExtensions = [
+      highlightActiveLine(),
+      drawSelection(),
+      history(),
+      keymap.of([...defaultKeymap, ...historyKeymap, indentWithTab, ...completionKeymap]),
+      autocompletion(),
+      closeBrackets(),
+      lintGutter(),
+      EditorView.lineWrapping
+    ];
+
+    const diagnostics = new Map([
+      ['html', []],
+      ['css', []],
+      ['js', []],
+      ['json', []]
+    ]);
+
+    const getLineOffset = (doc, line, column) => {
+      if (!Number.isFinite(line) || line < 1) return 0;
+      const ln = doc.line(Math.max(1, Math.min(doc.lines, line)));
+      return ln.from + Math.max(0, Math.min(ln.length, column - 1));
+    };
+
+    const htmlLint = (view) => {
+      const text = view.state.doc.toString();
+      if (!text.trim()) return [];
+      const parser = new DOMParser();
+      const parsed = parser.parseFromString(text, 'text/html');
+      const error = parsed.querySelector('parsererror');
+      if (error) {
+        const msg = error.textContent?.replace(/\s+/g, ' ').trim() || 'HTML parse error';
+        return [{ from: 0, to: Math.min(1, text.length), severity: 'error', message: msg }];
+      }
+      return [];
+    };
+
+    const cssLint = (view) => {
+      const text = view.state.doc.toString();
+      if (!text.trim()) return [];
+      try {
+        const sheet = new CSSStyleSheet();
+        sheet.replaceSync(text);
+      } catch (err) {
+        const message = (err && err.message) ? String(err.message) : 'CSS syntax error';
+        const match = message.match(/:(\d+):(\d+)/);
+        if (match) {
+          const line = Number(match[1]);
+          const column = Number(match[2]);
+          const pos = getLineOffset(view.state.doc, line, column);
+          return [{ from: pos, to: pos + 1, severity: 'error', message }];
+        }
+        return [{ from: 0, to: Math.min(text.length, 1), severity: 'error', message }];
+      }
+      return [];
+    };
+
+    const jsLint = (view) => {
+      const text = view.state.doc.toString();
+      if (!text.trim()) return [];
+      try {
+        // eslint-disable-next-line no-new-func
+        new Function(text);
+      } catch (err) {
+        const message = err && err.message ? String(err.message) : 'JavaScript syntax error';
+        const match = message.match(/<anonymous>:(\d+):(\d+)/);
+        if (match) {
+          const line = Number(match[1]);
+          const column = Number(match[2]);
+          const pos = getLineOffset(view.state.doc, line, column);
+          return [{ from: pos, to: pos + 1, severity: 'error', message }];
+        }
+        return [{ from: 0, to: Math.min(text.length, 1), severity: 'error', message }];
+      }
+      return [];
+    };
+
+    const jsonLint = (view) => {
+      const text = view.state.doc.toString();
+      if (!text.trim()) return [];
+      let parsed;
+      try {
+        parsed = JSON.parse(text);
+      } catch (err) {
+        const message = err && err.message ? String(err.message) : 'JSON parse error';
+        const posMatch = message.match(/position (\d+)/i);
+        const idx = posMatch ? Number(posMatch[1]) : 0;
+        const from = Math.min(idx, text.length);
+        return [{ from, to: Math.min(from + 1, text.length), severity: 'error', message }];
+      }
+      const valid = validateJson(parsed);
+      if (!valid) {
+        const err = validateJson.errors && validateJson.errors[0];
+        if (err) {
+          const path = err.instancePath || '';
+          const key = path.split('/').filter(Boolean).pop();
+          let idx = 0;
+          if (key) {
+            const regex = new RegExp(`"${key}"`);
+            const match = regex.exec(text);
+            if (match) idx = match.index;
+          }
+          return [{
+            from: idx,
+            to: Math.min(idx + (key ? key.length + 2 : 1), text.length),
+            severity: 'error',
+            message: `${err.message || 'Schema validation error'} (${path || 'root'})`
+          }];
+        }
+      }
+      return [];
+    };
+
+    const createEditor = (element, doc, langExt, lintFn, key) => {
+      const view = new EditorView({
+        state: EditorState.create({
+          doc,
+          extensions: [
+            ...baseExtensions,
+            langExt,
+            linter(lintFn),
+            EditorView.updateListener.of((update) => {
+              if (update.docChanged) {
+                markDirty();
+                if (autoToggle && autoToggle.checked) schedulePreview();
+              }
+              diagnostics.set(key, (update.state.field(lintState, false)?.diagnostics) || []);
+              updateValidationSummary();
+            })
+          ]
+        }),
+        parent: element
+      });
+      diagnostics.set(key, (view.state.field(lintState, false)?.diagnostics) || []);
+      return view;
+    };
+
+    const htmlEditor = createEditor(htmlSurface, initialHTML, htmlLang(), htmlLint, 'html');
+    const cssEditor = createEditor(cssSurface, initialCSS, cssLang(), cssLint, 'css');
+    const jsEditor = createEditor(jsSurface, initialJS, jsLang({ typescript: false }), jsLint, 'js');
+    const jsonEditor = createEditor(jsonSurface, initialJSON, jsonLang(), jsonLint, 'json');
+
+    const editorMap = { html: htmlEditor, css: cssEditor, js: jsEditor, json: jsonEditor };
+
+    let dirty = false;
+    let refreshTimer = null;
+    let lastBroadcast = 0;
+
+    const broadcastKey = 'self-clock-workflow';
+
+    const markDirty = () => {
+      dirty = true;
+      if (previewStatus) {
+        previewStatus.textContent = 'Unsaved changes — preview will refresh on save.';
+      }
+    };
+
+    const resetDirty = () => { dirty = false; };
+
+    const getDocs = () => ({
+      html: htmlEditor.state.doc.toString(),
+      css: cssEditor.state.doc.toString(),
+      js: jsEditor.state.doc.toString(),
+      json: jsonEditor.state.doc.toString()
+    });
+
+    const escapeForScript = (text) => text.replace(/<\/(script)/gi, '<\\/$1');
+
+    const hasBlockingErrors = () => {
+      for (const list of diagnostics.values()) {
+        if (list.some(item => item.severity === 'error')) return true;
+      }
+      return false;
+    };
+
+    const buildPreviewDoc = ({ html, css, js, json }) => `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>${css}</style>
+<script>window.__workflowSchema = ${escapeForScript(json)};<\/script>
+<script>${escapeForScript(js)}<\/script>
+</head>
+<body>
+${html}
+</body>
+</html>`;
+
+    const refreshPreview = (payload = null, external = false) => {
+      if (hasBlockingErrors()) {
+        if (previewStatus) previewStatus.textContent = 'Preview blocked — fix lint errors to refresh.';
+        if (!external) broadcastDiagnostics();
+        return;
+      }
+      const docs = payload || getDocs();
+      if (previewFrame) {
+        previewFrame.srcdoc = buildPreviewDoc(docs);
+      }
+      const stamp = new Date();
+      if (previewMeta) {
+        previewMeta.textContent = `Synced ${stamp.toLocaleTimeString()}`;
+      }
+      if (previewStatus) {
+        previewStatus.textContent = external ? 'Preview auto-refreshed from watcher event.' : 'Preview refreshed.';
+      }
+      resetDirty();
+      if (!external) {
+        lastBroadcast = Date.now();
+        try {
+          localStorage.setItem(broadcastKey, JSON.stringify({ time: lastBroadcast, docs }));
+        } catch (err) {
+          console.warn('Workflow broadcast failed', err);
+        }
+      }
+    };
+
+    const schedulePreview = () => {
+      clearTimeout(refreshTimer);
+      refreshTimer = window.setTimeout(() => refreshPreview(), 500);
+    };
+
+    const broadcastDiagnostics = () => updateValidationSummary();
+
+    const updateValidationSummary = () => {
+      if (!summaryEl) return;
+      const all = [...diagnostics.entries()].flatMap(([key, list]) => list.map(item => ({ key, item })));
+      const total = all.length;
+      const worst = all.find(({ item }) => item.severity === 'error');
+      const warning = all.find(({ item }) => item.severity === 'warning');
+      const badge = document.createElement('span');
+      const message = document.createElement('span');
+      summaryEl.innerHTML = '';
+      if (worst) {
+        badge.className = 'validation-badge error';
+        badge.textContent = 'Errors';
+        message.textContent = `${worst.key.toUpperCase()} — ${worst.item.message}`;
+      } else if (warning) {
+        badge.className = 'validation-badge warn';
+        badge.textContent = 'Warnings';
+        message.textContent = `${warning.key.toUpperCase()} — ${warning.item.message}`;
+      } else {
+        badge.className = 'validation-badge ok';
+        badge.textContent = 'Lint clean';
+        message.textContent = total ? `${total} notices` : 'No issues detected.';
+      }
+      summaryEl.append(badge, message);
+    };
+
+    updateValidationSummary();
+
+    document.querySelectorAll('.editor-tab').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const target = btn.getAttribute('data-target');
+        if (!target) return;
+        document.querySelectorAll('.editor-tab').forEach((tab) => {
+          const isActive = tab === btn;
+          tab.classList.toggle('is-active', isActive);
+          tab.setAttribute('aria-selected', String(isActive));
+        });
+        document.querySelectorAll('.editor-surface').forEach((surface) => {
+          surface.classList.toggle('is-visible', surface.id === `editor-${target}`);
+        });
+        const view = editorMap[target];
+        if (view) view.focus();
+      });
+    });
+
+    const adjustBy = (delta) => {
+      if (!panels) return;
+      const bounds = panels.getBoundingClientRect();
+      const min = 240;
+      const max = bounds.width - 240;
+      const currentPercent = parseFloat(getComputedStyle(panels).getPropertyValue('--editor-width')) || 55;
+      const current = (currentPercent / 100) * bounds.width;
+      const next = Math.max(min, Math.min(max, current + delta));
+      const percent = (next / bounds.width) * 100;
+      panels.style.setProperty('--editor-width', `${percent}%`);
+    };
+
+    if (resizer && panels) {
+      resizer.addEventListener('pointerdown', (event) => {
+        event.preventDefault();
+        resizer.setPointerCapture(event.pointerId);
+        const startX = event.clientX;
+        const bounds = panels.getBoundingClientRect();
+        const startWidth = htmlSurface.getBoundingClientRect().width;
+        const move = (ev) => {
+          const delta = ev.clientX - startX;
+          const next = Math.max(240, Math.min(bounds.width - 240, startWidth + delta));
+          const percent = (next / bounds.width) * 100;
+          panels.style.setProperty('--editor-width', `${percent}%`);
+        };
+        const up = () => {
+          resizer.releasePointerCapture(event.pointerId);
+          window.removeEventListener('pointermove', move);
+        };
+        window.addEventListener('pointermove', move);
+        window.addEventListener('pointerup', up, { once: true });
+      });
+
+      resizer.addEventListener('keydown', (ev) => {
+        if (ev.key === 'ArrowLeft') { ev.preventDefault(); adjustBy(-40); }
+        if (ev.key === 'ArrowRight') { ev.preventDefault(); adjustBy(40); }
+      });
+    }
+
+    const handleSave = () => {
+      refreshPreview();
+    };
+
+    saveButton?.addEventListener('click', handleSave);
+
+    autoToggle?.addEventListener('change', (event) => {
+      if (!previewStatus) return;
+      if (event.target.checked) {
+        previewStatus.textContent = 'Auto refresh enabled.';
+        if (dirty) schedulePreview();
+      } else {
+        previewStatus.textContent = 'Auto refresh paused — use Save to update preview.';
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
+        if (event.target && event.target.closest && event.target.closest('.cm-editor')) {
+          event.preventDefault();
+          handleSave();
+        }
+      }
+    });
+
+    window.addEventListener('storage', (event) => {
+      if (event.key !== broadcastKey || !event.newValue) return;
+      try {
+        const payload = JSON.parse(event.newValue);
+        if (payload.time && payload.time === lastBroadcast) return;
+        if (payload.docs) {
+          refreshPreview(payload.docs, true);
+        }
+      } catch (err) {
+        console.warn('Failed to process workflow broadcast', err);
+      }
+    });
+
+    // Initial preview render
+    refreshPreview();
+  </script>
 </body>
 </html>
