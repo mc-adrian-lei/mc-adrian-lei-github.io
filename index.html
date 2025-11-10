@@ -5,655 +5,182 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>32 Aspect Developmental Self Clock — Mind–Body–Energy Mapping</title>
   <style>
+    /* =============================================================
+       32 Aspect Developmental Self Clock — Single File Implementation
+       • Plain HTML, CSS, and JavaScript (no external libraries)
+       • Accessible controls + Canvas visualization
+       • Keyboard navigation, high-contrast defaults, mobile-friendly
+       ============================================================= */
+
     :root {
-      --bg: #f6f7fc;
-      --panel: rgba(255, 255, 255, 0.9);
-      --accent: #1d4ed8;
-      --accent-2: #7c3aed;
-      --good: #059669;
-      --warn: #d97706;
-      --bad: #dc2626;
-      --focus: #facc15;
-      --glass-stroke: rgba(148, 163, 233, 0.22);
-    }
-
-    body[data-theme="dark"] {
-      --bg: #050914;
-      --panel: rgba(18, 22, 45, 0.85);
-      --accent: #60a5fa;
-      --accent-2: #a855f7;
-      --good: #34d399;
-      --warn: #fbbf24;
-      --bad: #f87171;
+      --bg: #0f1220;
+      --panel: #12162a;
+      --ink: #f6f7fb;
+      --muted: #b8bfd9;
+      --accent: #7dd3fc; /* cyan */
+      --accent-2: #a78bfa; /* violet */
+      --good: #34d399; /* green */
+      --warn: #fbbf24; /* amber */
+      --bad: #f87171;  /* red */
+      --ring: #1f2543;
       --focus: #fde68a;
-      --glass-stroke: rgba(120, 150, 255, 0.18);
     }
 
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
     body {
       margin: 0;
-      font-family: "Inter", system-ui;
-      color: #111;
-      background: radial-gradient(circle at 70% 20%, rgba(125,211,252,0.24), transparent),
-        linear-gradient(160deg, var(--bg), #e2e8f0);
-      transition: background 0.6s ease, color 0.4s ease;
-    }
-
-    body[data-theme="dark"] {
-      background: radial-gradient(900px 900px at 85% 18%, rgba(59, 130, 246, 0.18), transparent),
-        linear-gradient(160deg, rgba(9, 12, 28, 0.92), var(--bg));
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 1200px at 70% 20%, #1b2245 0%, var(--bg) 55%);
+      color: var(--ink);
     }
 
     .app {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 360px;
+      grid-template-columns: 1fr 360px;
       grid-template-rows: auto 1fr auto;
-      grid-template-areas:
+      grid-template-areas: 
         "top top"
         "vis side"
         "footer footer";
-      gap: 16px;
+      gap: 12px;
       height: 100dvh;
-      padding: clamp(16px, 2vw, 28px);
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-
-    .workflow {
-      margin: 32px auto 64px;
-      max-width: 1400px;
-      padding: 0 clamp(16px, 2vw, 28px);
-      display: grid;
-      gap: 18px;
-    }
-
-    .workflow-card {
-      background: var(--panel);
-      border-radius: 22px;
-      border: 1px solid var(--glass-stroke);
-      box-shadow: var(--shadow-1);
-      padding: clamp(18px, 2.4vw, 26px);
-      display: grid;
-      gap: 18px;
-      backdrop-filter: blur(16px);
-    }
-
-    .workflow-header {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: flex-start;
-    }
-
-    .workflow-header h2 {
-      margin: 0;
-      font-size: clamp(18px, 2.4vw, 24px);
-    }
-
-    .workflow-header p {
-      margin: 4px 0 0;
-      max-width: 70ch;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.55;
-    }
-
-    .workflow-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .workflow-actions label {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .workflow-panels {
-      display: grid;
-      grid-template-columns: var(--editor-width, 55%) 12px 1fr;
-      gap: 0;
-      min-height: 420px;
-      background: color-mix(in srgb, var(--panel-strong) 95%, transparent);
-      border: 1px solid var(--glass-stroke);
-      border-radius: 20px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .workflow-pane {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      background: color-mix(in srgb, var(--panel-strong) 94%, transparent);
-    }
-
-    .workflow-pane.preview {
-      background: color-mix(in srgb, var(--panel) 96%, transparent);
-    }
-
-    .pane-resizer {
-      cursor: col-resize;
-      background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 40%, transparent), transparent);
-      position: relative;
-    }
-
-    .pane-resizer::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      margin: auto;
-      width: 4px;
-      height: 48px;
-      border-radius: 999px;
-      background: color-mix(in srgb, var(--accent) 60%, transparent);
-    }
-
-    .editor-tabs {
-      display: flex;
-      gap: 6px;
-      padding: 12px;
-      background: color-mix(in srgb, var(--panel-strong) 88%, transparent);
-      border-bottom: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
-    }
-
-    .editor-tab {
-      border: none;
-      border-radius: 12px;
-      background: transparent;
-      padding: 8px 14px;
-      font: inherit;
-      cursor: pointer;
-      color: var(--muted);
-      transition: background 0.2s ease, color 0.2s ease;
-    }
-
-    .editor-tab.is-active {
-      background: linear-gradient(140deg, color-mix(in srgb, var(--accent) 35%, transparent), color-mix(in srgb, var(--accent-2) 40%, transparent));
-      color: var(--ink);
-      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.25);
-    }
-
-    .editor-surfaces {
-      position: relative;
-      flex: 1;
-    }
-
-    .editor-surface {
-      position: absolute;
-      inset: 0;
-      display: none;
-    }
-
-    .editor-surface.is-visible {
-      display: block;
-    }
-
-    .editor-surface .cm-editor {
-      height: 100%;
-      font-size: 13px;
-    }
-
-    .validation-summary {
-      padding: 12px 16px;
-      border-top: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
-      font-size: 12px;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .validation-summary strong {
-      font-weight: 600;
-      color: var(--ink);
-    }
-
-    .preview-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 16px;
-      border-bottom: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
-      font-size: 13px;
-    }
-
-    .preview-header span {
-      color: var(--muted);
-    }
-
-    #workflowPreview {
-      border: none;
-      flex: 1;
-      width: 100%;
-      background: #fff;
-    }
-
-    .preview-status {
-      font-size: 12px;
-      color: var(--muted);
-      padding: 10px 16px;
-      border-top: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
-    }
-
-    .validation-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      border-radius: 999px;
-      padding: 4px 10px;
-      background: color-mix(in srgb, var(--panel-strong) 85%, transparent);
-      border: 1px solid color-mix(in srgb, var(--accent) 24%, transparent);
-      font-weight: 600;
-      letter-spacing: 0.2px;
-    }
-
-    .validation-badge.ok { color: var(--good); border-color: color-mix(in srgb, var(--good) 45%, transparent); }
-    .validation-badge.warn { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 45%, transparent); }
-    .validation-badge.error { color: var(--bad); border-color: color-mix(in srgb, var(--bad) 45%, transparent); }
-
-    .workflow-footer {
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.6;
+      padding: 10px;
     }
 
     header {
-      background: var(--panel);
-      border: 1px solid var(--glass-stroke);
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-      text-align: center;
-      position: relative;
+      grid-area: top;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: color-mix(in oklab, var(--panel) 80%, black 20%);
+      border: 1px solid #1c2248;
+      border-radius: 14px;
+      padding: 10px 12px;
+      box-shadow: 0 4px 22px rgba(0,0,0,.25);
     }
 
-    header h1 {
-      font-size: clamp(20px, 2.5vw, 28px);
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: hueShift 6s linear infinite;
-    }
+    header h1 { font-size: clamp(16px, 2vw, 18px); margin: 0; letter-spacing: .3px; }
 
-    @keyframes hueShift {
-      0% { filter: hue-rotate(0deg); }
-      100% { filter: hue-rotate(360deg); }
-    }
+    header .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 
     .btn {
-      background: linear-gradient(140deg, var(--accent), var(--accent-2));
-      border: none;
+      background: linear-gradient(180deg, #22306b, #1a234a);
+      color: var(--ink);
+      border: 1px solid #31407c;
       border-radius: 10px;
-      color: white;
-      padding: 8px 16px;
+      padding: 8px 10px;
       font-weight: 600;
       cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+    .btn:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+    .btn.secondary { background: #1a1f3d; border-color: #2b356a; }
+    .btn.warn { background: #3b1f1f; border-color: #6b2b2b; }
+
+    .vis {
+      grid-area: vis;
+      position: relative;
+      background: radial-gradient(800px 800px at 50% 45%, #141a34 0%, #0e1328 60%);
+      border-radius: 16px;
+      border: 1px solid #1b1f3f;
+      display: grid;
+      grid-template-rows: 1fr auto;
+      overflow: clip;
     }
 
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(59, 130, 246, 0.35);
+    canvas { width: 100%; height: 100%; display: block; }
+
+    .legend {
+      padding: 10px;
+      border-top: 1px solid #1b1f3f;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      background: #0f1430;
     }
 
     .legend .chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
-      border-radius: 999px;
-      padding: 6px 12px;
+      display: inline-flex; align-items: center; gap: 6px;
+      border: 1px solid #2a315f; border-radius: 999px; padding: 6px 10px;
       color: var(--muted);
-      background: color-mix(in srgb, var(--panel-strong) 85%, transparent);
+      background: #12183b;
       font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.2px;
     }
 
-    .legend .swatch {
-      width: 12px;
-      height: 12px;
-      border-radius: 4px;
-      background: var(--accent);
-      box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 50%, transparent);
-      display: inline-block;
-    }
+    .legend .swatch { width: 12px; height: 12px; border-radius: 3px; background: var(--accent); display: inline-block; }
 
     aside {
       grid-area: side;
       display: grid;
-      grid-template-rows: auto auto auto 1fr auto;
-      gap: 14px;
-      background: var(--panel-strong);
-      border: 1px solid var(--glass-stroke);
-      border-radius: 22px;
-      padding: 16px;
-      overflow: hidden;
-      backdrop-filter: blur(18px);
-      box-shadow: var(--shadow-1);
-    }
-
-    .panel {
-      background: color-mix(in srgb, var(--panel) 92%, transparent);
-      border: 1px solid var(--glass-stroke);
-      border-radius: 18px;
-      padding: 14px;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
-      display: grid;
+      grid-template-rows: auto 1fr auto;
       gap: 10px;
-    }
-
-    .metrics {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 12px;
-    }
-
-    .metric {
-      background: linear-gradient(150deg,
-        color-mix(in srgb, var(--panel-strong) 92%, transparent) 0%,
-        color-mix(in srgb, var(--accent) 18%, transparent) 100%);
-      border: 1px solid color-mix(in srgb, var(--accent) 32%, transparent);
+      background: color-mix(in oklab, var(--panel) 90%, black 10%);
+      border: 1px solid #1c2248;
       border-radius: 16px;
-      padding: 12px;
-      display: grid;
-      gap: 6px;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
-    }
-    .metric h3 { margin: 0; font-size: 12px; color: var(--muted); font-weight: 600; letter-spacing: 0.3px; }
-    .metric .val { font-size: 20px; font-weight: 700; line-height: 1.2; color: var(--ink); }
-    .metric .val small { display: block; font-size: 11px; font-weight: 500; color: var(--muted); }
-    .status-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
-    .status-label { font-size: 11px; color: var(--muted); font-weight: 600; }
-
-    .panel p { margin: 0; }
-
-    .weights-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 10px;
-    }
-
-    .weight-item {
-      background: color-mix(in srgb, var(--panel-strong) 88%, transparent);
-      border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
-      border-radius: 14px;
       padding: 10px;
-      display: grid;
-      gap: 6px;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+      overflow: hidden;
     }
 
-    .weight-item header {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 6px;
-    }
+    .panel { background: #0f1430; border: 1px solid #1b214b; border-radius: 12px; padding: 10px; }
 
-    .weight-item output {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--muted);
-    }
+    .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
-    .weights-grid input[type="range"] {
-      accent-color: var(--accent-2);
-    }
+    .metric { background: #0c1027; border: 1px solid #18204b; border-radius: 12px; padding: 10px; }
+    .metric h3 { margin: 0 0 6px; font-size: 12px; color: var(--muted); font-weight: 600; }
+    .metric .val { font-size: 18px; font-weight: 800; }
 
-    .weight-summary {
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.5;
-    }
+    .scroll { overflow: auto; min-height: 120px; max-height: 50vh; padding-right: 4px; }
+    .aspect-list { display: grid; gap: 6px; }
 
-    .compare-panel {
-      display: grid;
-      gap: 12px;
-    }
-
-    .compare-controls {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 10px;
-    }
-
-    .compare-summary {
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.55;
-    }
-
-    .compare-summary strong {
-      color: var(--ink);
-    }
-
-    .compare-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .sci-explainer {
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.55;
-    }
-
-    .tutorial-overlay {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: clamp(16px, 4vw, 40px);
-      background: rgba(9, 12, 28, 0.65);
-      backdrop-filter: blur(10px);
-      transition: opacity 0.3s ease;
-      z-index: 20;
-    }
-
-    .tutorial-overlay.is-hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .tutorial-card {
-      background: var(--panel-strong);
-      border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
-      border-radius: 20px;
-      padding: clamp(18px, 3vw, 28px);
-      max-width: min(540px, 100%);
-      width: 100%;
-      display: grid;
-      gap: 14px;
-      box-shadow: var(--shadow-2);
-      color: var(--ink);
-    }
-
-    .tutorial-card header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
-    }
-
-    .tutorial-card h3 {
-      margin: 0;
-      font-size: clamp(16px, 2.4vw, 20px);
-    }
-
-    .tutorial-body {
-      display: grid;
-      gap: 10px;
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    .comparison-summary {
-      background: color-mix(in srgb, var(--panel-strong) 85%, transparent);
-      border: 1px dashed color-mix(in srgb, var(--accent) 30%, transparent);
-      border-radius: 14px;
-      padding: 12px;
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    dialog {
-      border: none;
-      border-radius: 20px;
-      padding: 0;
-      max-width: min(540px, 90vw);
-      background: var(--panel-strong);
-      color: var(--ink);
-      box-shadow: var(--shadow-2);
-    }
-    dialog::backdrop { background: rgba(15, 23, 42, 0.45); }
-
-    dialog .modal-body {
-      display: grid;
-      gap: 14px;
-      padding: 20px;
-      background: transparent;
-    }
-
-    .tutorial-list { padding-left: 18px; display: grid; gap: 8px; font-size: 13px; color: var(--muted); }
-    .tutorial-list li strong { color: var(--ink); }
-
-    .export-grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
-
-    body[data-layout="mobile"] {
-      padding-bottom: env(safe-area-inset-bottom, 0px);
-    }
-
-    .tutorial-nav {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .tutorial-nav .btn.small {
-      padding-inline: 12px;
-      padding-block: 6px;
-      font-size: 12px;
-    }
-
-    .hidden { display: none !important; }
-
-    .scroll { overflow: auto; min-height: 120px; max-height: 50vh; padding-right: 6px; }
-    .aspect-list { display: grid; gap: 10px; }
-
-    .aspect-item {
-      background: color-mix(in srgb, var(--panel-strong) 90%, transparent);
-      border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
-      border-radius: 16px;
-      padding: 12px;
-      display: grid;
-      gap: 10px;
-      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
-    }
-    .aspect-item:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--accent) 45%, transparent); box-shadow: 0 12px 26px rgba(37, 99, 235, 0.18); }
-    .aspect-item[aria-selected="true"] { border-color: color-mix(in srgb, var(--focus) 60%, transparent); box-shadow: 0 16px 32px rgba(253, 230, 138, 0.28); }
-
-    .row { display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
-    .row .name { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; letter-spacing: 0.25px; }
-
-    .badge {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--muted);
-      background: color-mix(in srgb, var(--panel) 80%, transparent);
-      border-radius: 999px;
-      padding: 4px 10px;
-      border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
-    }
-
-    .dot { width: 12px; height: 12px; border-radius: 999px; box-shadow: 0 0 0 2px rgba(255,255,255,0.05); }
-
-    .activation-bar { position: relative; width: 100%; height: 6px; border-radius: 999px; background: color-mix(in srgb, var(--panel) 82%, transparent); overflow: hidden; }
-    .activation-bar span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, rgba(125, 211, 252, 0.85), rgba(168, 85, 247, 0.9)); transition: width 0.2s ease; }
-
+    .aspect-item { background: #0a0f24; border: 1px solid #1a2352; border-radius: 12px; padding: 8px; display: grid; gap: 6px; }
+    .aspect-item[aria-selected="true"] { outline: 2px solid var(--focus); }
+    .row { display: flex; gap: 8px; align-items: center; justify-content: space-between; }
+    .row .name { display: flex; align-items: center; gap: 8px; font-weight: 700; }
+    .dot { width: 10px; height: 10px; border-radius: 999px; }
     .tags { display: flex; gap: 6px; flex-wrap: wrap; }
-    .tag { font-size: 11px; color: var(--muted); background: color-mix(in srgb, var(--panel-strong) 88%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent); padding: 3px 8px; border-radius: 999px; letter-spacing: 0.2px; }
+    .tag { font-size: 10px; color: var(--muted); background: #12183b; border: 1px solid #222c65; padding: 2px 6px; border-radius: 999px; }
 
-    label { font-size: 12px; color: var(--muted); font-weight: 600; }
-
-    input[type="range"] { width: 100%; accent-color: var(--accent); }
-    input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--accent); border: 2px solid rgba(255,255,255,0.4); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 50%, transparent); cursor: pointer; }
-    input[type="range"]::-webkit-slider-runnable-track { height: 6px; border-radius: 999px; background: color-mix(in srgb, var(--panel) 80%, transparent); }
-    input[type="range"]:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-
-    .input-field { display: grid; gap: 6px; }
-    .input-field input,
-    .input-field select {
-      width: 100%;
-      height: 100%;
-      border-radius: 16px;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.2);
-    }
+    label { font-size: 12px; color: var(--muted); }
+    input[type="range"] { width: 100%; }
+    input[type="range"]:focus-visible { outline: 2px solid var(--focus); }
 
     footer {
-      text-align: center;
-      padding: 16px;
-      color: #666;
-      font-size: 13px;
-      background: var(--panel);
-      border-radius: 16px;
-      margin: 16px auto;
-      width: 90%;
-      max-width: 800px;
+      grid-area: footer;
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between;
+      background: #0e1433; border-top: 1px solid #18204b; padding: 8px 10px; border-radius: 12px;
     }
 
-    .vis-hint {
-      font-style: italic;
-      color: var(--warn);
-    }
+    .vis-hint { color: var(--muted); font-size: 12px; }
 
-    .resonance-glow {
-      animation: pulse 3s infinite ease-in-out;
-      filter: drop-shadow(0 0 12px var(--accent));
-    }
+    /* Dialog (for quick info/tooltip-like modal) */
+    dialog { border: 1px solid #24306f; border-radius: 16px; padding: 0; color: var(--ink); background: #0c1129; max-width: min(520px, 92vw); }
+    dialog::backdrop { background: rgba(0,0,0,.4); }
+    .modal-head { padding: 12px; border-bottom: 1px solid #1b214b; display: flex; align-items: center; justify-content: space-between; }
+    .modal-body { padding: 12px; display: grid; gap: 10px; }
+    .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .modal-grid > div { background: #0a0f24; border: 1px solid #1a2352; border-radius: 10px; padding: 8px; }
 
-    @keyframes pulse {
-      0%, 100% { opacity: 0.8; transform: scale(1); }
-      50% { opacity: 1; transform: scale(1.02); }
+    @media (max-width: 1024px) {
+      .app { grid-template-columns: 1fr; grid-template-areas: "top" "vis" "side" "footer"; height: auto; min-height: 100dvh; }
+      aside { order: 3; }
     }
   </style>
 </head>
-<body data-layout="desktop" data-panel="open">
+<body>
   <div class="app" role="application" aria-label="32 Aspect Developmental Self Clock">
     <header>
-      <div class="header-top">
-        <div class="title-block">
-          <h1>32 Aspect Self Clock · Mind–Body–Energy Mapping</h1>
-          <p class="subtitle">An interactive atlas for synchronising cognitive, somatic, and archetypal development across the lifespan.</p>
-        </div>
-        <div class="mode-toggle" role="group" aria-label="Model lenses">
-          <button id="modeMind" class="btn" aria-pressed="true" title="View Mind model (psych/semantic)">🧠 Mind</button>
-          <button id="modeBody" class="btn secondary" aria-pressed="false" title="View Body model (neuro/physiology)">🩺 Body</button>
-          <button id="modeSoul" class="btn secondary" aria-pressed="false" title="View Soul model (archetypal/transpersonal)">✨ Soul</button>
-          <button id="btnTheme" class="btn ghost small" type="button" aria-pressed="false" title="Toggle light or dark presentation">🌙 Dark</button>
-        </div>
-      </div>
-      <div class="control-row">
-        <div class="control-cluster">
-          <button id="btnTutorial" class="btn" aria-pressed="false" title="Toggle tutorial/walkthrough mode (keyboard: T)">▶ Tutorial</button>
-          <button id="btnRandomize" class="btn secondary" title="Randomize activations (keyboard: R)">Shuffle</button>
-          <button id="btnDeactivate" class="btn warn" title="Set all activations to 0 (keyboard: 0)">Deactivate All</button>
-        </div>
-        <div class="control-cluster secondary">
-          <button id="btnExport" class="btn secondary" title="Export all aspect states as JSON (keyboard: E)">Export JSON</button>
-          <button id="btnExportReport" class="btn secondary" title="Download a printable summary report (keyboard: Shift+E)">Export Report</button>
-          <button id="panelToggle" class="btn ghost small mobile-only" type="button" aria-controls="insightPanel" aria-expanded="false">Insights</button>
-        </div>
+      <h1>32 Aspect Self Clock · Mind–Body–Energy Mapping</h1>
+      <div class="controls">
+        <button id="modeMind" class="btn" aria-pressed="true" title="View Mind model (psych/semantic)">Mind</button>
+        <button id="modeBody" class="btn secondary" aria-pressed="false" title="View Body model (neuro/physiology)">Body</button>
+        <button id="modeSoul" class="btn secondary" aria-pressed="false" title="View Soul model (archetypal/transpersonal)">Soul</button>
+        <button id="btnTutorial" class="btn" aria-pressed="false" title="Toggle tutorial/walkthrough mode (keyboard: T)">▶ Tutorial</button>
+        <button id="btnRandomize" class="btn secondary" title="Randomize activations (keyboard: R)">Shuffle</button>
+        <button id="btnDeactivate" class="btn secondary" title="Set all activations to 0 (keyboard: 0)">Deactivate All</button>
+        <button id="btnExport" class="btn" title="Export all aspect states as JSON (keyboard: E)">Export JSON</button>
       </div>
     </header>
 
@@ -667,122 +194,16 @@
       </div>
     </section>
 
-    <aside id="insightPanel">
-      <div class="panel mobile-only">
-        <div class="row" style="justify-content: space-between; align-items: center;">
-          <strong>Insights &amp; Controls</strong>
-          <button id="panelClose" class="btn ghost small" type="button" aria-label="Close insights panel">Close</button>
-        </div>
-        <p class="vis-hint">Review metrics or fine-tune activations.</p>
-      </div>
+    <aside>
       <div class="panel metrics" aria-label="System metrics">
-        <div class="metric" aria-live="polite">
-          <h3>SCI (Semantic Coherence Index)</h3>
-          <div class="val" id="sciVal">—</div>
-          <div class="status-row">
-            <span id="sciStatus" class="status-label">Awaiting activation data.</span>
-            <button id="btnSciInfo" class="btn ghost small" type="button">What is SCI?</button>
-          </div>
-        </div>
+        <div class="metric" aria-live="polite"><h3>SCI (Semantic Coherence Index)</h3><div class="val" id="sciVal">—</div></div>
         <div class="metric" aria-live="polite"><h3>Energy–Matter</h3><div class="val" id="emVal">—</div></div>
-        <div class="metric" aria-live="polite"><h3>Active Aspects</h3><div class="val" id="activeVal">—</div></div>
-        <div class="metric" aria-live="polite"><h3>Peak Activation</h3><div class="val" id="peakVal">—</div></div>
-      </div>
-
-      <div class="panel" aria-label="Semantic Coherence guidance">
-        <strong>Understanding the SCI</strong>
-        <p class="sci-explainer" id="sciExplanation">The Semantic Coherence Index (SCI) is calculated as the mean activation of all 32 aspects divided by (1 + the standard deviation) and scaled by 100. High scores indicate evenly distributed activations with shared emphasis, while lower scores reveal fragmented focus or extreme peaks.</p>
       </div>
 
       <div class="panel" aria-label="Developmental stage slider">
-        <label for="devStageSlider"><strong>Developmental Stage</strong> <span id="devStageVal">1 · Infancy</span></label>
+        <label for="devStageSlider"><strong>Developmental Stage</strong> <span id="devStageVal">1</span></label>
         <input id="devStageSlider" type="range" min="0" max="11" value="0" />
         <p class="vis-hint">0 = birth/infancy ··· 12 = wisdom/end-of-life · Adjusts all activations via devProfile</p>
-      </div>
-
-      <div class="panel" aria-label="Stage weighting controls">
-        <div class="row" style="align-items: center; justify-content: space-between;">
-          <strong>Stage Emphasis</strong>
-          <button id="btnResetWeights" class="btn ghost small" type="button">Reset weights</button>
-        </div>
-        <label for="stageWeightSelect">Focus stage</label>
-        <select id="stageWeightSelect"></select>
-        <label for="stageWeightSlider">Multiplier <span id="stageWeightValue">1.00×</span></label>
-        <input id="stageWeightSlider" type="range" min="0.5" max="1.8" step="0.05" value="1" />
-        <p class="vis-hint">Emphasize specific stages beyond the base 0–12 developmental profile.</p>
-      </div>
-
-      <div class="panel" aria-label="Developmental comparison">
-        <strong>Comparative Mode</strong>
-        <div class="control-grid">
-          <div class="input-field">
-            <label for="compareStageA">Stage A</label>
-            <select id="compareStageA"></select>
-          </div>
-          <div class="input-field">
-            <label for="compareStageB">Stage B</label>
-            <select id="compareStageB"></select>
-          </div>
-        </div>
-        <div id="comparisonSummary" class="comparison-summary" aria-live="polite">Select two stages to compare their activation patterns.</div>
-      </div>
-
-      <div class="panel" aria-label="Aspect filters and sorting">
-        <div class="control-grid">
-          <div class="input-field">
-            <label for="searchInput">Find aspect</label>
-            <input id="searchInput" type="search" placeholder="Search names, roles, or regions" autocomplete="off" />
-          </div>
-          <div class="input-field">
-            <label for="sortSelect">Sort by</label>
-            <select id="sortSelect">
-              <option value="stage">Stage · Ring</option>
-              <option value="activationDesc">Activation (high → low)</option>
-              <option value="activationAsc">Activation (low → high)</option>
-              <option value="name">Name (A → Z)</option>
-            </select>
-          </div>
-          <div class="input-field">
-            <label for="stageFilter">Stage focus</label>
-            <select id="stageFilter">
-              <option value="all">All stages</option>
-              <option value="1">Stage 1</option>
-              <option value="2">Stage 2</option>
-              <option value="3">Stage 3</option>
-              <option value="4">Stage 4</option>
-              <option value="5">Stage 5</option>
-              <option value="6">Stage 6</option>
-              <option value="7">Stage 7</option>
-              <option value="8">Stage 8</option>
-              <option value="9">Stage 9</option>
-              <option value="10">Stage 10</option>
-              <option value="11">Stage 11</option>
-              <option value="12">Stage 12</option>
-            </select>
-          </div>
-          <div class="input-field">
-            <label for="ringFilter">Ring focus</label>
-            <select id="ringFilter">
-              <option value="all">All rings</option>
-              <option value="1">Ring 1</option>
-              <option value="2">Ring 2</option>
-              <option value="3">Ring 3</option>
-              <option value="4">Ring 4</option>
-              <option value="5">Ring 5</option>
-              <option value="6">Ring 6</option>
-              <option value="7">Ring 7</option>
-              <option value="8">Ring 8</option>
-            </select>
-          </div>
-        </div>
-        <label class="toggle">
-          <input type="checkbox" id="activeOnly" />
-          <span>Show active aspects only</span>
-        </label>
-        <div class="filter-actions">
-          <button id="btnResetFilters" class="btn tertiary small" type="button">Reset</button>
-          <span id="filterSummary" class="vis-hint">All aspects visible.</span>
-        </div>
       </div>
 
       <div class="panel scroll" aria-label="Aspect controls">
@@ -795,67 +216,16 @@
           <span class="tag">NT: 5-HT, DA, NE, GABA, ACh, Oxytocin</span>
           <span class="tag">Modes: visual, auditory, interoceptive…</span>
         </div>
-        <p class="vis-hint">Keyboard: Arrow keys pan focus · Enter opens details · T tutorial · R shuffle · E export JSON · Shift+E export report · 0 clear</p>
+        <p class="vis-hint">Keyboard: Arrow keys pan focus · Enter opens details · T tutorial · R shuffle · E export · 0 clear</p>
       </div>
     </aside>
-    <div class="panel-overlay" id="panelOverlay" aria-hidden="true"></div>
 
-  <dialog id="tutorialDialog" aria-label="Interactive tutorial">
-    <form method="dialog" class="modal-body">
-      <header class="modal-head">
-        <strong>Self Clock Tutorial</strong>
-        <button class="btn" value="cancel">Close</button>
-      </header>
-      <ol id="tutorialContent" class="tutorial-list"></ol>
-    </form>
-  </dialog>
-
-  <section class="workflow" aria-labelledby="workflowTitle">
-    <div class="workflow-card">
-      <div class="workflow-header">
-        <div>
-          <h2 id="workflowTitle">Codex Workflow Studio</h2>
-          <p>Design and validate interface updates without leaving the page. Edit HTML, CSS, JavaScript, and data schemas with inline linting, then preview the result instantly.</p>
-        </div>
-        <div class="workflow-actions">
-          <button id="workflowSave" class="btn" type="button">Save &amp; Refresh Preview</button>
-          <label><input id="workflowAuto" type="checkbox" checked /> Auto refresh on save</label>
-        </div>
-      </div>
-      <div class="workflow-panels" id="workflowPanels">
-        <div class="workflow-pane editors" id="workflowEditors">
-          <div class="editor-tabs" role="tablist">
-            <button class="editor-tab is-active" role="tab" aria-selected="true" id="tab-html" data-target="html">HTML</button>
-            <button class="editor-tab" role="tab" aria-selected="false" id="tab-css" data-target="css">CSS</button>
-            <button class="editor-tab" role="tab" aria-selected="false" id="tab-js" data-target="js">JavaScript</button>
-            <button class="editor-tab" role="tab" aria-selected="false" id="tab-json" data-target="json">JSON Schema</button>
-          </div>
-          <div class="editor-surfaces">
-            <div id="editor-html" class="editor-surface is-visible" role="tabpanel" aria-labelledby="tab-html"></div>
-            <div id="editor-css" class="editor-surface" role="tabpanel" aria-labelledby="tab-css"></div>
-            <div id="editor-js" class="editor-surface" role="tabpanel" aria-labelledby="tab-js"></div>
-            <div id="editor-json" class="editor-surface" role="tabpanel" aria-labelledby="tab-json"></div>
-          </div>
-          <div id="validationSummary" class="validation-summary" aria-live="polite">
-            <span class="validation-badge ok">Lint clean</span>
-            <span>No issues detected.</span>
-          </div>
-        </div>
-        <div class="pane-resizer" id="workflowResizer" role="separator" aria-orientation="vertical" aria-label="Resize editor and preview" tabindex="0"></div>
-        <div class="workflow-pane preview">
-          <div class="preview-header">
-            <strong>Live Preview</strong>
-            <span id="previewMeta">Synced just now</span>
-          </div>
-          <iframe id="workflowPreview" title="Live preview workspace" sandbox="allow-scripts allow-same-origin"></iframe>
-          <div id="previewStatus" class="preview-status">Waiting for first save…</div>
-        </div>
-      </div>
-      <div class="workflow-footer">
-        <p>Tip: Press <kbd>Ctrl</kbd>/<kbd>⌘</kbd>+<kbd>S</kbd> while focused in any editor to save and refresh the preview. Lint markers highlight parse issues directly in the gutter, while the summary lists the most recent warnings.</p>
-      </div>
-    </div>
-  </section>
+    <footer>
+      <div class="vis-hint">C = E × MC · Energy input → neural region → neurochemical output → system response</div>
+      <div class="vis-hint">Open science: Export preserves all annotations for reproducibility</div>
+      <div class="vis-hint">Adrian Lei Martinez-Conol, founder of the Only When Prompted Research Initiative 2018</div>
+    </footer>
+  </div>
 
   <!-- Info Modal (tooltip-like, accessible) -->
   <dialog id="infoModal" aria-label="Aspect details">
@@ -887,67 +257,11 @@
         <label for="mSlider"><strong>Activation</strong> <span id="mActVal" style="float:right">0</span></label>
         <input id="mSlider" type="range" min="0" max="100" value="0" />
       </div>
-    </form>
-  </dialog>
-
-  <div id="tutorialOverlay" class="tutorial-overlay is-hidden" aria-hidden="true">
-    <div class="tutorial-card" role="dialog" aria-modal="true" aria-labelledby="tutorialTitle">
-      <header>
-        <div>
-          <h3 id="tutorialTitle">Interactive Tutorial</h3>
-          <p id="tutorialStep" class="vis-hint" style="margin:4px 0 0;">Step 1 of 1</p>
-        </div>
-        <button id="tutorialClose" class="btn ghost small" type="button">Close</button>
-      </header>
-      <div class="tutorial-body" id="tutorialBody"></div>
-      <div class="tutorial-keys" id="tutorialKeys"></div>
-      <div class="tutorial-nav">
-        <button id="tutorialPrev" class="btn secondary small" type="button">Previous</button>
-        <button id="tutorialNext" class="btn small" type="button">Next</button>
+      <div class="panel">
+        <strong>Matter/Energy Summary</strong>
+        <div id="mSummary"></div>
       </div>
     </div>
-  </div>
-
-  <dialog id="sciModal" aria-label="Semantic Coherence Index explanation">
-    <form method="dialog" class="modal-body">
-      <header class="modal-head">
-        <strong>Semantic Coherence Index</strong>
-        <button class="btn" value="cancel">Close</button>
-      </header>
-      <p>The SCI summarises how harmoniously the 32 aspect activations align. It blends three signals:</p>
-      <ol>
-        <li><strong>Activation mean</strong> — higher overall activation raises the index.</li>
-        <li><strong>Distribution balance</strong> — lower variance indicates the system is coherent.</li>
-        <li><strong>Resonance coverage</strong> — similar stages, rings, and activation levels reinforce the network.</li>
-      </ol>
-      <p>The live value is scaled to 0–100 and updates instantly as you adjust sliders, shuffle activations, or change developmental emphasis.</p>
-      <p id="sciFormula" class="vis-hint"></p>
-    </form>
-  </dialog>
-
-  <dialog id="tutorialDialog" aria-label="Interactive tutorial">
-    <form method="dialog" class="modal-body">
-      <header class="modal-head">
-        <strong>Self Clock Tutorial</strong>
-        <button class="btn" value="cancel">Close</button>
-      </header>
-      <ol id="tutorialContent" class="tutorial-list"></ol>
-    </form>
-  </dialog>
-
-  <dialog id="exportDialog" aria-label="Export options">
-    <form method="dialog" class="modal-body">
-      <header class="modal-head">
-        <strong>Export Current Map</strong>
-        <button class="btn" value="cancel">Close</button>
-      </header>
-      <p>Select a format to download the current developmental snapshot, including the SCI and resonance metrics.</p>
-      <div class="export-grid">
-        <button id="exportJson" class="btn" value="json">JSON (raw data)</button>
-        <button id="exportCsv" class="btn secondary" value="csv">CSV (spreadsheet)</button>
-        <button id="exportReport" class="btn secondary" value="html">Printable report</button>
-      </div>
-    </form>
   </dialog>
 
   <script>
@@ -962,154 +276,117 @@
     const TWO_PI = Math.PI * 2;
     const center = { x: 0, y: 0 };
     const DEV_STAGES = 12;
-    const DEV_STAGE_LABELS = [
-      'Infancy', 'Attachment', 'Exploration', 'Identity', 'Competence', 'Integration',
-      'Visioning', 'Collaboration', 'Leadership', 'Stewardship', 'Legacy', 'Wisdom'
-    ];
 
-    const BIO_LIBRARY = {
-      brain: {
-        PFC: { name: 'Prefrontal Cortex', summary: 'Executive control, planning, and modulation of complex behaviours.' },
-        Limbic: { name: 'Limbic Network', summary: 'Emotional appraisal, memory tagging, and motivation coupling.' },
-        Insula: { name: 'Insular Cortex', summary: 'Interoceptive awareness and translation of body state to feeling tone.' },
-        Amygdala: { name: 'Amygdala', summary: 'Rapid salience detection, threat appraisal, and emotional tagging.' },
-        Hippocampus: { name: 'Hippocampus', summary: 'Contextual memory integration and spatial-temporal mapping.' },
-        ACC: { name: 'Anterior Cingulate Cortex', summary: 'Conflict monitoring, attention regulation, and adaptive focus.' },
-        'Basal Ganglia': { name: 'Basal Ganglia', summary: 'Sequencing of actions, habit formation, and energy gating.' },
-        Cerebellum: { name: 'Cerebellum', summary: 'Sensorimotor prediction, timing, and embodied coordination.' }
-      },
-      nt: {
-        '5-HT': { name: 'Serotonin (5-HT)', summary: 'Mood stabilisation, sensory integration, and behavioural flexibility.' },
-        DA: { name: 'Dopamine (DA)', summary: 'Reward tracking, motivation, and precision of mental models.' },
-        NE: { name: 'Norepinephrine (NE)', summary: 'Arousal, alerting, and prioritisation of salient cues.' },
-        GABA: { name: 'GABA', summary: 'Primary inhibitory tone moderating excitability and balance.' },
-        ACh: { name: 'Acetylcholine (ACh)', summary: 'Attention sharpening, neuroplasticity, and state transitions.' },
-        Oxytocin: { name: 'Oxytocin', summary: 'Social bonding, trust calibration, and affiliative safety.' },
-        Endorphins: { name: 'Endorphins', summary: 'Analgesia, euphoria, and stress recovery buffering.' }
-      },
-      modes: {
-        visual: { name: 'Visual', summary: 'Pattern and imagery channels guiding anticipatory modelling.' },
-        auditory: { name: 'Auditory', summary: 'Temporal sequencing and linguistic-phonetic attunement.' },
-        interoceptive: { name: 'Interoceptive', summary: 'Sensing internal physiology for regulation and self-awareness.' },
-        proprioceptive: { name: 'Proprioceptive', summary: 'Muscle and joint awareness for posture and embodied context.' },
-        vestibular: { name: 'Vestibular', summary: 'Balance, orientation, and gravitational reference frames.' },
-        somatic: { name: 'Somatic', summary: 'Touch, pressure, and visceral grounding of experience.' }
-      }
+    // ─────────────────────────────────────────────────────────────────────────────
+    // Enhanced 32-Aspect Developmental Self Clock
+    // Integrates the 24 core Faculties of Being + 8 compound Faculties
+    // from Adrian Lei Martinez-Conol's Periodic Table of Consciousness
+    // ─────────────────────────────────────────────────────────────────────────────
+    const FACULTIES_OF_BEING = {
+      1:  { name:"Sensation",             symbol:"Se",  family:"S",        definition:"Raw sensory input",             stage:1,  ring:1 },
+      2:  { name:"Attention",             symbol:"At",  family:"S",        definition:"Selective focus",               stage:2,  ring:1 },
+      3:  { name:"Affect",                symbol:"Af",  family:"S",        definition:"Emotional charge",              stage:1,  ring:2 },
+      4:  { name:"Orientation",           symbol:"Or",  family:"S",        definition:"Spatial/temporal framing",      stage:2,  ring:2 },
+      5:  { name:"BreathTempo",           symbol:"Bt",  family:"S",        definition:"System timing",                 stage:3,  ring:1 },
+      6:  { name:"Perception",            symbol:"Pe",  family:"P",        definition:"Pattern recognition",           stage:4,  ring:2 },
+      7:  { name:"Memory",                symbol:"Me",  family:"P",        definition:"Storage & retrieval",           stage:5,  ring:2 },
+      8:  { name:"Imagination",           symbol:"Im",  family:"P",        definition:"Creative synthesis",            stage:6,  ring:3 },
+      9:  { name:"Discernment",           symbol:"Ds",  family:"P",        definition:"Essence vs illusion",           stage:7,  ring:3 },
+      10: { name:"Intuition",             symbol:"In",  family:"P",        definition:"Direct knowing",                stage:8,  ring:3 },
+      11: { name:"Judgment",              symbol:"Ju",  family:"D",        definition:"Evaluative reasoning",          stage:9,  ring:4 },
+      12: { name:"Will",                  symbol:"Wi",  family:"D",        definition:"Purposeful action",             stage:10, ring:4 },
+      13: { name:"Language",              symbol:"La",  family:"D",        definition:"Symbolic expression",           stage:8,  ring:4 },
+      14: { name:"Metacognition",         symbol:"Mc",  family:"D",        definition:"Thinking about thinking",       stage:9,  ring:5 },
+      15: { name:"Reflection",            symbol:"Rf",  family:"D",        definition:"Conscious introspection",       stage:10, ring:5 },
+      16: { name:"Moral Reasoning",       symbol:"Mrl", family:"F",        definition:"Ethical discernment",           stage:11, ring:5 },
+      17: { name:"Empathy",               symbol:"Em",  family:"F",        definition:"Emotional resonance",           stage:7,  ring:6 },
+      18: { name:"Wisdom",                symbol:"Ws",  family:"F",        definition:"Integrated understanding",      stage:12, ring:6 },
+      19: { name:"Creativity",            symbol:"Cr",  family:"F",        definition:"Novel synthesis",               stage:6,  ring:4 },
+      20: { name:"Consciousness",         symbol:"Cs",  family:"F",        definition:"Awareness of awareness",        stage:11, ring:7 },
+      21: { name:"Compassion",            symbol:"Cm",  family:"F",        definition:"Universal care",                stage:12, ring:7 },
+      22: { name:"Unity",                 symbol:"Un",  family:"F",        definition:"Non-dual awareness",            stage:12, ring:8 },
+      23: { name:"Transcendence",         symbol:"Tr",  family:"F",        definition:"Beyond individual self",        stage:12, ring:8 },
+      24: { name:"Love",                  symbol:"Lv",  family:"F",        definition:"Fundamental force",             stage:11, ring:8 },
+      25: { name:"Practical Wisdom",      symbol:"PW",  family:"Compound", definition:"Mc+Ju+Mrl",                      stage:11, ring:6 },
+      26: { name:"Authentic Expression",  symbol:"AE",  family:"Compound", definition:"La+Wi+Cr",                        stage:9,  ring:5 },
+      27: { name:"Empathic Intelligence", symbol:"EI",  family:"Compound", definition:"Em+In+Ds",                        stage:8,  ring:6 },
+      28: { name:"Sacred Presence",       symbol:"SP",  family:"Compound", definition:"Cs+Lv+Tr",                        stage:12, ring:8 },
+      29: { name:"Integrative Flow",      symbol:"IF",  family:"Compound", definition:"Me+Im+Rf",                        stage:7,  ring:4 },
+      30: { name:"Compassionate Action",  symbol:"CA",  family:"Compound", definition:"Cm+Wi+Mrl",                       stage:11, ring:7 },
+      31: { name:"Unified Awareness",     symbol:"UA",  family:"Compound", definition:"Un+Cs+Lv",                        stage:12, ring:8 },
+      32: { name:"I Am That I Am",        symbol:"IATA",family:"Eternal",  definition:"The ground of being",             stage:12, ring:8 }
     };
 
-    const TUTORIAL_STEPS = [
-      { title: 'Navigate the map', detail: 'Use the arrow keys or tap nodes to cycle the 32 aspects. Focus is highlighted on the clock and in the list.' },
-      { title: 'Inspect activations', detail: 'Press Enter or the Details buttons to open the aspect modal. Adjust activation sliders to see immediate SCI feedback.' },
-      { title: 'Semantic Coherence Index', detail: 'Watch the SCI metric for balance (variance), power (mean activation), and resonance coverage (stage/ring alignment).' },
-      { title: 'Developmental emphasis', detail: 'The stage slider loads the canonical devProfile while Stage Emphasis multipliers let you weight phases that matter now.' },
-      { title: 'Comparative mode', detail: 'Select any two stages to surface leading increases/decreases across the aspect network.' },
-      { title: 'Resonance links', detail: 'Green–blue links join aspects that co-activate or share structural placement. Denser links = higher coherence.' },
-      { title: 'Exports for research', detail: 'Press E or Export to choose JSON, CSV, or a printable briefing with SCI formula details.' }
-    ];
-
-    const palette = {
-      ring1: '#1a214a',
-      ring2: '#161c3f',
-      stage: '#24306f',
-      label: '#cbd5f1',
-      focus: '#fde68a',
-      nodeBorder: '#0b0f2a',
-      resonanceA: '#34d399',
-      resonanceB: '#7dd3fc'
+    const FACULTY_FAMILY_META = {
+      S: { nsil:"sensory", gravity:"attractor", archetype:"The Sensor" },
+      P: { nsil:"perceptual", gravity:"resonator", archetype:"The Seer" },
+      D: { nsil:"directive", gravity:"initiator", archetype:"The Navigator" },
+      F: { nsil:"fulcrum", gravity:"integrator", archetype:"The Sage" },
+      Compound: { nsil:"compound", gravity:"synthesizer", archetype:"The Weaver" },
+      Eternal: { nsil:"eternal", gravity:"transcendent", archetype:"The Witness" }
     };
 
-    function refreshPalette() {
-      const styles = getComputedStyle(document.body);
-      const fetch = (name, fallback) => {
-        const val = styles.getPropertyValue(name);
-        return val ? val.trim() : fallback;
-      };
-      palette.ring1 = fetch('--ring-line-1', palette.ring1);
-      palette.ring2 = fetch('--ring-line-2', palette.ring2);
-      palette.stage = fetch('--stage-line', palette.stage);
-      palette.label = fetch('--node-label', palette.label);
-      palette.focus = fetch('--focus', palette.focus);
-      palette.nodeBorder = fetch('--glass-stroke', palette.nodeBorder);
-      palette.resonanceA = fetch('--good', palette.resonanceA);
-      palette.resonanceB = fetch('--accent', palette.resonanceB);
+    const NEURAL_RINGS = [
+      "Brainstem & Arousal Networks",
+      "Thalamic Relay & Orientation Systems",
+      "Limbic Integration Circuits",
+      "Sensorimotor & Associative Cortex",
+      "Prefrontal Executive Matrix",
+      "Social & Mirror Neuron Networks",
+      "Default Mode / Salience Bridge",
+      "Global Neural Synchrony"
+    ];
+
+    const TRANSMITTER_BY_FAMILY = {
+      S: "Acetylcholine (ACh)",
+      P: "Glutamate",
+      D: "Dopamine (DA)",
+      F: "Serotonin (5-HT)",
+      Compound: "Oxytocin",
+      Eternal: "Endorphins"
+    };
+
+    const ENERGY_MODE_BY_RING = {
+      1: "Grounding / Somatic",
+      2: "Orientation / Vestibular",
+      3: "Imaginative / Default",
+      4: "Creative / Motor",
+      5: "Executive / Breath",
+      6: "Relational / Heart Field",
+      7: "Insight / Auric",
+      8: "Transpersonal / Quantum"
+    };
+
+    function generateNSILSignature(fac) {
+      const meta = FACULTY_FAMILY_META[fac.family] || { nsil: "facet" };
+      return `nsil:${meta.nsil}:${fac.symbol.toLowerCase()}`;
     }
 
-    function detectInitialTheme() {
-      try {
-        const stored = localStorage.getItem('selfClockTheme');
-        if (stored === 'light' || stored === 'dark') return stored;
-      } catch (_) { /* ignore */ }
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        return 'dark';
-      }
-      return 'light';
+    function calculateSemanticGravity(fac) {
+      const meta = FACULTY_FAMILY_META[fac.family];
+      return meta ? meta.gravity : "dynamic";
     }
 
-    function updateThemeButton() {
-      if (!themeBtn) return;
-      const next = state.theme === 'dark' ? 'light' : 'dark';
-      themeBtn.textContent = state.theme === 'dark' ? '☀️ Light' : '🌙 Dark';
-      themeBtn.setAttribute('title', `Switch to ${next} mode`);
-      themeBtn.setAttribute('aria-pressed', String(state.theme === 'light'));
+    function mapToNeuralSubstrate(fac) {
+      return NEURAL_RINGS[(fac.ring - 1) % NEURAL_RINGS.length];
     }
 
-    function applyTheme(theme) {
-      state.theme = theme;
-      document.body.setAttribute('data-theme', theme);
-      try { localStorage.setItem('selfClockTheme', theme); } catch (_) { /* ignore */ }
-      refreshPalette();
-      updateThemeButton();
-      draw();
+    function mapToNeurotransmitter(fac) {
+      return TRANSMITTER_BY_FAMILY[fac.family] || "Poly-neuro";
     }
 
-    function updatePanelToggleLabel() {
-      if (!panelToggle) return;
-      const open = state.panelOpen;
-      const label = open ? 'Hide insights panel' : 'Show insights panel';
-      panelToggle.textContent = open ? 'Hide Panel' : 'Show Panel';
-      panelToggle.setAttribute('aria-expanded', String(open));
-      panelToggle.setAttribute('aria-label', label);
+    function mapToEnergyMode(fac) {
+      return ENERGY_MODE_BY_RING[fac.ring] || "Harmonic";
     }
 
-    function setPanelState(open) {
-      state.panelOpen = open;
-      document.body.setAttribute('data-panel', open ? 'open' : 'closed');
-      if (panelOverlay) {
-        panelOverlay.hidden = !(open && state.layout === 'mobile');
-        panelOverlay.setAttribute('aria-hidden', open && state.layout === 'mobile' ? 'false' : 'true');
-      }
-      updatePanelToggleLabel();
-      if (insightPanel) {
-        if (open && state.layout === 'mobile') {
-          insightPanel.setAttribute('tabindex', '-1');
-          if (typeof insightPanel.focus === 'function') {
-            try {
-              insightPanel.focus({ preventScroll: true });
-            } catch (_) {
-              insightPanel.focus();
-            }
-          }
-        } else {
-          insightPanel.removeAttribute('tabindex');
-        }
-      }
+    function generateArchetypalSymbol(fac) {
+      const meta = FACULTY_FAMILY_META[fac.family];
+      return meta ? `${meta.archetype}` : "Archetype";
     }
 
-    function applyLayoutMode(isMobile) {
-      state.layout = isMobile ? 'mobile' : 'desktop';
-      document.body.setAttribute('data-layout', state.layout);
-      if (state.layout === 'mobile') {
-        setPanelState(false);
-      } else {
-        setPanelState(true);
-        if (insightPanel) insightPanel.removeAttribute('tabindex');
-      }
+    function generateNSILPrinciple(fac) {
+      return `principle:${(fac.symbol || fac.name).toLowerCase()}`;
     }
-
-    // Placeholders; replace with canonical mappings as needed
-    const BRAIN = ["PFC", "Limbic", "Insula", "Amygdala", "Hippocampus", "ACC", "Basal Ganglia", "Cerebellum"];
-    const NT = ["5-HT", "DA", "NE", "GABA", "ACh", "Oxytocin", "Endorphins"];
-    const MODES = ["visual", "auditory", "somatic", "interoceptive", "proprioceptive", "vestibular"];
 
     // Developmental profile generator (smooth rise → peak → taper)
     function makeDevProfile(i, stage, ring) {
@@ -1129,66 +406,58 @@
     }
 
     // Build a complete 32-aspect set for a given lens (mind/body/soul)
-    function makeAspectSet(model) {
-      return Array.from({ length: N_ASPECTS }, (_, i) => {
+    function makeAspectSetWithFaculties(model) {
+      return Array.from({ length: 32 }, (_, i) => {
+        const id = i + 1;
+        const fac = FACULTIES_OF_BEING[id];
+        const devProfile = makeDevProfile(i, fac.stage, fac.ring);
         const hue = Math.round((i * (360 / N_ASPECTS)) % 360);
-        const stage = 1 + (i % 12);
-        const ring  = 1 + (i % 8);
-        const devProfile = makeDevProfile(i, stage, ring);
         const base = {
-          id: i+1,
-          name: `${model[0].toUpperCase()+model.slice(1)} Aspect ${i+1}`,
-          stage, ring, hue,
+          id,
+          name: fac.name,
+          symbol: fac.symbol,
+          family: fac.family,
+          definition: fac.definition,
+          stage: fac.stage,
+          ring: fac.ring,
+          hue,
           activation: devProfile[0],
           devProfile,
+          brainRegion: mapToNeuralSubstrate(fac),
+          neurotransmitter: mapToNeurotransmitter(fac),
+          energyMode: mapToEnergyMode(fac),
+          matterOutput: `${fac.name} embodiment`
         };
         if (model === 'mind') {
-          return Object.assign(base, {
-            definition: "Cognitive/semantic placeholder.",
-            corePsychologicalRole: "Role placeholder",
-            nsilSemanticSignature: "nsil:placeholder",
-            semanticGravity: "attractor",
-            quantumMode: ["particle","wave","field"][i%3],
-            particleWaveFieldFunction: "propagation placeholder",
-            brainRegion: "—",
-            neurotransmitter: "—",
-            energyMode: "—",
-            matterOutput: "—",
-          });
+          return {
+            ...base,
+            nsilSemanticSignature: generateNSILSignature(fac),
+            semanticGravity: calculateSemanticGravity(fac),
+            quantumMode: `${fac.family.toLowerCase()}-wave`,
+            particleWaveFieldFunction: `${fac.symbol}-propagation`,
+            matterOutput: `${fac.name} insight`
+          };
         }
         if (model === 'body') {
-          const brainKey = BRAIN[i % BRAIN.length];
-          const ntKey = NT[i % NT.length];
-          const modeKey = MODES[i % MODES.length];
-          return Object.assign(base, {
-            definition: "Neuro/physiology placeholder.",
-            brainRegionKey: brainKey,
-            brainRegion: BIO_LIBRARY.brain[brainKey]?.name || brainKey,
-            neurotransmitterKey: ntKey,
-            neurotransmitter: BIO_LIBRARY.nt[ntKey]?.name || ntKey,
-            energyModeKey: modeKey,
-            energyMode: BIO_LIBRARY.modes[modeKey]?.name || modeKey,
-            matterOutput: "Physiological function",
-          });
+          return {
+            ...base,
+            matterOutput: `${fac.name} embodiment`
+          };
         }
-        // soul
-        return Object.assign(base, {
-          definition: "Archetypal/transpersonal placeholder.",
-          archetypalSymbol: "Symbol",
-          spiritualRole: "Role",
-          nsilPrincipleSignature: "nsil:principle",
-          brainRegion: "—",
-          neurotransmitter: "—",
-          energyMode: "—",
-          matterOutput: "—",
-        });
+        return {
+          ...base,
+          archetypalSymbol: generateArchetypalSymbol(fac),
+          spiritualRole: `${fac.name} consciousness`,
+          nsilPrincipleSignature: generateNSILPrinciple(fac),
+          matterOutput: `${fac.name} radiance`
+        };
       });
     }
 
-    // Three parallel datasets (placeholders until you provide canonical labels)
-    const mindAspects = makeAspectSet('mind');
-    const bodyAspects = makeAspectSet('body');
-    const soulAspects = makeAspectSet('soul');
+    // Three parallel datasets using canonical faculties
+    const mindAspects = makeAspectSetWithFaculties('mind');
+    const bodyAspects = makeAspectSetWithFaculties('body');
+    const soulAspects = makeAspectSetWithFaculties('soul');
 
     // Active lens state
     let mode = 'mind';
@@ -1203,60 +472,16 @@
       tutorialIndex: 0,
       focusId: 1,
       devStage: 0,
-      stageWeights: Array.from({ length: DEV_STAGES }, () => 1),
-      filterText: '',
-      sort: 'stage',
-      stageFilter: 'all',
-      ringFilter: 'all',
-      activeOnly: false,
-      theme: 'dark',
-      layout: 'desktop',
-      panelOpen: true,
-      visible: [...aspects],
-      compareA: 0,
-      compareB: 6,
     };
 
-    function computeResonanceStats() {
-      let total = 0;
-      let supportive = 0;
-      let stageAligned = 0;
-      let ringAligned = 0;
-      let activationAligned = 0;
-      for (let i = 0; i < aspects.length; i++) {
-        for (let j = i + 1; j < aspects.length; j++) {
-          total++;
-          const ai = aspects[i];
-          const aj = aspects[j];
-          const diff = Math.abs(ai.activation - aj.activation);
-          const sim = diff <= state.resonanceThreshold;
-          const sameStage = ai.stage === aj.stage;
-          const sameRing = ai.ring === aj.ring;
-          if (sim || sameStage || sameRing) {
-            supportive++;
-            if (sim) activationAligned++;
-            if (sameStage) stageAligned++;
-            if (sameRing) ringAligned++;
-          }
-        }
-      }
-      const ratio = total ? supportive / total : 0;
-      return { total, supportive, ratio, stageAligned, ringAligned, activationAligned };
-    }
-
+    // SCI: mean / (1 + stddev) * 100
     function computeSCI() {
       const vals = aspects.map(a => a.activation);
       const mean = vals.reduce((a,b)=>a+b,0) / vals.length;
       const variance = vals.reduce((acc, v)=> acc + Math.pow(v-mean, 2), 0) / vals.length;
       const std = Math.sqrt(variance);
-      const activationScore = mean / 100; // 0..1
-      const balance = 1 - Math.min(1, std / 35); // 0..1
-      const resonance = computeResonanceStats();
-      const resonanceScore = resonance.ratio;
-      const alignmentScore = resonance.total ? ((resonance.stageAligned + resonance.ringAligned) / (2 * resonance.total)) : 0;
-      const weighted = (activationScore * 0.35) + (balance * 0.35) + (resonanceScore * 0.2) + (alignmentScore * 0.1);
-      const sci = Math.max(0, Math.min(100, weighted * 100));
-      return { mean, std, sci, activationScore, balance, resonance, resonanceScore, alignmentScore };
+      const sci = (mean / (1 + std)) * 100;
+      return { mean, std, sci };
     }
 
     // Energy–Matter overview (simple but informative proxy)
@@ -1271,8 +496,6 @@
       return { total, byNT, metabolic };
     }
 
-    const clamp = (value, min = 0, max = 100) => Math.min(max, Math.max(min, value));
-
     /* ============================================================
        DOM HELPERS
     ============================================================ */
@@ -1280,421 +503,42 @@
     const listEl = el('#aspectList');
     const sciEl  = el('#sciVal');
     const emEl   = el('#emVal');
-    const activeEl = el('#activeVal');
-    const peakEl = el('#peakVal');
-    const sciStatusEl = el('#sciStatus');
-    const sciFormulaEl = el('#sciFormula');
-    const sciInfoBtn = el('#btnSciInfo');
-    const sciModal = el('#sciModal');
-    const filterSummaryEl = el('#filterSummary');
     const devSlider = el('#devStageSlider');
     const devVal = el('#devStageVal');
-    const stageWeightSelect = el('#stageWeightSelect');
-    const stageWeightSlider = el('#stageWeightSlider');
-    const stageWeightValue = el('#stageWeightValue');
-    const resetWeightsBtn = el('#btnResetWeights');
-    const compareStageA = el('#compareStageA');
-    const compareStageB = el('#compareStageB');
-    const comparisonSummaryEl = el('#comparisonSummary');
-    const searchInput = el('#searchInput');
-    const sortSelect = el('#sortSelect');
-    const stageFilterSelect = el('#stageFilter');
-    const ringFilterSelect = el('#ringFilter');
-    const activeOnlyToggle = el('#activeOnly');
-    const resetFiltersBtn = el('#btnResetFilters');
-    const themeBtn = el('#btnTheme');
-    const panelToggle = el('#panelToggle');
-    const panelClose = el('#panelClose');
-    const panelOverlay = el('#panelOverlay');
-    const insightPanel = el('#insightPanel');
-    const tutorialDialog = el('#tutorialDialog');
-    const tutorialListEl = el('#tutorialContent');
-    const exportDialog = el('#exportDialog');
-    const exportJsonBtn = el('#exportJson');
-    const exportCsvBtn = el('#exportCsv');
-    const exportReportBtn = el('#exportReport');
-    const tutorialBtn = el('#btnTutorial');
-    const exportBtn = el('#btnExport');
-
-    function describeBrain(key, fallback) {
-      if (!key) return fallback || '—';
-      const def = BIO_LIBRARY.brain[key];
-      if (!def) return fallback || key;
-      return `<strong>${def.name}</strong><br><span class="vis-hint">${def.summary}</span>`;
-    }
-
-    function describeNeurochemical(key, fallback) {
-      if (!key) return fallback || '—';
-      const def = BIO_LIBRARY.nt[key];
-      if (!def) return fallback || key;
-      return `<strong>${def.name}</strong><br><span class="vis-hint">${def.summary}</span>`;
-    }
-
-    function describeMode(key, fallback) {
-      if (!key) return fallback || '—';
-      const def = BIO_LIBRARY.modes[key];
-      if (!def) return fallback || key;
-      return `<strong>${def.name}</strong><br><span class="vis-hint">${def.summary}</span>`;
-    }
-
-    function buildTutorialList() {
-      if (!tutorialListEl) return;
-      tutorialListEl.innerHTML = TUTORIAL_STEPS.map(step => `<li><strong>${step.title}</strong> — ${step.detail}</li>`).join('');
-    }
-
-    function updateComparisonSummary() {
-      if (!comparisonSummaryEl || !compareStageA || !compareStageB) return;
-      const aIdx = Number(compareStageA.value);
-      const bIdx = Number(compareStageB.value);
-      if (!Number.isFinite(aIdx) || !Number.isFinite(bIdx)) {
-        comparisonSummaryEl.textContent = 'Select two stages to compare their activation patterns.';
-        return;
-      }
-      if (aIdx === bIdx) {
-        comparisonSummaryEl.textContent = 'Choose two distinct developmental points for comparison.';
-        return;
-      }
-      const dataset = mode === 'mind' ? mindAspects : mode === 'body' ? bodyAspects : soulAspects;
-      const mean = (vals) => vals.reduce((sum, val) => sum + val, 0) / vals.length;
-      const valuesA = dataset.map(a => a.devProfile?.[aIdx] ?? 0);
-      const valuesB = dataset.map(a => a.devProfile?.[bIdx] ?? 0);
-      const meanA = mean(valuesA);
-      const meanB = mean(valuesB);
-      const diffs = dataset.map((a, idx) => ({ name: a.name, delta: valuesB[idx] - valuesA[idx] }));
-      const topUp = diffs.filter(d => d.delta > 0).sort((a,b)=>b.delta-a.delta).slice(0,3);
-      const topDown = diffs.filter(d => d.delta < 0).sort((a,b)=>a.delta-b.delta).slice(0,3);
-      const fmt = (arr) => arr.length ? arr.map(d => `${escapeHtml(d.name)} (${d.delta > 0 ? '+' : ''}${d.delta.toFixed(0)})`).join(', ') : '—';
-      const delta = meanB - meanA;
-      comparisonSummaryEl.innerHTML = `
-        <p><strong>${stageLabel(bIdx)}</strong> mean ${(delta>=0?'+':'')}${delta.toFixed(1)} relative to <strong>${stageLabel(aIdx)}</strong>.</p>
-        <p><strong>Leading increases:</strong> ${fmt(topUp)}</p>
-        <p><strong>Leading decreases:</strong> ${fmt(topDown)}</p>`;
-    }
-
-    function stageLabel(stageIndex) {
-      const name = DEV_STAGE_LABELS[stageIndex] || '';
-      return `Stage ${stageIndex + 1}${name ? ` · ${name}` : ''}`;
-    }
 
     function applyDevStage(stage){
       state.devStage = stage;
-      if (devVal) devVal.textContent = stageLabel(stage);
-      const currentWeight = state.stageWeights[stage] ?? 1;
-      if (stageWeightSelect) stageWeightSelect.value = String(stage);
-      if (stageWeightSlider) stageWeightSlider.value = String(currentWeight);
-      if (stageWeightValue) stageWeightValue.textContent = `${Number(currentWeight).toFixed(2)}×`;
-      aspects.forEach(a => {
-        if (a.devProfile?.length === DEV_STAGES) {
-          const base = a.devProfile[stage] ?? 0;
-          const weight = state.stageWeights[(a.stage - 1) % state.stageWeights.length] ?? 1;
-          const weighted = Math.max(0, Math.min(100, Math.round(base * weight)));
-          a.baseActivation = base;
-          a.activation = weighted;
-        }
-      });
-      updateMetrics();
-      buildList();
-      draw();
-      updateComparisonSummary();
+      if (devVal) devVal.textContent = stage + 1;
+      aspects.forEach(a => { if (a.devProfile?.length === DEV_STAGES) a.activation = a.devProfile[stage]; });
+      draw(); updateMetrics(); syncListRanges();
     }
-
-    function populateStageSelectors() {
-      const options = DEV_STAGE_LABELS.map((label, idx) => `<option value="${idx}">${stageLabel(idx)}</option>`).join('');
-      if (stageWeightSelect) stageWeightSelect.innerHTML = options;
-      if (compareStageA) compareStageA.innerHTML = options;
-      if (compareStageB) compareStageB.innerHTML = options;
-      if (stageWeightSelect) stageWeightSelect.value = String(state.devStage);
-      if (compareStageA) compareStageA.value = '0';
-      if (compareStageB) compareStageB.value = '6';
-      if (stageWeightSlider) stageWeightSlider.value = String(state.stageWeights[state.devStage] ?? 1);
-      if (stageWeightValue) stageWeightValue.textContent = `${Number(stageWeightSlider?.value || 1).toFixed(2)}×`;
-    }
-
-    populateStageSelectors();
-    buildTutorialList();
-    updateComparisonSummary();
 
     if (devSlider) devSlider.addEventListener('input', (e)=> applyDevStage(Number(e.target.value)));
-    if (stageWeightSelect) stageWeightSelect.addEventListener('change', (e)=> {
-      const idx = Number(e.target.value);
-      const weight = state.stageWeights[idx] ?? 1;
-      if (stageWeightSlider) stageWeightSlider.value = String(weight);
-      if (stageWeightValue) stageWeightValue.textContent = `${Number(weight).toFixed(2)}×`;
-    });
-    if (stageWeightSlider) stageWeightSlider.addEventListener('input', (e)=> {
-      const idx = Number(stageWeightSelect?.value ?? state.devStage);
-      const val = Number(e.target.value);
-      if (!Number.isFinite(idx)) return;
-      state.stageWeights[idx] = val;
-      if (stageWeightValue) stageWeightValue.textContent = `${val.toFixed(2)}×`;
-      applyDevStage(state.devStage);
-    });
-    if (resetWeightsBtn) resetWeightsBtn.addEventListener('click', ()=> {
-      state.stageWeights = Array.from({ length: DEV_STAGES }, () => 1);
-      if (stageWeightSelect) stageWeightSelect.value = String(state.devStage);
-      if (stageWeightSlider) stageWeightSlider.value = '1';
-      if (stageWeightValue) stageWeightValue.textContent = '1.00×';
-      applyDevStage(state.devStage);
-    });
-    if (compareStageA) compareStageA.addEventListener('change', updateComparisonSummary);
-    if (compareStageB) compareStageB.addEventListener('change', updateComparisonSummary);
-    if (searchInput) searchInput.addEventListener('input', (e)=> { state.filterText = e.target.value || ''; buildList(); });
-    if (sortSelect) sortSelect.addEventListener('change', (e)=> { state.sort = e.target.value; buildList(); });
-    if (stageFilterSelect) stageFilterSelect.addEventListener('change', (e)=> { state.stageFilter = e.target.value; buildList(); });
-    if (ringFilterSelect) ringFilterSelect.addEventListener('change', (e)=> { state.ringFilter = e.target.value; buildList(); });
-    if (activeOnlyToggle) activeOnlyToggle.addEventListener('change', (e)=> { state.activeOnly = e.target.checked; buildList(); });
-    if (resetFiltersBtn) resetFiltersBtn.addEventListener('click', ()=> {
-      state.filterText = '';
-      state.sort = 'stage';
-      state.stageFilter = 'all';
-      state.ringFilter = 'all';
-      state.activeOnly = false;
-      if (searchInput) searchInput.value = '';
-      if (sortSelect) sortSelect.value = 'stage';
-      if (stageFilterSelect) stageFilterSelect.value = 'all';
-      if (ringFilterSelect) ringFilterSelect.value = 'all';
-      if (activeOnlyToggle) activeOnlyToggle.checked = false;
-      buildList();
-    });
-    if (themeBtn) themeBtn.addEventListener('click', ()=> applyTheme(state.theme === 'dark' ? 'light' : 'dark'));
-    if (panelToggle) panelToggle.addEventListener('click', ()=> setPanelState(!state.panelOpen));
-    if (panelClose) panelClose.addEventListener('click', ()=> setPanelState(false));
-    if (panelOverlay) panelOverlay.addEventListener('click', ()=> setPanelState(false));
-    if (resetWeightsBtn) resetWeightsBtn.addEventListener('click', ()=> {
-      state.devWeights = Array.from({ length: DEV_STAGES }, () => 1);
-      buildWeightsUI();
-      applyDevStage(state.devStage);
-    });
-    if (compareStageASelect) {
-      compareStageASelect.value = String(state.compareA);
-      compareStageASelect.addEventListener('change', (e)=> {
-        state.compareA = Number(e.target.value);
-        updateComparisonSummary();
-      });
-    }
-    if (compareStageBSelect) {
-      compareStageBSelect.value = String(state.compareB);
-      compareStageBSelect.addEventListener('change', (e)=> {
-        state.compareB = Number(e.target.value);
-        updateComparisonSummary();
-      });
-    }
-    if (previewAButton) previewAButton.addEventListener('click', ()=> applyDevStage(state.compareA));
-    if (previewBButton) previewBButton.addEventListener('click', ()=> applyDevStage(state.compareB));
-    if (tutorialPrev) tutorialPrev.addEventListener('click', ()=> adjustTutorialFocus(-1));
-    if (tutorialNext) tutorialNext.addEventListener('click', ()=> adjustTutorialFocus(1));
-    if (tutorialOverlay) tutorialOverlay.addEventListener('click', (event)=> {
-      if (event.target === tutorialOverlay) toggleTutorial(false);
-    });
-    if (tutorialClose) tutorialClose.addEventListener('click', ()=> toggleTutorial(false));
 
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') {
-        if (state.tutorial) {
-          toggleTutorial(false);
-          return;
-        }
-        if (state.layout === 'mobile' && state.panelOpen) {
-          setPanelState(false);
-        }
-      }
-    });
-
-    function updateWeightSummary() {
-      if (!weightSummaryEl) return;
-      const weights = state.devWeights || [];
-      if (!weights.length) {
-        weightSummaryEl.textContent = 'Weights unavailable.';
-        return;
-      }
-      const avg = weights.reduce((sum, val) => sum + val, 0) / weights.length;
-      const emphasised = weights
-        .map((w, idx) => ({ w, label: `S${idx + 1}` }))
-        .filter(item => item.w > 1.05)
-        .map(item => `${item.label} ${item.w.toFixed(2)}×`);
-      const softened = weights
-        .map((w, idx) => ({ w, label: `S${idx + 1}` }))
-        .filter(item => item.w < 0.95)
-        .map(item => `${item.label} ${item.w.toFixed(2)}×`);
-      const parts = [`Mean ${avg.toFixed(2)}×`];
-      if (emphasised.length) parts.push(`Emphasis ${emphasised.join(', ')}`);
-      if (softened.length) parts.push(`Softened ${softened.join(', ')}`);
-      if (!emphasised.length && !softened.length) parts.push('All neutral (1.00×)');
-      weightSummaryEl.textContent = parts.join(' · ');
-    }
-
-    function buildWeightsUI() {
-      if (!weightsContainer) return;
-      weightsContainer.innerHTML = '';
-      const weights = state.devWeights || [];
-      weights.forEach((weight, idx) => {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'weight-item';
-        const header = document.createElement('header');
-        const label = document.createElement('span');
-        label.textContent = `Stage ${idx + 1}`;
-        label.id = `weight-label-${idx}`;
-        const output = document.createElement('output');
-        output.id = `weight-output-${idx}`;
-        output.textContent = `${weight.toFixed(2)}×`;
-        header.append(label, output);
-        const slider = document.createElement('input');
-        slider.type = 'range';
-        slider.min = '0.5';
-        slider.max = '1.5';
-        slider.step = '0.05';
-        slider.value = String(weight);
-        slider.setAttribute('aria-labelledby', label.id);
-        slider.addEventListener('input', (e) => {
-          const val = Number(e.target.value);
-          state.devWeights[idx] = val;
-          output.textContent = `${val.toFixed(2)}×`;
-          updateWeightSummary();
-          applyDevStage(state.devStage);
-        });
-        wrapper.append(header, slider);
-        weightsContainer.appendChild(wrapper);
-      });
-      updateWeightSummary();
-    }
-
-    function formatDelta(val) {
-      return `${val >= 0 ? '+' : ''}${val.toFixed(1)}`;
-    }
-
-    function updateComparisonSummary() {
-      if (!compareSummaryEl) return;
-      const stageA = Number.isFinite(state.compareA) ? state.compareA : 0;
-      const stageB = Number.isFinite(state.compareB) ? state.compareB : 0;
-      if (stageA === stageB) {
-        compareSummaryEl.textContent = 'Select two different stages to compare their weighted profiles.';
-        return;
-      }
-      const profileA = aspects.map(a => getWeightedActivation(a, stageA));
-      const profileB = aspects.map(a => getWeightedActivation(a, stageB));
-      const mean = arr => arr.reduce((sum, val) => sum + val, 0) / arr.length;
-      const meanA = mean(profileA);
-      const meanB = mean(profileB);
-      const diffMean = meanB - meanA;
-      const diffs = profileB.map((val, idx) => ({
-        name: aspects[idx].name,
-        delta: val - profileA[idx],
-      }));
-      const gains = diffs.filter(d => d.delta > 0.5).sort((a, b) => b.delta - a.delta).slice(0, 3);
-      const reductions = diffs.filter(d => d.delta < -0.5).sort((a, b) => a.delta - b.delta).slice(0, 3);
-      const gainText = gains.length ? gains.map(g => `${g.name} (${formatDelta(g.delta)})`).join(', ') : '—';
-      const lossText = reductions.length ? reductions.map(g => `${g.name} (${formatDelta(g.delta)})`).join(', ') : '—';
-      compareSummaryEl.innerHTML = `<strong>Stage ${stageA + 1}</strong> μ ${meanA.toFixed(1)} → <strong>Stage ${stageB + 1}</strong> μ ${meanB.toFixed(1)} (Δ ${formatDelta(diffMean)})<br>Largest gains: ${gainText}<br>Softened nodes: ${lossText}`;
-    }
-
-    if (weightsContainer) buildWeightsUI();
-
-    function setTutorialOverlayVisible(visible) {
-      if (!tutorialOverlay) return;
-      tutorialOverlay.classList.toggle('is-hidden', !visible);
-      tutorialOverlay.setAttribute('aria-hidden', visible ? 'false' : 'true');
-    }
-
-    function updateTutorialContent() {
-      if (!tutorialOverlay) return;
-      const totalAspects = aspects.length || 1;
-      const stride = Math.max(1, Math.round(totalAspects / TUTORIAL_STEPS.length));
-      const normalizedIndex = ((state.tutorialIndex % totalAspects) + totalAspects) % totalAspects;
-      const stepIndex = Math.min(TUTORIAL_STEPS.length - 1, Math.floor(normalizedIndex / stride));
-      const step = TUTORIAL_STEPS[stepIndex];
-      if (tutorialTitleEl) tutorialTitleEl.textContent = step.title;
-      if (tutorialStepLabel) tutorialStepLabel.textContent = `Step ${stepIndex + 1} of ${TUTORIAL_STEPS.length}`;
-      if (tutorialBody) {
-        tutorialBody.innerHTML = '';
-        const p = document.createElement('p');
-        p.textContent = step.body;
-        tutorialBody.appendChild(p);
-      }
-      if (tutorialKeys) {
-        tutorialKeys.innerHTML = '';
-        step.keys.forEach(text => {
-          const div = document.createElement('div');
-          div.textContent = text;
-          tutorialKeys.appendChild(div);
-        });
-      }
-    }
-
-    function adjustTutorialFocus(deltaSteps) {
-      const totalAspects = aspects.length || 1;
-      const stride = Math.max(1, Math.round(totalAspects / TUTORIAL_STEPS.length));
-      state.tutorialIndex = (state.tutorialIndex + deltaSteps * stride + totalAspects) % totalAspects;
-      state.focusId = aspects[state.tutorialIndex].id;
-      refreshListSelection();
-      draw();
-      updateTutorialContent();
-    }
     function tagHTML(a){
       if (mode==='mind') {
-        return `<span class="tag">${a.quantumMode}</span><span class="tag">NSIL</span><span class="tag">${a.semanticGravity}</span>`;
+        return `<span class="tag">${a.symbol}</span><span class="tag">${a.quantumMode}</span><span class="tag">${a.nsilSemanticSignature}</span>`;
       } else if (mode==='body') {
-        const brainTag = a.brainRegionKey ? `${a.brainRegionKey}` : `${a.brainRegion}`;
-        const ntTag = a.neurotransmitterKey || String(a.neurotransmitter||'—').split(' ')[0];
-        const modeTag = a.energyModeKey || a.energyMode;
-        return `<span class="tag" title="${a.brainRegion}">${brainTag}</span><span class="tag" title="${a.neurotransmitter}">${ntTag}</span><span class="tag" title="${a.energyMode}">${modeTag}</span>`;
+        return `<span class="tag">${a.symbol}</span><span class="tag">${a.brainRegion}</span><span class="tag">${String(a.neurotransmitter||'—').split(' ')[0]}</span><span class="tag">${a.energyMode}</span>`;
       }
-      return `<span class="tag">${a.archetypalSymbol}</span><span class="tag">${a.spiritualRole}</span><span class="tag">NSIL</span>`;
+      return `<span class="tag">${a.symbol}</span><span class="tag">${a.archetypalSymbol}</span><span class="tag">${a.nsilPrincipleSignature}</span>`;
     }
 
     function hsl(h, s=70, l=52) { return `hsl(${h} ${s}% ${l}%)`; }
     function hslAlpha(h, a=.25, s=70, l=50) { return `hsl(${h} ${s}% ${l}% / ${a})`; }
 
-    function formatSciFormula(metrics) {
-      const act = (metrics.activationScore * 100).toFixed(1);
-      const bal = (metrics.balance * 100).toFixed(1);
-      const res = (metrics.resonanceScore * 100).toFixed(1);
-      const align = (metrics.alignmentScore * 100).toFixed(1);
-      return `SCI = (0.35×${act}% + 0.35×${bal}% + 0.20×${res}% + 0.10×${align}%) → ${metrics.sci.toFixed(1)}`;
-    }
-
     function updateMetrics() {
-      const metrics = computeSCI();
-      const { mean, std, sci, resonanceScore, resonance } = metrics;
-      if (sciEl) {
-        sciEl.innerHTML = `${sci.toFixed(1)}<small>μ=${mean.toFixed(1)}, σ=${std.toFixed(1)}, resonance ${(resonanceScore*100).toFixed(0)}%</small>`;
-      }
-      if (sciStatusEl) {
-        let status = 'Awaiting activation data.';
-        if (sci >= 75) {
-          status = 'High coherence — activations are harmonised and richly resonant.';
-        } else if (sci >= 55) {
-          status = 'Moderate coherence — adjust stage emphasis or balance activations.';
-        } else {
-          status = 'Fragmented network — reduce variance or strengthen shared links.';
-        }
-        const coverage = resonance.total ? ` Resonance coverage ${(resonanceScore*100).toFixed(0)}% across ${resonance.supportive}/${resonance.total} links.` : '';
-        sciStatusEl.textContent = status + coverage;
-      }
-      if (sciFormulaEl) {
-        sciFormulaEl.textContent = formatSciFormula(metrics);
-      }
+      const { mean, std, sci } = computeSCI();
+      sciEl.textContent = `${sci.toFixed(1)}  (μ=${mean.toFixed(1)}, σ=${std.toFixed(1)})`;
       const { total, byNT, metabolic } = computeEnergyMatter();
       const top = [...byNT.entries()].sort((a,b)=>b[1]-a[1]).slice(0,2).map(([k,v])=> `${String(k).split(' ')[0]} ${Math.round(v)}` ).join(', ');
-      if (emEl) emEl.textContent = `ΣE=${Math.round(total)} · NT↑ ${top || '—'} · Metabolic ${(metabolic*100).toFixed(0)}%`;
-      const activeCount = aspects.filter(a => a.activation > 0).length;
-      if (activeEl) activeEl.textContent = `${activeCount}/${N_ASPECTS}`;
-      if (peakEl) {
-        const peak = aspects.reduce((best, cand) => (cand.activation > (best?.activation ?? -1) ? cand : best), null);
-        peakEl.innerHTML = peak ? `${peak.activation}<small>${peak.name}</small>` : '—';
-      }
-      if (sciExplanationEl) {
-        let insight = 'Balanced focus across the map.';
-        if (sci >= 75) insight = 'High semantic harmony — activations are tightly integrated.';
-        else if (sci <= 40) insight = 'Fragmented emphasis — consider smoothing extreme peaks or raising quiet aspects.';
-        else insight = 'Moderate coherence — explore resonance links or weights to refine alignment.';
-        sciExplanationEl.textContent = `The Semantic Coherence Index (mean ÷ (1 + σ) × 100) updates live as activations shift. ${insight}`;
-      }
+      emEl.textContent = `ΣE=${Math.round(total)} · NT↑ ${top || '—'} · Metabolic ${(metabolic*100).toFixed(0)}%`;
     }
 
     function createAspectRow(a) {
       const item = document.createElement('div');
       item.className = 'aspect-item';
-      item.setAttribute('role', 'option');
+      item.role = 'option';
       item.tabIndex = 0;
       item.dataset.id = a.id;
       item.setAttribute('aria-selected', a.id === state.focusId ? 'true' : 'false');
@@ -1702,14 +546,7 @@
       const r1 = document.createElement('div');
       r1.className = 'row';
       r1.innerHTML = `<div class="name"><span class="dot" style="background:${hsl(a.hue)}"></span>${a.name}</div>
-                      <span class="badge">Stage ${a.stage} · Ring ${a.ring}</span>`;
-
-      const bar = document.createElement('div');
-      bar.className = 'activation-bar';
-      const barFill = document.createElement('span');
-      barFill.style.width = `${a.activation}%`;
-      barFill.style.background = `linear-gradient(90deg, ${hsl(a.hue, 70, 55)}, ${hslAlpha(a.hue, 0.45, 70, 55)})`;
-      bar.appendChild(barFill);
+                      <div class="tag">Stage ${a.stage} · Ring ${a.ring}</div>`;
 
       const r2 = document.createElement('div');
       r2.className = 'row';
@@ -1720,24 +557,17 @@
 
       const range = document.createElement('input');
       range.type = 'range';
-      range.min = 0;
-      range.max = 100;
-      range.value = a.activation;
-      range.id = `rng-${a.id}`;
-      range.style.flex = '1';
+      range.min = 0; range.max = 100; range.value = a.activation; range.id = `rng-${a.id}`;
       range.setAttribute('aria-label', `${a.name} activation`);
       range.addEventListener('input', (e) => {
         a.activation = Number(e.target.value);
         label.textContent = `Activation: ${a.activation}`;
-        barFill.style.width = `${a.activation}%`;
         draw();
         updateMetrics();
       });
-      range.addEventListener('change', () => { state.focusId = a.id; buildList(); });
 
       const detailsBtn = document.createElement('button');
-      detailsBtn.className = 'btn tertiary small';
-      detailsBtn.type = 'button';
+      detailsBtn.className = 'btn secondary';
       detailsBtn.textContent = 'Details';
       detailsBtn.addEventListener('click', () => openModal(a));
 
@@ -1747,10 +577,9 @@
       r3.className = 'tags';
       r3.innerHTML = `${tagHTML(a)}`;
 
-      item.append(r1, bar, r2, r3);
+      item.append(r1, r2, r3);
 
       item.addEventListener('click', () => { state.focusId = a.id; refreshListSelection(); draw(); });
-      item.addEventListener('focus', () => { state.focusId = a.id; refreshListSelection(); draw(); });
       item.addEventListener('keydown', (ev) => {
         if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); openModal(a); }
       });
@@ -1759,85 +588,12 @@
     }
 
     function refreshListSelection() {
-      if (!listEl) return;
-      listEl.querySelectorAll('[data-id]').forEach(ch => ch.setAttribute('aria-selected', ch.dataset.id == state.focusId ? 'true':'false'));
-    }
-
-    function matchesFilter(a, needle) {
-      if (!needle) return true;
-      const hay = [
-        a.name,
-        a.definition,
-        a.brainRegion,
-        a.neurotransmitter,
-        a.energyMode,
-        a.semanticGravity,
-        a.archetypalSymbol,
-        a.spiritualRole,
-        a.matterOutput
-      ].filter(Boolean).join(' ').toLowerCase();
-      return hay.includes(needle);
-    }
-
-    function getVisibleAspects() {
-      const needle = state.filterText.trim().toLowerCase();
-      const stageFilter = state.stageFilter;
-      const ringFilter = state.ringFilter;
-      const filtered = aspects.filter(a => {
-        if (stageFilter !== 'all' && String(a.stage) !== stageFilter) return false;
-        if (ringFilter !== 'all' && String(a.ring) !== ringFilter) return false;
-        if (state.activeOnly && a.activation <= 0) return false;
-        return matchesFilter(a, needle);
-      });
-      const sorted = [...filtered];
-      sorted.sort((a, b) => {
-        switch (state.sort) {
-          case 'activationDesc':
-            return (b.activation - a.activation) || a.name.localeCompare(b.name);
-          case 'activationAsc':
-            return (a.activation - b.activation) || a.name.localeCompare(b.name);
-          case 'name':
-            return a.name.localeCompare(b.name);
-          default:
-            return (a.stage - b.stage) || (a.ring - b.ring) || (a.id - b.id);
-        }
-      });
-      return sorted;
-    }
-
-    function updateFilterSummary(count) {
-      if (!filterSummaryEl) return;
-      if (!count) {
-        filterSummaryEl.textContent = 'No aspects match the current filters.';
-        return;
-      }
-      const parts = [`${count} of ${aspects.length} aspects shown`];
-      if (state.filterText.trim()) parts.push(`“${state.filterText.trim()}”`);
-      if (state.stageFilter !== 'all') parts.push(`Stage ${state.stageFilter}`);
-      if (state.ringFilter !== 'all') parts.push(`Ring ${state.ringFilter}`);
-      if (state.activeOnly) parts.push('Active > 0');
-      filterSummaryEl.textContent = parts.join(' · ');
+      [...listEl.children].forEach(ch => ch.setAttribute('aria-selected', ch.dataset.id == state.focusId ? 'true':'false'));
     }
 
     function buildList() {
-      if (!listEl) return;
-      const view = getVisibleAspects();
-      state.visible = view;
       listEl.innerHTML = '';
-      if (!view.length) {
-        const empty = document.createElement('div');
-        empty.className = 'empty-state';
-        empty.textContent = 'No aspects match the current filters.';
-        listEl.appendChild(empty);
-        updateFilterSummary(0);
-        return;
-      }
-      if (!view.some(a => a.id === state.focusId)) {
-        state.focusId = view[0].id;
-      }
-      view.forEach(a => listEl.appendChild(createAspectRow(a)));
-      refreshListSelection();
-      updateFilterSummary(view.length);
+      aspects.forEach(a => listEl.appendChild(createAspectRow(a)));
     }
 
     /* ============================================================
@@ -1867,9 +623,9 @@
         mStage.textContent = `Stage ${a.stage} · Ring ${a.ring}`;
       } else if (mode==='body') {
         mDef.textContent = a.definition;
-        mBrain.innerHTML = describeBrain(a.brainRegionKey, a.brainRegion);
-        mNT.innerHTML = describeNeurochemical(a.neurotransmitterKey, a.neurotransmitter);
-        mEnergy.innerHTML = describeMode(a.energyModeKey, a.energyMode);
+        mBrain.textContent = a.brainRegion;
+        mNT.textContent = a.neurotransmitter;
+        mEnergy.textContent = a.energyMode;
         mStage.textContent = `Stage ${a.stage} · Ring ${a.ring}`;
       } else {
         mDef.textContent = a.definition;
@@ -1891,8 +647,7 @@
       const ntStr = String(currentAspect.neurotransmitter || '—');
       const neuroOut = ntStr.split(' ')[0];
       const metabolic = Math.round((energyIn/100) * 100);
-      const energyNote = currentAspect.energySummary ? ` ${currentAspect.energySummary}` : '';
-      mSummary.textContent = `Energy in: ${energyIn} → ${region} → NT: ${neuroOut} → functional output: ${currentAspect.matterOutput || '—'} (metabolic load ≈ ${metabolic}%).${energyNote}`;
+      mSummary.textContent = `Energy in: ${energyIn} → ${region} → NT: ${neuroOut} → functional output: ${currentAspect.matterOutput || '—'} (metabolic load ≈ ${metabolic}%)`;
     }
 
     dlg.addEventListener('close', ()=>{ currentAspect = null; });
@@ -1910,10 +665,8 @@
       if (row) {
         const label = row.querySelector('label');
         const range = row.querySelector('input[type="range"]');
-        const bar = row.querySelector('.activation-bar span');
         if (range) range.value = String(currentAspect.activation);
         if (label) label.textContent = `Activation: ${currentAspect.activation}`;
-        if (bar) bar.style.width = `${currentAspect.activation}%`;
       }
       draw();
       updateMetrics();
@@ -1923,33 +676,128 @@
        CANVAS RENDERING
     ============================================================ */
     const canvas = el('#clock');
-    const canvas = document.getElementById('clockCanvas');
     const ctx = canvas.getContext('2d');
+
     function resizeCanvas() {
-      canvas.width = window.innerWidth * 0.9;
-      canvas.height = window.innerHeight * 0.6;
+      const dpr = Math.max(1, window.devicePixelRatio || 1);
+      const { clientWidth:w, clientHeight:h } = canvas;
+      canvas.width = Math.floor(w * dpr);
+      canvas.height = Math.floor(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      center.x = w/2; center.y = h/2;
       draw();
     }
     window.addEventListener('resize', resizeCanvas);
 
-    function draw() {
-      const w = canvas.width;
-      const h = canvas.height;
-      ctx.clearRect(0, 0, w, h);
-      const cx = w / 2;
-      const cy = h / 2;
+    function polar(angle, radius) {
+      return { x: center.x + Math.cos(angle)*radius, y: center.y + Math.sin(angle)*radius };
+    }
+
+    function drawRings(maxR) {
       const rings = 8;
-      for (let i = 1; i <= rings; i++) {
-        const r = (i / rings) * Math.min(cx, cy) * 0.9;
+      const step = maxR / rings;
+      ctx.save();
+      for (let i=1;i<=rings;i++) {
         ctx.beginPath();
-        ctx.strokeStyle = `hsla(${(i * 45) % 360},70%,60%,0.3)`;
-        ctx.lineWidth = 2;
-        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.strokeStyle = i % 2 ? '#1a214a' : '#161c3f';
+        ctx.lineWidth = 1;
+        ctx.arc(center.x, center.y, step*i, 0, TWO_PI);
         ctx.stroke();
       }
+      ctx.restore();
+    }
+
+    function drawStageLines(maxR) {
+      const count = 12;
+      ctx.save();
+      ctx.strokeStyle = '#24306f';
+      ctx.lineWidth = 1;
+      for (let s=0; s<count; s++) {
+        const angle = (s/count)*TWO_PI - Math.PI/2;
+        const p1 = polar(angle, 10);
+        const p2 = polar(angle, maxR);
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawNodes(maxR) {
+      const nodeR = 10;
+      const radius = maxR * 0.92;
+      const out = [];
+      aspects.forEach((a, i) => {
+        const angle = (i/N_ASPECTS)*TWO_PI - Math.PI/2;
+        const p = polar(angle, radius);
+        const arcSize = Math.max(0.05, a.activation/100) * (TWO_PI / N_ASPECTS);
+        ctx.beginPath();
+        ctx.arc(center.x, center.y, radius, angle - arcSize/2, angle + arcSize/2);
+        ctx.strokeStyle = hsl(a.hue, 70, 55);
+        ctx.lineWidth = 8;
+        ctx.globalAlpha = 0.55;
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+
+        ctx.beginPath();
+        ctx.fillStyle = hsl(a.hue, 70, 50);
+        ctx.arc(p.x, p.y, nodeR, 0, TWO_PI);
+        ctx.fill();
+        ctx.lineWidth = (a.id === state.focusId) ? 3 : 1.5;
+        ctx.strokeStyle = (a.id === state.focusId) ? '#fde68a' : '#0b0f2a';
+        ctx.stroke();
+
+        ctx.fillStyle = '#cbd5f1';
+        ctx.font = '12px ui-sans-serif, system-ui, -apple-system, Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText(a.name, p.x, p.y - (nodeR+8));
+
+        out.push({ id: a.id, x: p.x, y: p.y, angle });
+      });
+      return out;
+    }
+
+    function drawResonanceLinks(nodePoints) {
+      ctx.save();
+      for (let i=0;i<aspects.length;i++) {
+        for (let j=i+1;j<aspects.length;j++) {
+          const ai = aspects[i], aj = aspects[j];
+          const sim = Math.abs(ai.activation - aj.activation);
+          const sameStage = (ai.stage === aj.stage);
+          const sameRing = (ai.ring === aj.ring);
+          const shouldLink = sim <= state.resonanceThreshold || sameStage || sameRing;
+          if (!shouldLink) continue;
+          const pi = nodePoints[i], pj = nodePoints[j];
+          const d = Math.hypot(pi.x - pj.x, pi.y - pj.y);
+          const alpha = Math.min(0.35, 0.08 + (1 - sim/100) * 0.25) * (sameStage ? 1.25 : 1) * (sameRing ? 1.15 : 1);
+          ctx.beginPath();
+          const grad = ctx.createLinearGradient(pi.x, pi.y, pj.x, pj.y);
+          grad.addColorStop(0, 'rgba(52, 211, 153, '+alpha.toFixed(3)+')');
+          grad.addColorStop(1, 'rgba(125, 211, 252, '+alpha.toFixed(3)+')');
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = Math.max(0.5, 2.5 - (d/260));
+          ctx.moveTo(pi.x, pi.y);
+          ctx.lineTo(pj.x, pj.y);
+          ctx.stroke();
+        }
+      }
+      ctx.restore();
+    }
+
+    function drawTutorialHalo(nodePoints) {
+      if (!state.tutorial) return;
+      const idx = (state.tutorialIndex % aspects.length);
+      const { x, y } = nodePoints[idx];
+      const t = performance.now()/1000;
+      const pulse = 10 + 6*Math.sin(t*2);
+      ctx.save();
+      const g = ctx.createRadialGradient(x, y, 2, x, y, 42+pulse);
+      g.addColorStop(0, 'rgba(245, 158, 11, 0.7)');
+      g.addColorStop(1, 'rgba(245, 158, 11, 0.0)');
+      ctx.fillStyle = g;
       ctx.beginPath();
-      ctx.fillStyle = 'hsla(200,80%,70%,0.25)';
-      ctx.arc(cx, cy, 10, 0, Math.PI * 2);
+      ctx.arc(x, y, 42+pulse, 0, TWO_PI);
       ctx.fill();
       ctx.restore();
     }
@@ -1995,26 +843,20 @@
 
     // Basic keyboard navigation
     window.addEventListener('keydown', (e)=>{
-      const tag = (e.target && e.target.tagName ? e.target.tagName.toLowerCase() : '');
-      if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
-      if (e.target && typeof e.target.closest === 'function' && e.target.closest('.cm-editor')) return;
       const key = e.key.toLowerCase();
-      if (key === 't') { e.preventDefault(); toggleTutorial(); }
-      if (key === 'r') { e.preventDefault(); randomize(); }
-      if (key === 'e') { e.preventDefault(); openExportDialog(); }
-      if (key === '0') { e.preventDefault(); deactivateAll(); }
+      if (key === 't') { toggleTutorial(); }
+      if (key === 'r') { randomize(); }
+      if (key === 'e') { exportJSON(); }
+      if (key === '0') { deactivateAll(); }
       if (key === 'arrowright' || key === 'arrowdown') { e.preventDefault(); moveFocus(1); }
       if (key === 'arrowleft' || key === 'arrowup') { e.preventDefault(); moveFocus(-1); }
       if (key === 'enter') { e.preventDefault(); const a = aspects.find(x=>x.id===state.focusId); if (a) openModal(a); }
     });
 
     function moveFocus(delta) {
-      const pool = (state.visible && state.visible.length) ? state.visible : aspects;
-      if (!pool.length) return;
-      let idx = pool.findIndex(a => a.id === state.focusId);
-      if (idx === -1) idx = 0;
-      const next = (idx + delta + pool.length) % pool.length;
-      state.focusId = pool[next].id;
+      const idx = aspects.findIndex(a => a.id === state.focusId);
+      const next = (idx + delta + aspects.length) % aspects.length;
+      state.focusId = aspects[next].id;
       refreshListSelection();
       draw();
       const row = listEl.querySelector(`[data-id="${state.focusId}"]`);
@@ -2026,213 +868,75 @@
     ============================================================ */
     function randomize() {
       aspects.forEach(a => a.activation = Math.round(Math.random()*100));
-      updateMetrics();
-      buildList();
-      draw();
+      syncListRanges(); draw(); updateMetrics();
     }
 
     function deactivateAll() {
       aspects.forEach(a => a.activation = 0);
-      updateMetrics();
-      buildList();
-      draw();
+      syncListRanges(); draw(); updateMetrics();
+    }
+
+    function syncListRanges() {
+      aspects.forEach(a => {
+        const row = listEl.querySelector(`[data-id="${a.id}"]`);
+        if (!row) return;
+        const range = row.querySelector('input[type="range"]');
+        const label = row.querySelector('label');
+        if (range) range.value = a.activation;
+        if (label) label.textContent = `Activation: ${a.activation}`;
+      });
     }
 
     // Build payload separately so we can unit-test it
     function buildExportPayload() {
-      const metrics = computeSCI();
+      const { mean, std, sci } = computeSCI();
       const { total, byNT, metabolic } = computeEnergyMatter();
       return {
         generatedAt: new Date().toISOString(),
         model: `32 Aspect Developmental Self Clock — ${mode}`,
         devStage: state.devStage,
-        devStageLabel: stageLabel(state.devStage),
-        stageWeights: [...state.stageWeights],
-        metrics: {
-          mean: metrics.mean,
-          std: metrics.std,
-          sci: metrics.sci,
-          activationScore: metrics.activationScore,
-          balance: metrics.balance,
-          resonanceRatio: metrics.resonanceScore,
-          alignmentScore: metrics.alignmentScore,
-          formula: formatSciFormula(metrics)
-        },
-        resonance: metrics.resonance,
+        metrics: { mean, std, sci },
         energyMatter: { total, byNT: Object.fromEntries(byNT), metabolic },
-        filters: {
-          search: state.filterText,
-          sort: state.sort,
-          stage: state.stageFilter,
-          ring: state.ringFilter,
-          activeOnly: state.activeOnly,
-        },
-        comparison: {
-          stageA: Number(compareStageA?.value ?? state.devStage),
-          stageB: Number(compareStageB?.value ?? state.devStage),
-          summary: comparisonSummaryEl ? comparisonSummaryEl.textContent : '',
-          summaryHtml: comparisonSummaryEl ? comparisonSummaryEl.innerHTML : ''
-        },
-        aspects: aspects.map(a => ({ ...a }))
+        aspects: aspects
       };
-    }
-
-    function downloadFile(content, mime, filename) {
-      const blob = new Blob([content], { type: mime });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = filename;
-      document.body.appendChild(a); a.click(); a.remove();
-      URL.revokeObjectURL(url);
-    }
-
-    function registerDialogBackdropClose(dialogEl, onClose) {
-      if (!dialogEl) return;
-      dialogEl.addEventListener('click', (event) => {
-        const rect = dialogEl.getBoundingClientRect();
-        if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) {
-          dialogEl.close();
-        }
-      });
-      if (typeof onClose === 'function') dialogEl.addEventListener('close', onClose);
     }
 
     function exportJSON() {
       const payload = buildExportPayload();
-      downloadFile(JSON.stringify(payload, null, 2), 'application/json', 'self-clock-export.json');
-    }
-
-    function csvEscape(value) {
-      const str = String(value ?? '');
-      if (/[",\n]/.test(str)) {
-        return '"' + str.replace(/"/g, '""') + '"';
-      }
-      return str;
-    }
-
-    function exportCSV() {
-      const payload = buildExportPayload();
-      const header = ['Aspect', 'Stage', 'Ring', 'Activation', 'Base', 'Brain', 'Neurotransmitter', 'Mode'];
-      const rows = [header.join(',')];
-      payload.aspects.forEach(a => {
-        rows.push([
-          csvEscape(a.name),
-          csvEscape(a.stage),
-          csvEscape(a.ring),
-          csvEscape(a.activation),
-          csvEscape(a.baseActivation ?? (a.devProfile?.[state.devStage] ?? '')),
-          csvEscape(a.brainRegion || a.brainRegionKey || '—'),
-          csvEscape(a.neurotransmitter || a.neurotransmitterKey || '—'),
-          csvEscape(a.energyMode || a.energyModeKey || '—')
-        ].join(','));
-      });
-      downloadFile(rows.join('\n'), 'text/csv', 'self-clock-export.csv');
-    }
-
-    function escapeHtml(str) {
-      return String(str ?? '').replace(/[&<>"']/g, (ch) => ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;'
-      }[ch]));
-    }
-
-    function exportReport() {
-      const payload = buildExportPayload();
-      const topAspects = payload.aspects.slice().sort((a,b)=>b.activation - a.activation).slice(0,8);
-      const rows = topAspects.map(a => `<tr><td>${escapeHtml(a.name)}</td><td>${a.activation}</td><td>${escapeHtml(a.brainRegion || a.brainRegionKey || '—')}</td><td>${escapeHtml(a.neurotransmitter || a.neurotransmitterKey || '—')}</td></tr>`).join('');
-      const html = `<!doctype html><html><head><meta charset="utf-8"><title>Self Clock Report</title><style>
-        body{font-family:Inter,Segoe UI,sans-serif;background:#f5f7ff;color:#111827;padding:32px;line-height:1.6;}
-        h1{margin-top:0;}
-        table{border-collapse:collapse;width:100%;margin-top:16px;}
-        th,td{border:1px solid #cbd5f5;padding:8px;text-align:left;}
-        th{background:#e0e7ff;}
-        .muted{color:#6b7280;font-size:14px;}
-      </style></head><body>
-        <h1>32 Aspect Developmental Self Clock</h1>
-        <p class="muted">Generated ${escapeHtml(new Date().toLocaleString())}</p>
-        <h2>Semantic Coherence Index</h2>
-        <p><strong>${payload.metrics.sci.toFixed(1)}</strong> · ${escapeHtml(payload.metrics.formula)}</p>
-        <p>Resonance coverage ${(payload.metrics.resonanceRatio*100).toFixed(0)}% across ${payload.resonance.supportive}/${payload.resonance.total} potential links.</p>
-        <h2>Developmental Context</h2>
-        <p>Active stage: <strong>${escapeHtml(payload.devStageLabel)}</strong>. Stage weights: ${payload.stageWeights.map((w,i)=>`Stage ${i+1} ${Number(w).toFixed(2)}×`).join(', ')}.</p>
-        <p>${payload.comparison.summaryHtml || escapeHtml(payload.comparison.summary || '')}</p>
-        <h2>Energy–Matter</h2>
-        <p>Total activation ${Math.round(payload.energyMatter.total)} · Metabolic ${(payload.energyMatter.metabolic*100).toFixed(0)}%</p>
-        <h2>Peak Activations</h2>
-        <table><thead><tr><th>Aspect</th><th>Activation</th><th>Brain</th><th>Neurochemical</th></tr></thead><tbody>${rows}</tbody></table>
-      </body></html>`;
-      downloadFile(html, 'text/html', 'self-clock-report.html');
-    }
-
-    function openExportDialog() {
-      if (exportDialog && !exportDialog.open) exportDialog.showModal();
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'self-clock-export.json';
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
     }
 
     /* ============================================================
        TUTORIAL / WALKTHROUGH MODE
     ============================================================ */
     let tutorialTimer = null;
-    function toggleTutorial(forceValue) {
-      const next = typeof forceValue === 'boolean' ? forceValue : !state.tutorial;
-      if (state.tutorial === next) {
-        if (next && tutorialDialog && !tutorialDialog.open) tutorialDialog.showModal();
-        return;
-      }
-      state.tutorial = next;
-      if (tutorialBtn) {
-        tutorialBtn.setAttribute('aria-pressed', String(state.tutorial));
-        tutorialBtn.textContent = state.tutorial ? '⏸ Tutorial' : '▶ Tutorial';
-      }
+    function toggleTutorial() {
+      state.tutorial = !state.tutorial;
+      el('#btnTutorial').setAttribute('aria-pressed', String(state.tutorial));
+      el('#btnTutorial').textContent = state.tutorial ? '⏸ Tutorial' : '▶ Tutorial';
       if (state.tutorial) {
-        updateTutorialContent();
-        setTutorialOverlayVisible(true);
-        draw();
         if (!tutorialTimer) tutorialTimer = setInterval(()=>{
           state.tutorialIndex = (state.tutorialIndex + 1) % aspects.length;
           state.focusId = aspects[state.tutorialIndex].id;
-          refreshListSelection();
-          draw();
-          updateTutorialContent();
+          refreshListSelection(); draw();
         }, 1400);
-        if (tutorialDialog && !tutorialDialog.open) tutorialDialog.showModal();
       } else {
         clearInterval(tutorialTimer); tutorialTimer = null; draw();
-        if (tutorialDialog && tutorialDialog.open) tutorialDialog.close();
       }
     }
 
     /* ============================================================
        UI WIRING
     ============================================================ */
-    tutorialBtn?.addEventListener('click', ()=> toggleTutorial());
+    el('#btnTutorial').addEventListener('click', toggleTutorial);
     el('#btnRandomize').addEventListener('click', randomize);
     el('#btnDeactivate').addEventListener('click', deactivateAll);
-    exportBtn?.addEventListener('click', (e)=> { e.preventDefault(); openExportDialog(); });
-
-    function attachExportHandler(btn, handler) {
-      if (!btn) return;
-      btn.addEventListener('click', (event)=> {
-        event.preventDefault();
-        handler();
-        exportDialog?.close();
-      });
-    }
-
-    attachExportHandler(exportJsonBtn, exportJSON);
-    attachExportHandler(exportCsvBtn, exportCSV);
-    attachExportHandler(exportReportBtn, exportReport);
-
-    if (sciInfoBtn) sciInfoBtn.addEventListener('click', ()=> {
-      if (sciFormulaEl) sciFormulaEl.textContent = formatSciFormula(computeSCI());
-      if (sciModal && !sciModal.open) sciModal.showModal();
-    });
-
-    registerDialogBackdropClose(sciModal);
-    registerDialogBackdropClose(tutorialDialog, ()=> { if (state.tutorial) toggleTutorial(false); });
-    registerDialogBackdropClose(exportDialog);
+    el('#btnExport').addEventListener('click', exportJSON);
 
     function setMode(newMode){
       mode = newMode;
@@ -2247,278 +951,43 @@
       applyDevStage(state.devStage);
       updateMetrics();
       draw();
-      if (state.tutorial) updateTutorialContent();
     }
 
-    resizeCanvas();
+    el('#modeMind').addEventListener('click', ()=> setMode('mind'));
+    el('#modeBody').addEventListener('click', ()=> setMode('body'));
+    el('#modeSoul').addEventListener('click', ()=> setMode('soul'));
 
-    const themeToggle = document.getElementById('themeToggle');
-    themeToggle.addEventListener('click', () => {
-      const current = document.body.getAttribute('data-theme');
-      const next = current === 'dark' ? 'light' : 'dark';
-      document.body.setAttribute('data-theme', next);
-    });
-  </script>
-  <script type="module">
-    import { EditorState } from "https://esm.sh/@codemirror/state@6.2.1";
-    import { EditorView, keymap, highlightActiveLine, drawSelection } from "https://esm.sh/@codemirror/view@6.23.1";
-    import { defaultKeymap, history, historyKeymap, indentWithTab } from "https://esm.sh/@codemirror/commands@6.2.4";
-    import { autocompletion, completionKeymap, closeBrackets } from "https://esm.sh/@codemirror/autocomplete@6.10.2";
-    import { lintGutter, linter, lintState } from "https://esm.sh/@codemirror/lint@6.4.1";
-    import { html as htmlLang } from "https://esm.sh/@codemirror/lang-html@6.4.7";
-    import { css as cssLang } from "https://esm.sh/@codemirror/lang-css@6.2.1";
-    import { javascript as jsLang } from "https://esm.sh/@codemirror/lang-javascript@6.2.1";
-    import { json as jsonLang } from "https://esm.sh/@codemirror/lang-json@6.0.1";
-    import Ajv from "https://esm.sh/ajv@8.12.0";
+    /* ============================================================
+       SELF-TESTS (basic runtime checks) — shown in console
+       We add tests since none existed previously.
+    ============================================================ */
+    function runSelfTests() {
+      const results = [];
+      function assert(name, cond) { results.push({ name, pass: !!cond }); }
 
-    const htmlSurface = document.getElementById('editor-html');
-    const cssSurface = document.getElementById('editor-css');
-    const jsSurface = document.getElementById('editor-js');
-    const jsonSurface = document.getElementById('editor-json');
-    const summaryEl = document.getElementById('validationSummary');
-    const previewFrame = document.getElementById('workflowPreview');
-    const previewStatus = document.getElementById('previewStatus');
-    const previewMeta = document.getElementById('previewMeta');
-    const saveButton = document.getElementById('workflowSave');
-    const autoToggle = document.getElementById('workflowAuto');
-    const resizer = document.getElementById('workflowResizer');
-    const panels = document.getElementById('workflowPanels');
+      // Test 1: DEV_STAGES
+      assert('DEV_STAGES == 12', DEV_STAGES === 12);
 
-    if (!htmlSurface || !cssSurface || !jsSurface || !jsonSurface) {
-      console.warn('Workflow studio surfaces unavailable.');
-      return;
-    }
+      // Test 2: Each dataset has 32 aspects
+      assert('mindAspects length', mindAspects.length === 32);
+      assert('bodyAspects length', bodyAspects.length === 32);
+      assert('soulAspects length', soulAspects.length === 32);
 
-    const ajv = new Ajv({ allErrors: true, strict: false });
-    const jsonSchema = {
-      type: 'object',
-      additionalProperties: false,
-      required: ['title', 'version', 'aspects'],
-      properties: {
-        title: { type: 'string', minLength: 1 },
-        version: { type: 'number', minimum: 1 },
-        aspects: {
-          type: 'array',
-          minItems: 1,
-          items: {
-            type: 'object',
-            required: ['id', 'name', 'stage', 'ring', 'activation'],
-            properties: {
-              id: { type: 'integer', minimum: 1 },
-              name: { type: 'string', minLength: 1 },
-              stage: { type: 'integer', minimum: 1, maximum: 12 },
-              ring: { type: 'integer', minimum: 1, maximum: 8 },
-              activation: { type: 'integer', minimum: 0, maximum: 100 },
-              brainRegion: { type: 'string' },
-              neurotransmitter: { type: 'string' }
-            },
-            additionalProperties: true
-          }
-        }
-      }
-    };
-    const validateJson = ajv.compile(jsonSchema);
+      // Test 3: devProfile lengths
+      assert('mind devProfile[0].length == 12', mindAspects[0].devProfile.length === 12);
 
-    const initialHTML = `<section class="demo-grid">
-  <header>
-    <h1>Stage Synergy Digest</h1>
-    <p class="lead">Summarise emergent resonance between developmental stages and neurobiological anchors.</p>
-  </header>
-  <ul class="digest" aria-label="High-synergy aspects">
-    <li data-stage="5">
-      <strong>Stage 5 · Limbic Integration</strong>
-      <span>Oxytocin + Insula feedback aligns with mindful body awareness rituals.</span>
-    </li>
-    <li data-stage="9">
-      <strong>Stage 9 · Transcendent Strategy</strong>
-      <span>PFC schema maps balance dopamine drive with reflective pause cues.</span>
-    </li>
-  </ul>
-</section>`;
-
-    const initialCSS = `.demo-grid {
-  font-family: 'Inter', system-ui, sans-serif;
-  padding: 24px;
-  background: linear-gradient(145deg, rgba(59,130,246,0.14), rgba(167,139,250,0.18));
-  border-radius: 18px;
-  color: #0f172a;
-}
-.demo-grid header { margin-bottom: 16px; }
-.demo-grid h1 { margin: 0 0 4px; font-size: 1.3rem; }
-.demo-grid .lead { margin: 0; color: #475569; max-width: 62ch; }
-.demo-grid .digest { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
-.demo-grid .digest li {
-  background: rgba(255,255,255,0.8);
-  border-radius: 16px;
-  padding: 12px 16px;
-  border: 1px solid rgba(148,163,233,0.35);
-  box-shadow: 0 10px 30px rgba(15,23,42,0.08);
-  display: grid;
-  gap: 4px;
-}
-.demo-grid .digest li strong { font-size: 0.95rem; }
-.demo-grid .digest li span { font-size: 0.82rem; color: #475569; }
-.demo-grid .digest li[data-stage="9"] { border-color: rgba(14,165,233,0.6); }
-@media (max-width: 680px) {
-  .demo-grid { padding: 18px; }
-}`;
-
-    const initialJS = `const focusOrder = ['5', '9'];
-const list = document.querySelector('.digest');
-if (list) {
-  focusOrder.forEach(stage => {
-    const item = list.querySelector('[data-stage="' + stage + '"]');
-    if (item) {
-      item.dataset.highlight = 'true';
-      item.style.outline = '2px solid rgba(14,165,233,0.65)';
-      item.style.outlineOffset = '2px';
-    }
-  });
-}
-console.info('Preview initialised with focus order', focusOrder);
-`;
-
-    const initialJSON = JSON.stringify({
-      title: 'Workflow Preview Payload',
-      version: 1,
-      aspects: [
-        { id: 1, name: 'Limbic Integration', stage: 5, ring: 6, activation: 78, brainRegion: 'Limbic', neurotransmitter: 'Oxytocin' },
-        { id: 2, name: 'Strategic Pause', stage: 9, ring: 7, activation: 64, brainRegion: 'PFC', neurotransmitter: 'DA' }
-      ]
-    }, null, 2);
-
-    const baseExtensions = [
-      highlightActiveLine(),
-      drawSelection(),
-      history(),
-      keymap.of([...defaultKeymap, ...historyKeymap, indentWithTab, ...completionKeymap]),
-      autocompletion(),
-      closeBrackets(),
-      lintGutter(),
-      EditorView.lineWrapping
-    ];
-
-    const diagnostics = new Map([
-      ['html', []],
-      ['css', []],
-      ['js', []],
-      ['json', []]
-    ]);
-
-    const getLineOffset = (doc, line, column) => {
-      if (!Number.isFinite(line) || line < 1) return 0;
-      const ln = doc.line(Math.max(1, Math.min(doc.lines, line)));
-      return ln.from + Math.max(0, Math.min(ln.length, column - 1));
-    };
-
-    const htmlLint = (view) => {
-      const text = view.state.doc.toString();
-      if (!text.trim()) return [];
-      const parser = new DOMParser();
-      const parsed = parser.parseFromString(text, 'text/html');
-      const error = parsed.querySelector('parsererror');
-      if (error) {
-        const msg = error.textContent?.replace(/\s+/g, ' ').trim() || 'HTML parse error';
-        return [{ from: 0, to: Math.min(1, text.length), severity: 'error', message: msg }];
-      }
-      return [];
-    };
-
-    const cssLint = (view) => {
-      const text = view.state.doc.toString();
-      if (!text.trim()) return [];
-      try {
-        const sheet = new CSSStyleSheet();
-        sheet.replaceSync(text);
-      } catch (err) {
-        const message = (err && err.message) ? String(err.message) : 'CSS syntax error';
-        const match = message.match(/:(\d+):(\d+)/);
-        if (match) {
-          const line = Number(match[1]);
-          const column = Number(match[2]);
-          const pos = getLineOffset(view.state.doc, line, column);
-          return [{ from: pos, to: pos + 1, severity: 'error', message }];
-        }
-        return [{ from: 0, to: Math.min(text.length, 1), severity: 'error', message }];
-      }
-      return [];
-    };
-
-    const jsLint = (view) => {
-      const text = view.state.doc.toString();
-      if (!text.trim()) return [];
-      try {
-        // eslint-disable-next-line no-new-func
-        new Function(text);
-      } catch (err) {
-        const message = err && err.message ? String(err.message) : 'JavaScript syntax error';
-        const match = message.match(/<anonymous>:(\d+):(\d+)/);
-        if (match) {
-          const line = Number(match[1]);
-          const column = Number(match[2]);
-          const pos = getLineOffset(view.state.doc, line, column);
-          return [{ from: pos, to: pos + 1, severity: 'error', message }];
-        }
-        return [{ from: 0, to: Math.min(text.length, 1), severity: 'error', message }];
-      }
-      return [];
-    };
-
-    const jsonLint = (view) => {
-      const text = view.state.doc.toString();
-      if (!text.trim()) return [];
-      let parsed;
-      try {
-        parsed = JSON.parse(text);
-      } catch (err) {
-        const message = err && err.message ? String(err.message) : 'JSON parse error';
-        const posMatch = message.match(/position (\d+)/i);
-        const idx = posMatch ? Number(posMatch[1]) : 0;
-        const from = Math.min(idx, text.length);
-        return [{ from, to: Math.min(from + 1, text.length), severity: 'error', message }];
-      }
-      const valid = validateJson(parsed);
-      if (!valid) {
-        const err = validateJson.errors && validateJson.errors[0];
-        if (err) {
-          const path = err.instancePath || '';
-          const key = path.split('/').filter(Boolean).pop();
-          let idx = 0;
-          if (key) {
-            const regex = new RegExp(`"${key}"`);
-            const match = regex.exec(text);
-            if (match) idx = match.index;
-          }
-          return [{
-            from: idx,
-            to: Math.min(idx + (key ? key.length + 2 : 1), text.length),
-            severity: 'error',
-            message: `${err.message || 'Schema validation error'} (${path || 'root'})`
-          }];
-        }
-      }
-      return [];
-    };
-
-      // Test 4: SCI on uniform activations → high coherence, variance ≈ 0
+      // Test 4: SCI on uniform activations → std≈0, sci≈mean*100
       const bak = aspects;
-      aspects = [
-        { activation: 50, stage: 1, ring: 1 },
-        { activation: 50, stage: 1, ring: 1 },
-        { activation: 50, stage: 1, ring: 1 },
-        { activation: 50, stage: 1, ring: 1 }
-      ];
-      const { mean, std, sci, resonance } = computeSCI();
+      aspects = [{ activation: 50 },{ activation: 50 },{ activation: 50 },{ activation: 50 }];
+      const { mean, std, sci } = computeSCI();
       assert('SCI std == 0', Math.abs(std - 0) < 1e-9);
-      assert('SCI resonance == 1', Math.abs(resonance.ratio - 1) < 1e-9);
-      assert('SCI value', Math.abs(sci - 82.5) < 1e-6);
+      assert('SCI value', Math.abs(sci - (50/(1+0)*100)) < 1e-6);
       aspects = bak;
 
       // Test 5: export payload shape
       const payload = buildExportPayload();
       assert('payload.aspects length == 32', Array.isArray(payload.aspects) && payload.aspects.length === 32);
       assert('payload.metrics has sci', typeof payload.metrics.sci === 'number');
-      assert('payload.metrics has formula', typeof payload.metrics.formula === 'string');
 
       // Report
       const passCount = results.filter(r=>r.pass).length;
@@ -2528,81 +997,22 @@ console.info('Preview initialised with focus order', focusOrder);
       if (fail.length) {
         console.warn('Some self-tests failed:', fail);
       } else {
-        badge.className = 'validation-badge ok';
-        badge.textContent = 'Lint clean';
-        message.textContent = total ? `${total} notices` : 'No issues detected.';
+        console.log(`All ${passCount} self-tests passed.`);
       }
-      summaryEl.append(badge, message);
-    };
-
-    updateValidationSummary();
-
-    document.querySelectorAll('.editor-tab').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const target = btn.getAttribute('data-target');
-        if (!target) return;
-        document.querySelectorAll('.editor-tab').forEach((tab) => {
-          const isActive = tab === btn;
-          tab.classList.toggle('is-active', isActive);
-          tab.setAttribute('aria-selected', String(isActive));
-        });
-        document.querySelectorAll('.editor-surface').forEach((surface) => {
-          surface.classList.toggle('is-visible', surface.id === `editor-${target}`);
-        });
-        const view = editorMap[target];
-        if (view) view.focus();
-      });
-    });
-
-    const adjustBy = (delta) => {
-      if (!panels) return;
-      const bounds = panels.getBoundingClientRect();
-      const min = 240;
-      const max = bounds.width - 240;
-      const currentPercent = parseFloat(getComputedStyle(panels).getPropertyValue('--editor-width')) || 55;
-      const current = (currentPercent / 100) * bounds.width;
-      const next = Math.max(min, Math.min(max, current + delta));
-      const percent = (next / bounds.width) * 100;
-      panels.style.setProperty('--editor-width', `${percent}%`);
-    };
-
-    if (resizer && panels) {
-      resizer.addEventListener('pointerdown', (event) => {
-        event.preventDefault();
-        resizer.setPointerCapture(event.pointerId);
-        const startX = event.clientX;
-        const bounds = panels.getBoundingClientRect();
-        const startWidth = htmlSurface.getBoundingClientRect().width;
-        const move = (ev) => {
-          const delta = ev.clientX - startX;
-          const next = Math.max(240, Math.min(bounds.width - 240, startWidth + delta));
-          const percent = (next / bounds.width) * 100;
-          panels.style.setProperty('--editor-width', `${percent}%`);
-        };
-        const up = () => {
-          resizer.releasePointerCapture(event.pointerId);
-          window.removeEventListener('pointermove', move);
-        };
-        window.addEventListener('pointermove', move);
-        window.addEventListener('pointerup', up, { once: true });
-      });
-
-      resizer.addEventListener('keydown', (ev) => {
-        if (ev.key === 'ArrowLeft') { ev.preventDefault(); adjustBy(-40); }
-        if (ev.key === 'ArrowRight') { ev.preventDefault(); adjustBy(40); }
-      });
     }
 
-    const handleSave = () => {
-      refreshPreview();
-    };
+    // Initial build & draw
+    buildList();
+    updateMetrics();
+    resizeCanvas();
+    applyDevStage(state.devStage);
+    requestAnimationFrame(tick);
+    runSelfTests();
 
     /* ============================================================
        SCIENCE NOTES (for researchers inside code comments)
        ----------------------------------------------------
-       • SCI blends activation power, variance balance, and resonance/structure
-         alignment: 0.35·activation + 0.35·balance + 0.20·resonance +
-         0.10·alignment.
+       • SCI implements the user's formula: mean/(1+stddev)*100.
        • We visualize C = E × MC (concept → energy × matter × cognition) via
          the info modal's pipeline description and resonance links.
        • 12 radial cross-lines = expanded Erikson-like developmental stages; 
