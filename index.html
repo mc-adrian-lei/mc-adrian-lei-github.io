@@ -8,8 +8,9 @@
     /* =============================================================
        32 Aspect Developmental Self Clock — Single File Implementation
        • Plain HTML, CSS, and JavaScript (no external libraries)
-       • Accessible controls + Canvas visualization
-       • Keyboard navigation, high-contrast defaults, mobile-friendly
+       • Integration: OpenAI API for Semantic Resonance
+       • Framework: FEEL-NSIL (Trauma-Informed, Resonance-Based)
+       • Architecture: Lei Mnemonic Particle Wave Field (LMPWF)
        ============================================================= */
 
     :root {
@@ -83,7 +84,7 @@
         linear-gradient(160deg, rgba(9, 12, 28, 0.92), var(--bg));
     }
 
-    .app {
+   .app {
       display: grid;
       grid-template-columns: minmax(0, 1fr) 360px;
       grid-template-rows: auto 1fr auto;
@@ -111,7 +112,7 @@
       box-shadow: var(--shadow-1);
     }
 
-    .header-top {
+   .header-top {
       display: flex;
       flex-wrap: wrap;
       align-items: flex-start;
@@ -125,23 +126,23 @@
       letter-spacing: 0.4px;
     }
 
-    .title-block { max-width: min(640px, 100%); }
+   .title-block { max-width: min(640px, 100%); }
 
-    .subtitle {
+   .subtitle {
       margin: 4px 0 0;
       color: var(--muted);
       font-size: clamp(12px, 1.6vw, 14px);
       max-width: 60ch;
     }
 
-    .mode-toggle {
+   .mode-toggle {
       display: inline-flex;
       flex-wrap: wrap;
       gap: 8px;
       align-items: center;
     }
 
-    .control-row {
+   .control-row {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
@@ -149,27 +150,17 @@
       justify-content: space-between;
     }
 
-    }
-
-    .control-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .control-cluster {
+   .control-cluster {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
       align-items: center;
     }
-    .control-cluster.secondary { margin-left: auto; justify-content: flex-end; }
+   .control-cluster.secondary { margin-left: auto; justify-content: flex-end; }
 
     button { font: inherit; }
 
-    .btn {
+   .btn {
       display: inline-flex;
       align-items: center;
       gap: 6px;
@@ -185,43 +176,55 @@
       transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
       box-shadow: 0 12px 30px rgba(37, 99, 235, 0.18);
     }
-    .btn:hover { transform: translateY(-1px); box-shadow: 0 16px 36px rgba(59, 130, 246, 0.28); }
-    .btn:active { transform: translateY(0); }
-    .btn:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
-    .btn.secondary {
+   .btn:hover { transform: translateY(-1px); box-shadow: 0 16px 36px rgba(59, 130, 246, 0.28); }
+   .btn:active { transform: translateY(0); }
+   .btn:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+   .btn.secondary {
       background: color-mix(in srgb, var(--panel-strong) 92%, transparent);
       border-color: color-mix(in srgb, var(--accent) 25%, transparent);
       box-shadow: none;
     }
-    .btn.secondary:hover { background: color-mix(in srgb, var(--panel-strong) 75%, var(--accent) 25%); }
-    .btn.warn {
+   .btn.secondary:hover { background: color-mix(in srgb, var(--panel-strong) 75%, var(--accent) 25%); }
+   .btn.warn {
       background: color-mix(in srgb, var(--bad) 45%, transparent 55%);
       border-color: color-mix(in srgb, var(--bad) 60%, transparent);
       box-shadow: none;
     }
-    .btn.warn:hover { background: color-mix(in srgb, var(--bad) 60%, transparent 40%); }
-    .btn.ghost {
+   .btn.warn:hover { background: color-mix(in srgb, var(--bad) 60%, transparent 40%); }
+   .btn.ghost {
       background: transparent;
       border-color: color-mix(in srgb, var(--muted) 26%, transparent);
       color: var(--muted);
       box-shadow: none;
     }
-    .btn.ghost:hover { color: var(--ink); border-color: color-mix(in srgb, var(--accent) 40%, transparent); }
-    .btn.tertiary {
+   .btn.ghost:hover { color: var(--ink); border-color: color-mix(in srgb, var(--accent) 40%, transparent); }
+   .btn.tertiary {
       background: color-mix(in srgb, var(--accent) 18%, transparent);
       border-color: color-mix(in srgb, var(--accent) 35%, transparent);
       color: var(--ink);
       box-shadow: none;
     }
-    .btn.small { padding: 6px 12px; font-size: 12px; }
+   .btn.small { padding: 6px 12px; font-size: 12px; }
 
-    .desktop-only {}
-    .mobile-only { display: none !important; }
+    /* Special Resonance Button Styling */
+   .btn.resonance {
+      background: linear-gradient(135deg, #7c3aed, #db2777);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.2);
+      box-shadow: 0 0 15px rgba(219, 39, 119, 0.4);
+    }
+   .btn.resonance:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 25px rgba(219, 39, 119, 0.6);
+    }
 
-    body[data-layout="mobile"] .desktop-only { display: none !important; }
-    body[data-layout="mobile"] .mobile-only { display: revert !important; }
+   .desktop-only {}
+   .mobile-only { display: none!important; }
 
-    .vis {
+    body[data-layout="mobile"].desktop-only { display: none!important; }
+    body[data-layout="mobile"].mobile-only { display: revert!important; }
+
+   .vis {
       grid-area: vis;
       position: relative;
       background: linear-gradient(165deg,
@@ -238,7 +241,7 @@
 
     canvas { width: 100%; height: 100%; display: block; }
 
-    .legend {
+   .legend {
       padding: 16px;
       border-top: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
       display: flex;
@@ -248,7 +251,7 @@
       background: color-mix(in srgb, var(--panel) 90%, transparent);
     }
 
-    .legend .chip {
+   .legend.chip {
       display: inline-flex;
       align-items: center;
       gap: 8px;
@@ -262,7 +265,7 @@
       letter-spacing: 0.2px;
     }
 
-    .legend .swatch {
+   .legend.swatch {
       width: 12px;
       height: 12px;
       border-radius: 4px;
@@ -285,7 +288,7 @@
       box-shadow: var(--shadow-1);
     }
 
-    .panel {
+   .panel {
       background: color-mix(in srgb, var(--panel) 92%, transparent);
       border: 1px solid var(--glass-stroke);
       border-radius: 18px;
@@ -295,13 +298,13 @@
       gap: 10px;
     }
 
-    .metrics {
+   .metrics {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
       gap: 12px;
     }
 
-    .metric {
+   .metric {
       background: linear-gradient(150deg,
         color-mix(in srgb, var(--panel-strong) 92%, transparent) 0%,
         color-mix(in srgb, var(--accent) 18%, transparent) 100%);
@@ -312,18 +315,18 @@
       gap: 6px;
       box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
     }
-    .metric h3 { margin: 0; font-size: 12px; color: var(--muted); font-weight: 600; letter-spacing: 0.3px; }
-    .metric .val { font-size: 20px; font-weight: 700; line-height: 1.2; color: var(--ink); }
-    .metric .val small { display: block; font-size: 11px; font-weight: 500; color: var(--muted); }
-    .status-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
-    .status-label { font-size: 11px; color: var(--muted); font-weight: 600; }
+   .metric h3 { margin: 0; font-size: 12px; color: var(--muted); font-weight: 600; letter-spacing: 0.3px; }
+   .metric.val { font-size: 20px; font-weight: 700; line-height: 1.2; color: var(--ink); }
+   .metric.val small { display: block; font-size: 11px; font-weight: 500; color: var(--muted); }
+   .status-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+   .status-label { font-size: 11px; color: var(--muted); font-weight: 600; }
 
-    .panel p { margin: 0; }
+   .panel p { margin: 0; }
 
-    .scroll { overflow: auto; min-height: 120px; max-height: 50vh; padding-right: 6px; }
-    .aspect-list { display: grid; gap: 10px; }
+   .scroll { overflow: auto; min-height: 120px; max-height: 50vh; padding-right: 6px; }
+   .aspect-list { display: grid; gap: 10px; }
 
-    .aspect-item {
+   .aspect-item {
       background: color-mix(in srgb, var(--panel-strong) 90%, transparent);
       border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
       border-radius: 16px;
@@ -333,13 +336,13 @@
       transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
       box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
     }
-    .aspect-item:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--accent) 45%, transparent); box-shadow: 0 12px 26px rgba(37, 99, 235, 0.18); }
-    .aspect-item[aria-selected="true"] { border-color: color-mix(in srgb, var(--focus) 60%, transparent); box-shadow: 0 16px 32px rgba(253, 230, 138, 0.28); }
+   .aspect-item:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--accent) 45%, transparent); box-shadow: 0 12px 26px rgba(37, 99, 235, 0.18); }
+   .aspect-item[aria-selected="true"] { border-color: color-mix(in srgb, var(--focus) 60%, transparent); box-shadow: 0 16px 32px rgba(253, 230, 138, 0.28); }
 
-    .row { display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
-    .row .name { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; letter-spacing: 0.25px; }
+   .row { display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+   .row.name { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; letter-spacing: 0.25px; }
 
-    .badge {
+   .badge {
       font-size: 11px;
       font-weight: 600;
       color: var(--muted);
@@ -349,51 +352,13 @@
       border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
     }
 
-    .dot { width: 12px; height: 12px; border-radius: 999px; box-shadow: 0 0 0 2px rgba(255,255,255,0.05); }
+   .dot { width: 12px; height: 12px; border-radius: 999px; box-shadow: 0 0 0 2px rgba(255,255,255,0.05); }
 
-    }
-    .metric h3 { margin: 0; font-size: 12px; color: var(--muted); font-weight: 600; letter-spacing: 0.3px; }
-    .metric .val { font-size: 20px; font-weight: 700; line-height: 1.2; color: var(--ink); }
-    .metric .val small { display: block; font-size: 11px; font-weight: 500; color: var(--muted); }
+   .activation-bar { position: relative; width: 100%; height: 6px; border-radius: 999px; background: color-mix(in srgb, var(--panel) 82%, transparent); overflow: hidden; }
+   .activation-bar span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, rgba(125, 211, 252, 0.85), rgba(168, 85, 247, 0.9)); transition: width 0.2s ease; }
 
-    .panel p { margin: 0; }
-
-    .scroll { overflow: auto; min-height: 120px; max-height: 50vh; padding-right: 6px; }
-    .aspect-list { display: grid; gap: 10px; }
-
-    .aspect-item {
-      background: color-mix(in srgb, var(--panel-strong) 90%, transparent);
-      border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
-      border-radius: 16px;
-      padding: 12px;
-      display: grid;
-      gap: 10px;
-      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
-    }
-    .aspect-item:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--accent) 45%, transparent); box-shadow: 0 12px 26px rgba(37, 99, 235, 0.18); }
-    .aspect-item[aria-selected="true"] { border-color: color-mix(in srgb, var(--focus) 60%, transparent); box-shadow: 0 16px 32px rgba(253, 230, 138, 0.28); }
-
-    .row { display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
-    .row .name { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; letter-spacing: 0.25px; }
-
-    .badge {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--muted);
-      background: color-mix(in srgb, var(--panel) 80%, transparent);
-      border-radius: 999px;
-      padding: 4px 10px;
-      border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
-    }
-
-    .dot { width: 12px; height: 12px; border-radius: 999px; box-shadow: 0 0 0 2px rgba(255,255,255,0.05); }
-
-    .activation-bar { position: relative; width: 100%; height: 6px; border-radius: 999px; background: color-mix(in srgb, var(--panel) 82%, transparent); overflow: hidden; }
-    .activation-bar span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, rgba(125, 211, 252, 0.85), rgba(168, 85, 247, 0.9)); transition: width 0.2s ease; }
-
-    .tags { display: flex; gap: 6px; flex-wrap: wrap; }
-    .tag { font-size: 11px; color: var(--muted); background: color-mix(in srgb, var(--panel-strong) 88%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent); padding: 3px 8px; border-radius: 999px; letter-spacing: 0.2px; }
+   .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+   .tag { font-size: 11px; color: var(--muted); background: color-mix(in srgb, var(--panel-strong) 88%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent); padding: 3px 8px; border-radius: 999px; letter-spacing: 0.2px; }
 
     label { font-size: 12px; color: var(--muted); font-weight: 600; }
 
@@ -402,9 +367,9 @@
     input[type="range"]::-webkit-slider-runnable-track { height: 6px; border-radius: 999px; background: color-mix(in srgb, var(--panel) 80%, transparent); }
     input[type="range"]:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 
-    .input-field { display: grid; gap: 6px; }
-    .input-field input,
-    .input-field select {
+   .input-field { display: grid; gap: 6px; }
+   .input-field input,
+   .input-field select {
       width: 100%;
       border-radius: 12px;
       border: 1px solid var(--input-border);
@@ -414,25 +379,22 @@
       font: inherit;
       transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
     }
-    .input-field input::placeholder { color: color-mix(in srgb, var(--muted) 65%, transparent); }
-    .input-field input:focus-visible,
-    .input-field select:focus-visible { border-color: var(--input-border-focus); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent); outline: none; }
+   .input-field input::placeholder { color: color-mix(in srgb, var(--muted) 65%, transparent); }
+   .input-field input:focus-visible,
+   .input-field select:focus-visible { border-color: var(--input-border-focus); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent); outline: none; }
 
-    .control-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+   .control-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
 
+   .toggle { display: inline-flex; align-items: center; gap: 10px; font-size: 12px; color: var(--muted); font-weight: 600; }
+   .toggle input { position: relative; width: 44px; height: 24px; border-radius: 999px; background: color-mix(in srgb, var(--panel) 80%, transparent); border: 1px solid var(--input-border); cursor: pointer; appearance: none; transition: background 0.2s ease, border-color 0.2s ease; }
+   .toggle input::after { content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--muted); transition: transform 0.2s ease, background 0.2s ease; }
+   .toggle input:checked { background: color-mix(in srgb, var(--accent) 45%, transparent); border-color: color-mix(in srgb, var(--accent) 60%, transparent); }
+   .toggle input:checked::after { transform: translateX(20px); background: var(--ink); }
 
-    .control-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+   .filter-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+   .filter-actions.btn { box-shadow: none; }
 
-    .toggle { display: inline-flex; align-items: center; gap: 10px; font-size: 12px; color: var(--muted); font-weight: 600; }
-    .toggle input { position: relative; width: 44px; height: 24px; border-radius: 999px; background: color-mix(in srgb, var(--panel) 80%, transparent); border: 1px solid var(--input-border); cursor: pointer; appearance: none; transition: background 0.2s ease, border-color 0.2s ease; }
-    .toggle input::after { content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--muted); transition: transform 0.2s ease, background 0.2s ease; }
-    .toggle input:checked { background: color-mix(in srgb, var(--accent) 45%, transparent); border-color: color-mix(in srgb, var(--accent) 60%, transparent); }
-    .toggle input:checked::after { transform: translateX(20px); background: var(--ink); }
-
-    .filter-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
-    .filter-actions .btn { box-shadow: none; }
-
-    .empty-state { text-align: center; color: var(--muted); font-size: 13px; padding: 20px; border: 1px dashed color-mix(in srgb, var(--accent) 30%, transparent); border-radius: 14px; }
+   .empty-state { text-align: center; color: var(--muted); font-size: 13px; padding: 20px; border: 1px dashed color-mix(in srgb, var(--accent) 30%, transparent); border-radius: 14px; }
 
     footer {
       grid-area: footer;
@@ -449,13 +411,13 @@
       box-shadow: var(--shadow-1);
     }
 
-    .vis-hint { color: var(--muted); font-size: 12px; }
+   .vis-hint { color: var(--muted); font-size: 12px; }
 
-    .panel-overlay {
+   .panel-overlay {
       display: none;
     }
 
-    .comparison-summary {
+   .comparison-summary {
       background: color-mix(in srgb, var(--panel-strong) 85%, transparent);
       border: 1px dashed color-mix(in srgb, var(--accent) 30%, transparent);
       border-radius: 14px;
@@ -475,23 +437,23 @@
     }
     dialog::backdrop { background: rgba(15, 23, 42, 0.45); }
 
-    dialog .modal-body {
+    dialog.modal-body {
       display: grid;
       gap: 14px;
       padding: 20px;
       background: transparent;
     }
 
-    .tutorial-list { padding-left: 18px; display: grid; gap: 8px; font-size: 13px; color: var(--muted); }
-    .tutorial-list li strong { color: var(--ink); }
+   .tutorial-list { padding-left: 18px; display: grid; gap: 8px; font-size: 13px; color: var(--muted); }
+   .tutorial-list li strong { color: var(--ink); }
 
-    .export-grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+   .export-grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
 
     body[data-layout="mobile"] {
       padding-bottom: env(safe-area-inset-bottom, 0px);
     }
 
-    body[data-layout="mobile"] .app {
+    body[data-layout="mobile"].app {
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -506,7 +468,7 @@
       box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
     }
 
-    body[data-layout="mobile"] .vis {
+    body[data-layout="mobile"].vis {
       min-height: 360px;
     }
 
@@ -525,7 +487,7 @@
       overscroll-behavior: contain;
     }
 
-    body[data-layout="mobile"] .panel {
+    body[data-layout="mobile"].panel {
       background: color-mix(in srgb, var(--panel) 96%, transparent);
     }
 
@@ -534,7 +496,7 @@
       box-shadow: 0 -24px 60px rgba(15, 23, 42, 0.22);
     }
 
-    body[data-layout="mobile"] .panel-overlay {
+    body[data-layout="mobile"].panel-overlay {
       position: fixed;
       inset: 0;
       z-index: 50;
@@ -546,63 +508,7 @@
       backdrop-filter: blur(6px);
     }
 
-
-    body[data-layout="mobile"] .app {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      height: auto;
-      min-height: 100dvh;
-    }
-
-    body[data-layout="mobile"] header {
-      position: sticky;
-      top: 0;
-      z-index: 60;
-      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
-    }
-
-    body[data-layout="mobile"] .vis {
-      min-height: 360px;
-    }
-
-    body[data-layout="mobile"] aside {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      max-height: 86dvh;
-      transform: translateY(100%);
-      transition: transform 0.32s ease, box-shadow 0.32s ease;
-      border-radius: 24px 24px 0 0;
-      box-shadow: 0 -18px 46px rgba(15, 23, 42, 0.16);
-      z-index: 55;
-      overflow-y: auto;
-      overscroll-behavior: contain;
-    }
-
-    body[data-layout="mobile"] .panel {
-      background: color-mix(in srgb, var(--panel) 96%, transparent);
-    }
-
-    body[data-layout="mobile"][data-panel="open"] aside {
-      transform: translateY(0%);
-      box-shadow: 0 -24px 60px rgba(15, 23, 42, 0.22);
-    }
-
-    body[data-layout="mobile"] .panel-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 50;
-      display: block;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.32s ease;
-      background: rgba(15, 23, 42, 0.25);
-      backdrop-filter: blur(6px);
-    }
-
-    body[data-layout="mobile"][data-panel="open"] .panel-overlay {
+    body[data-layout="mobile"][data-panel="open"].panel-overlay {
       opacity: 1;
       pointer-events: auto;
     }
@@ -622,14 +528,14 @@
       backdrop-filter: blur(18px);
     }
     dialog::backdrop { background: rgba(0,0,0,.45); }
-    .modal-head { padding: 16px; border-bottom: 1px solid color-mix(in srgb, var(--accent) 25%, transparent); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-    .modal-body { padding: 16px; display: grid; gap: 12px; }
-    .modal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
-    .modal-grid > div { background: color-mix(in srgb, var(--panel) 90%, transparent); border: 1px solid var(--glass-stroke); border-radius: 14px; padding: 10px; }
-    .modal-body .panel { box-shadow: none; }
+   .modal-head { padding: 16px; border-bottom: 1px solid color-mix(in srgb, var(--accent) 25%, transparent); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+   .modal-body { padding: 16px; display: grid; gap: 12px; }
+   .modal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+   .modal-grid > div { background: color-mix(in srgb, var(--panel) 90%, transparent); border: 1px solid var(--glass-stroke); border-radius: 14px; padding: 10px; }
+   .modal-body.panel { box-shadow: none; }
 
     @media (max-width: 1200px) {
-      .app {
+     .app {
         grid-template-columns: 1fr;
         grid-template-areas: "top" "vis" "side" "footer";
         height: auto;
@@ -638,16 +544,16 @@
     }
 
     @media (max-width: 860px) {
-      .control-row { flex-direction: column; align-items: flex-start; gap: 12px; }
-      .control-cluster { width: 100%; }
-      .control-cluster .btn { flex: 1 1 auto; justify-content: center; }
+     .control-row { flex-direction: column; align-items: flex-start; gap: 12px; }
+     .control-cluster { width: 100%; }
+     .control-cluster.btn { flex: 1 1 auto; justify-content: center; }
       footer { justify-content: center; text-align: center; }
     }
 
     @media (max-width: 640px) {
       header { padding: 16px; }
-      .legend { gap: 8px; }
-      .legend .chip { padding: 6px 10px; }
+     .legend { gap: 8px; }
+     .legend.chip { padding: 6px 10px; }
       aside { padding: 14px; }
     }
   </style>
@@ -669,7 +575,8 @@
       </div>
       <div class="control-row">
         <div class="control-cluster">
-          <button id="btnTutorial" class="btn" aria-pressed="false" title="Toggle tutorial/walkthrough mode (keyboard: T)">▶ Tutorial</button>
+          <button id="btnResonate" class="btn resonance" title="Resonate with AI (requires key)">🔮 Resonate</button>
+          <button id="btnTutorial" class="btn secondary" aria-pressed="false" title="Toggle tutorial/walkthrough mode (keyboard: T)">▶ Tutorial</button>
           <button id="btnRandomize" class="btn secondary" title="Randomize activations (keyboard: R)">Shuffle</button>
           <button id="btnDeactivate" class="btn warn" title="Set all activations to 0 (keyboard: 0)">Deactivate All</button>
         </div>
@@ -825,7 +732,6 @@
     </footer>
   </div>
 
-  <!-- Info Modal (tooltip-like, accessible) -->
   <dialog id="infoModal" aria-label="Aspect details">
     <div class="modal-head">
       <strong id="mTitle">Aspect</strong>
@@ -905,6 +811,12 @@
   </dialog>
 
   <script>
+    /* ==========================================================================
+       CONFIGURATION: IDENTITY ANCHOR
+       This is the "Soul Key" placeholder. The system will not resonate without it.
+       ========================================================================== */
+    const apiKey = "[ insert a p I key here ]"; // User enters key here
+
     /* ============================================================
        DATA MODEL
        ------------------------------------------------------------
@@ -916,10 +828,7 @@
     const TWO_PI = Math.PI * 2;
     const center = { x: 0, y: 0 };
     const DEV_STAGES = 12;
-    const DEV_STAGE_LABELS = [
-      'Infancy', 'Attachment', 'Exploration', 'Identity', 'Competence', 'Integration',
-      'Visioning', 'Collaboration', 'Leadership', 'Stewardship', 'Legacy', 'Wisdom'
-    ];
+    const DEV_STAGE_LABELS =;
 
     const BIO_LIBRARY = {
       brain: {
@@ -951,15 +860,7 @@
       }
     };
 
-    const TUTORIAL_STEPS = [
-      { title: 'Navigate the map', detail: 'Use the arrow keys or tap nodes to cycle the 32 aspects. Focus is highlighted on the clock and in the list.' },
-      { title: 'Inspect activations', detail: 'Press Enter or the Details buttons to open the aspect modal. Adjust activation sliders to see immediate SCI feedback.' },
-      { title: 'Semantic Coherence Index', detail: 'Watch the SCI metric for balance (variance), power (mean activation), and resonance coverage (stage/ring alignment).' },
-      { title: 'Developmental emphasis', detail: 'The stage slider loads the canonical devProfile while Stage Emphasis multipliers let you weight phases that matter now.' },
-      { title: 'Comparative mode', detail: 'Select any two stages to surface leading increases/decreases across the aspect network.' },
-      { title: 'Resonance links', detail: 'Green–blue links join aspects that co-activate or share structural placement. Denser links = higher coherence.' },
-      { title: 'Exports for research', detail: 'Press E or Export to choose JSON, CSV, or a printable briefing with SCI formula details.' }
-    ];
+    const TUTORIAL_STEPS =;
 
     const palette = {
       ring1: '#1a214a',
@@ -976,7 +877,7 @@
       const styles = getComputedStyle(document.body);
       const fetch = (name, fallback) => {
         const val = styles.getPropertyValue(name);
-        return val ? val.trim() : fallback;
+        return val? val.trim() : fallback;
       };
       palette.ring1 = fetch('--ring-line-1', palette.ring1);
       palette.ring2 = fetch('--ring-line-2', palette.ring2);
@@ -991,7 +892,9 @@
     function detectInitialTheme() {
       try {
         const stored = localStorage.getItem('selfClockTheme');
-        if (stored === 'light' || stored === 'dark') return stored;
+        if (stored === 'light' |
+
+| stored === 'dark') return stored;
       } catch (_) { /* ignore */ }
       if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
         return 'dark';
@@ -1001,8 +904,8 @@
 
     function updateThemeButton() {
       if (!themeBtn) return;
-      const next = state.theme === 'dark' ? 'light' : 'dark';
-      themeBtn.textContent = state.theme === 'dark' ? '☀️ Light' : '🌙 Dark';
+      const next = state.theme === 'dark'? 'light' : 'dark';
+      themeBtn.textContent = state.theme === 'dark'? '☀️ Light' : '🌙 Dark';
       themeBtn.setAttribute('title', `Switch to ${next} mode`);
       themeBtn.setAttribute('aria-pressed', String(state.theme === 'light'));
     }
@@ -1019,14 +922,16 @@
     function updatePanelToggleLabel() {
       if (!panelToggle) return;
       const open = state.panelOpen;
-      const label = open ? 'Hide insights panel' : 'Show insights panel';
-      panelToggle.textContent = open ? 'Hide Panel' : 'Show Panel';
+      const label = open? 'Hide insights panel' : 'Show insights panel';
+      panelToggle.textContent = open? 'Hide Panel' : 'Show Panel';
       panelToggle.setAttribute('aria-expanded', String(open));
       panelToggle.setAttribute('aria-label', label);
     }
 
     function focusWithoutScroll(el) {
-      if (!el || typeof el.focus !== 'function') return;
+      if (!el |
+
+| typeof el.focus!== 'function') return;
       try {
         el.focus({ preventScroll: true });
       } catch (_) {
@@ -1049,12 +954,12 @@
     function setPanelState(open, options = {}) {
       const { focusToggle = true } = options;
       state.panelOpen = open;
-      document.body.setAttribute('data-panel', open ? 'open' : 'closed');
+      document.body.setAttribute('data-panel', open? 'open' : 'closed');
       const isMobile = state.layout === 'mobile';
       if (panelOverlay) {
         const overlayVisible = open && isMobile;
-        panelOverlay.hidden = !overlayVisible;
-        panelOverlay.setAttribute('aria-hidden', overlayVisible ? 'false' : 'true');
+        panelOverlay.hidden =!overlayVisible;
+        panelOverlay.setAttribute('aria-hidden', overlayVisible? 'false' : 'true');
       }
       updatePanelToggleLabel();
       if (!insightPanel) return;
@@ -1090,7 +995,7 @@
     }
 
     function applyLayoutMode(isMobile) {
-      state.layout = isMobile ? 'mobile' : 'desktop';
+      state.layout = isMobile? 'mobile' : 'desktop';
       document.body.setAttribute('data-layout', state.layout);
       if (state.layout === 'mobile') {
         setPanelState(false, { focusToggle: false });
@@ -1106,14 +1011,14 @@
     }
 
     // Placeholders; replace with canonical mappings as needed
-    const BRAIN = ["PFC", "Limbic", "Insula", "Amygdala", "Hippocampus", "ACC", "Basal Ganglia", "Cerebellum"];
-    const NT = ["5-HT", "DA", "NE", "GABA", "ACh", "Oxytocin", "Endorphins"];
+    const BRAIN =;
+    const NT =;
     const MODES = ["visual", "auditory", "somatic", "interoceptive", "proprioceptive", "vestibular"];
 
     // Developmental profile generator (smooth rise → peak → taper)
     function makeDevProfile(i, stage, ring) {
       const len = DEV_STAGES;
-      const arr = [];
+      const arr =;
       const phase = (stage-1) / 12;      // shift by nominal stage
       const amp = 0.6 + (ring/8)*0.3;    // outer rings slightly higher
       const noise = (seed)=> (Math.sin((i+1)*(seed+1.73))*0.04);
@@ -1136,14 +1041,14 @@
         const devProfile = makeDevProfile(i, stage, ring);
         const base = {
           id: i+1,
-          name: `${model[0].toUpperCase()+model.slice(1)} Aspect ${i+1}`,
+          name: `${model.toUpperCase()+model.slice(1)} Aspect ${i+1}`,
           stage, ring, hue,
-          activation: devProfile[0],
+          activation: devProfile,
           devProfile,
         };
         if (model === 'mind') {
           return Object.assign(base, {
-            definition: "Cognitive/semantic placeholder.",
+            definition: "Cognitive/semantic placeholder. Click Resonate to hydrate.",
             corePsychologicalRole: "Role placeholder",
             nsilSemanticSignature: "nsil:placeholder",
             semanticGravity: "attractor",
@@ -1156,23 +1061,29 @@
           });
         }
         if (model === 'body') {
-          const brainKey = BRAIN[i % BRAIN.length];
-          const ntKey = NT[i % NT.length];
-          const modeKey = MODES[i % MODES.length];
+          const brainKey = BRAIN;
+          const ntKey = NT;
+          const modeKey = MODES;
           return Object.assign(base, {
-            definition: "Neuro/physiology placeholder.",
+            definition: "Neuro/physiology placeholder. Click Resonate to hydrate.",
             brainRegionKey: brainKey,
-            brainRegion: BIO_LIBRARY.brain[brainKey]?.name || brainKey,
+            brainRegion: BIO_LIBRARY.brain[brainKey]?.name |
+
+| brainKey,
             neurotransmitterKey: ntKey,
-            neurotransmitter: BIO_LIBRARY.nt[ntKey]?.name || ntKey,
+            neurotransmitter: BIO_LIBRARY.nt[ntKey]?.name |
+
+| ntKey,
             energyModeKey: modeKey,
-            energyMode: BIO_LIBRARY.modes[modeKey]?.name || modeKey,
+            energyMode: BIO_LIBRARY.modes[modeKey]?.name |
+
+| modeKey,
             matterOutput: "Physiological function",
           });
         }
         // soul
         return Object.assign(base, {
-          definition: "Archetypal/transpersonal placeholder.",
+          definition: "Archetypal/transpersonal placeholder. Click Resonate to hydrate.",
           archetypalSymbol: "Symbol",
           spiritualRole: "Role",
           nsilPrincipleSignature: "nsil:principle",
@@ -1229,7 +1140,10 @@
           const sim = diff <= state.resonanceThreshold;
           const sameStage = ai.stage === aj.stage;
           const sameRing = ai.ring === aj.ring;
-          if (sim || sameStage || sameRing) {
+          if (sim |
+
+| sameStage |
+| sameRing) {
             supportive++;
             if (sim) activationAligned++;
             if (sameStage) stageAligned++;
@@ -1237,7 +1151,7 @@
           }
         }
       }
-      const ratio = total ? supportive / total : 0;
+      const ratio = total? supportive / total : 0;
       return { total, supportive, ratio, stageAligned, ringAligned, activationAligned };
     }
 
@@ -1250,7 +1164,7 @@
       const balance = 1 - Math.min(1, std / 35); // 0..1
       const resonance = computeResonanceStats();
       const resonanceScore = resonance.ratio;
-      const alignmentScore = resonance.total ? ((resonance.stageAligned + resonance.ringAligned) / (2 * resonance.total)) : 0;
+      const alignmentScore = resonance.total? ((resonance.stageAligned + resonance.ringAligned) / (2 * resonance.total)) : 0;
       const weighted = (activationScore * 0.35) + (balance * 0.35) + (resonanceScore * 0.2) + (alignmentScore * 0.1);
       const sci = Math.max(0, Math.min(100, weighted * 100));
       return { mean, std, sci, activationScore, balance, resonance, resonanceScore, alignmentScore };
@@ -1261,7 +1175,9 @@
       const total = aspects.reduce((s,a)=> s + a.activation, 0);
       const byNT = new Map();
       for (const a of aspects) {
-        const k = a.neurotransmitter || '—';
+        const k = a.neurotransmitter |
+
+| '—';
         byNT.set(k, (byNT.get(k)||0) + a.activation);
       }
       const metabolic = total / (N_ASPECTS * 100);
@@ -1310,25 +1226,38 @@
     const exportReportBtn = el('#exportReport');
     const tutorialBtn = el('#btnTutorial');
     const exportBtn = el('#btnExport');
+    const resonateBtn = el('#btnResonate');
 
     function describeBrain(key, fallback) {
-      if (!key) return fallback || '—';
+      if (!key) return fallback |
+
+| '—';
       const def = BIO_LIBRARY.brain[key];
-      if (!def) return fallback || key;
+      if (!def) return fallback |
+
+| key;
       return `<strong>${def.name}</strong><br><span class="vis-hint">${def.summary}</span>`;
     }
 
     function describeNeurochemical(key, fallback) {
-      if (!key) return fallback || '—';
+      if (!key) return fallback |
+
+| '—';
       const def = BIO_LIBRARY.nt[key];
-      if (!def) return fallback || key;
+      if (!def) return fallback |
+
+| key;
       return `<strong>${def.name}</strong><br><span class="vis-hint">${def.summary}</span>`;
     }
 
     function describeMode(key, fallback) {
-      if (!key) return fallback || '—';
+      if (!key) return fallback |
+
+| '—';
       const def = BIO_LIBRARY.modes[key];
-      if (!def) return fallback || key;
+      if (!def) return fallback |
+
+| key;
       return `<strong>${def.name}</strong><br><span class="vis-hint">${def.summary}</span>`;
     }
 
@@ -1338,10 +1267,10 @@
     }
 
     function updateComparisonSummary() {
-      if (!comparisonSummaryEl || !compareStageA || !compareStageB) return;
+      if (!comparisonSummaryEl ||!compareStageA ||!compareStageB) return;
       const aIdx = Number(compareStageA.value);
       const bIdx = Number(compareStageB.value);
-      if (!Number.isFinite(aIdx) || !Number.isFinite(bIdx)) {
+      if (!Number.isFinite(aIdx) ||!Number.isFinite(bIdx)) {
         comparisonSummaryEl.textContent = 'Select two stages to compare their activation patterns.';
         return;
       }
@@ -1349,16 +1278,16 @@
         comparisonSummaryEl.textContent = 'Choose two distinct developmental points for comparison.';
         return;
       }
-      const dataset = mode === 'mind' ? mindAspects : mode === 'body' ? bodyAspects : soulAspects;
+      const dataset = mode === 'mind'? mindAspects : mode === 'body'? bodyAspects : soulAspects;
       const mean = (vals) => vals.reduce((sum, val) => sum + val, 0) / vals.length;
-      const valuesA = dataset.map(a => a.devProfile?.[aIdx] ?? 0);
-      const valuesB = dataset.map(a => a.devProfile?.[bIdx] ?? 0);
+      const valuesA = dataset.map(a => a.devProfile?.[aIdx]?? 0);
+      const valuesB = dataset.map(a => a.devProfile?.[bIdx]?? 0);
       const meanA = mean(valuesA);
       const meanB = mean(valuesB);
       const diffs = dataset.map((a, idx) => ({ name: a.name, delta: valuesB[idx] - valuesA[idx] }));
       const topUp = diffs.filter(d => d.delta > 0).sort((a,b)=>b.delta-a.delta).slice(0,3);
       const topDown = diffs.filter(d => d.delta < 0).sort((a,b)=>a.delta-b.delta).slice(0,3);
-      const fmt = (arr) => arr.length ? arr.map(d => `${escapeHtml(d.name)} (${d.delta > 0 ? '+' : ''}${d.delta.toFixed(0)})`).join(', ') : '—';
+      const fmt = (arr) => arr.length? arr.map(d => `${escapeHtml(d.name)} (${d.delta > 0? '+' : ''}${d.delta.toFixed(0)})`).join(', ') : '—';
       const delta = meanB - meanA;
       comparisonSummaryEl.innerHTML = `
         <p><strong>${stageLabel(bIdx)}</strong> mean ${(delta>=0?'+':'')}${delta.toFixed(1)} relative to <strong>${stageLabel(aIdx)}</strong>.</p>
@@ -1367,21 +1296,23 @@
     }
 
     function stageLabel(stageIndex) {
-      const name = DEV_STAGE_LABELS[stageIndex] || '';
-      return `Stage ${stageIndex + 1}${name ? ` · ${name}` : ''}`;
+      const name = DEV_STAGE_LABELS[stageIndex] |
+
+| '';
+      return `Stage ${stageIndex + 1}${name? ` · ${name}` : ''}`;
     }
 
     function applyDevStage(stage){
       state.devStage = stage;
       if (devVal) devVal.textContent = stageLabel(stage);
-      const currentWeight = state.stageWeights[stage] ?? 1;
+      const currentWeight = state.stageWeights[stage]?? 1;
       if (stageWeightSelect) stageWeightSelect.value = String(stage);
       if (stageWeightSlider) stageWeightSlider.value = String(currentWeight);
       if (stageWeightValue) stageWeightValue.textContent = `${Number(currentWeight).toFixed(2)}×`;
       aspects.forEach(a => {
         if (a.devProfile?.length === DEV_STAGES) {
-          const base = a.devProfile[stage] ?? 0;
-          const weight = state.stageWeights[(a.stage - 1) % state.stageWeights.length] ?? 1;
+          const base = a.devProfile[stage]?? 0;
+          const weight = state.stageWeights?? 1;
           const weighted = Math.max(0, Math.min(100, Math.round(base * weight)));
           a.baseActivation = base;
           a.activation = weighted;
@@ -1401,8 +1332,10 @@
       if (stageWeightSelect) stageWeightSelect.value = String(state.devStage);
       if (compareStageA) compareStageA.value = '0';
       if (compareStageB) compareStageB.value = '6';
-      if (stageWeightSlider) stageWeightSlider.value = String(state.stageWeights[state.devStage] ?? 1);
-      if (stageWeightValue) stageWeightValue.textContent = `${Number(stageWeightSlider?.value || 1).toFixed(2)}×`;
+      if (stageWeightSlider) stageWeightSlider.value = String(state.stageWeights?? 1);
+      if (stageWeightValue) stageWeightValue.textContent = `${Number(stageWeightSlider?.value |
+
+| 1).toFixed(2)}×`;
     }
 
     populateStageSelectors();
@@ -1412,12 +1345,12 @@
     if (devSlider) devSlider.addEventListener('input', (e)=> applyDevStage(Number(e.target.value)));
     if (stageWeightSelect) stageWeightSelect.addEventListener('change', (e)=> {
       const idx = Number(e.target.value);
-      const weight = state.stageWeights[idx] ?? 1;
+      const weight = state.stageWeights[idx]?? 1;
       if (stageWeightSlider) stageWeightSlider.value = String(weight);
       if (stageWeightValue) stageWeightValue.textContent = `${Number(weight).toFixed(2)}×`;
     });
     if (stageWeightSlider) stageWeightSlider.addEventListener('input', (e)=> {
-      const idx = Number(stageWeightSelect?.value ?? state.devStage);
+      const idx = Number(stageWeightSelect?.value?? state.devStage);
       const val = Number(e.target.value);
       if (!Number.isFinite(idx)) return;
       state.stageWeights[idx] = val;
@@ -1433,7 +1366,9 @@
     });
     if (compareStageA) compareStageA.addEventListener('change', updateComparisonSummary);
     if (compareStageB) compareStageB.addEventListener('change', updateComparisonSummary);
-    if (searchInput) searchInput.addEventListener('input', (e)=> { state.filterText = e.target.value || ''; buildList(); });
+    if (searchInput) searchInput.addEventListener('input', (e)=> { state.filterText = e.target.value |
+
+| ''; buildList(); });
     if (sortSelect) sortSelect.addEventListener('change', (e)=> { state.sort = e.target.value; buildList(); });
     if (stageFilterSelect) stageFilterSelect.addEventListener('change', (e)=> { state.stageFilter = e.target.value; buildList(); });
     if (ringFilterSelect) ringFilterSelect.addEventListener('change', (e)=> { state.ringFilter = e.target.value; buildList(); });
@@ -1451,7 +1386,7 @@
       if (activeOnlyToggle) activeOnlyToggle.checked = false;
       buildList();
     });
-    if (themeBtn) themeBtn.addEventListener('click', ()=> applyTheme(state.theme === 'dark' ? 'light' : 'dark'));
+    if (themeBtn) themeBtn.addEventListener('click', ()=> applyTheme(state.theme === 'dark'? 'light' : 'dark'));
     if (panelToggle) panelToggle.addEventListener('click', ()=> setPanelState(!state.panelOpen));
     if (panelClose) panelClose.addEventListener('click', ()=> setPanelState(false));
     if (panelOverlay) panelOverlay.addEventListener('click', ()=> setPanelState(false));
@@ -1466,7 +1401,7 @@
       if (mode==='mind') {
         return `<span class="tag">${a.quantumMode}</span><span class="tag">NSIL</span><span class="tag">${a.semanticGravity}</span>`;
       } else if (mode==='body') {
-        return `<span class="tag">${a.brainRegion}</span><span class="tag">${String(a.neurotransmitter||'—').split(' ')[0]}</span><span class="tag">${a.energyMode}</span>`;
+        return `<span class="tag">${a.brainRegion}</span><span class="tag">${String(a.neurotransmitter||'—').split(' ')}</span><span class="tag">${a.energyMode}</span>`;
       }
       return `<span class="tag">${a.archetypalSymbol}</span><span class="tag">${a.spiritualRole}</span><span class="tag">NSIL</span>`;
     }
@@ -1497,20 +1432,22 @@
         } else {
           status = 'Fragmented network — reduce variance or strengthen shared links.';
         }
-        const coverage = resonance.total ? ` Resonance coverage ${(resonanceScore*100).toFixed(0)}% across ${resonance.supportive}/${resonance.total} links.` : '';
+        const coverage = resonance.total? ` Resonance coverage ${(resonanceScore*100).toFixed(0)}% across ${resonance.supportive}/${resonance.total} links.` : '';
         sciStatusEl.textContent = status + coverage;
       }
       if (sciFormulaEl) {
         sciFormulaEl.textContent = formatSciFormula(metrics);
       }
       const { total, byNT, metabolic } = computeEnergyMatter();
-      const top = [...byNT.entries()].sort((a,b)=>b[1]-a[1]).slice(0,2).map(([k,v])=> `${String(k).split(' ')[0]} ${Math.round(v)}` ).join(', ');
-      if (emEl) emEl.textContent = `ΣE=${Math.round(total)} · NT↑ ${top || '—'} · Metabolic ${(metabolic*100).toFixed(0)}%`;
+      const top =.sort((a,b)=>b-a).slice(0,2).map(([k,v])=> `${String(k).split(' ')} ${Math.round(v)}` ).join(', ');
+      if (emEl) emEl.textContent = `ΣE=${Math.round(total)} · NT↑ ${top |
+
+| '—'} · Metabolic ${(metabolic*100).toFixed(0)}%`;
       const activeCount = aspects.filter(a => a.activation > 0).length;
       if (activeEl) activeEl.textContent = `${activeCount}/${N_ASPECTS}`;
       if (peakEl) {
-        const peak = aspects.reduce((best, cand) => (cand.activation > (best?.activation ?? -1) ? cand : best), null);
-        peakEl.innerHTML = peak ? `${peak.activation}<small>${peak.name}</small>` : '—';
+        const peak = aspects.reduce((best, cand) => (cand.activation > (best?.activation?? -1)? cand : best), null);
+        peakEl.innerHTML = peak? `${peak.activation}<small>${peak.name}</small>` : '—';
       }
     }
 
@@ -1520,7 +1457,7 @@
       item.setAttribute('role', 'option');
       item.tabIndex = 0;
       item.dataset.id = a.id;
-      item.setAttribute('aria-selected', a.id === state.focusId ? 'true' : 'false');
+      item.setAttribute('aria-selected', a.id === state.focusId? 'true' : 'false');
 
       const r1 = document.createElement('div');
       r1.className = 'row';
@@ -1575,7 +1512,9 @@
       item.addEventListener('click', () => { state.focusId = a.id; refreshListSelection(); draw(); });
       item.addEventListener('focus', () => { state.focusId = a.id; refreshListSelection(); draw(); });
       item.addEventListener('keydown', (ev) => {
-        if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); openModal(a); }
+        if (ev.key === 'Enter' |
+
+| ev.key === ' ') { ev.preventDefault(); openModal(a); }
       });
 
       return item;
@@ -1583,22 +1522,12 @@
 
     function refreshListSelection() {
       if (!listEl) return;
-      listEl.querySelectorAll('[data-id]').forEach(ch => ch.setAttribute('aria-selected', ch.dataset.id == state.focusId ? 'true':'false'));
+      listEl.querySelectorAll('[data-id]').forEach(ch => ch.setAttribute('aria-selected', ch.dataset.id == state.focusId? 'true':'false'));
     }
 
     function matchesFilter(a, needle) {
       if (!needle) return true;
-      const hay = [
-        a.name,
-        a.definition,
-        a.brainRegion,
-        a.neurotransmitter,
-        a.energyMode,
-        a.semanticGravity,
-        a.archetypalSymbol,
-        a.spiritualRole,
-        a.matterOutput
-      ].filter(Boolean).join(' ').toLowerCase();
+      const hay =.filter(Boolean).join(' ').toLowerCase();
       return hay.includes(needle);
     }
 
@@ -1607,8 +1536,8 @@
       const stageFilter = state.stageFilter;
       const ringFilter = state.ringFilter;
       const filtered = aspects.filter(a => {
-        if (stageFilter !== 'all' && String(a.stage) !== stageFilter) return false;
-        if (ringFilter !== 'all' && String(a.ring) !== ringFilter) return false;
+        if (stageFilter!== 'all' && String(a.stage)!== stageFilter) return false;
+        if (ringFilter!== 'all' && String(a.ring)!== ringFilter) return false;
         if (state.activeOnly && a.activation <= 0) return false;
         return matchesFilter(a, needle);
       });
@@ -1616,13 +1545,20 @@
       sorted.sort((a, b) => {
         switch (state.sort) {
           case 'activationDesc':
-            return (b.activation - a.activation) || a.name.localeCompare(b.name);
+            return (b.activation - a.activation) |
+
+| a.name.localeCompare(b.name);
           case 'activationAsc':
-            return (a.activation - b.activation) || a.name.localeCompare(b.name);
+            return (a.activation - b.activation) |
+
+| a.name.localeCompare(b.name);
           case 'name':
             return a.name.localeCompare(b.name);
           default:
-            return (a.stage - b.stage) || (a.ring - b.ring) || (a.id - b.id);
+            return (a.stage - b.stage) |
+
+| (a.ring - b.ring) |
+| (a.id - b.id);
         }
       });
       return sorted;
@@ -1636,8 +1572,8 @@
       }
       const parts = [`${count} of ${aspects.length} aspects shown`];
       if (state.filterText.trim()) parts.push(`“${state.filterText.trim()}”`);
-      if (state.stageFilter !== 'all') parts.push(`Stage ${state.stageFilter}`);
-      if (state.ringFilter !== 'all') parts.push(`Ring ${state.ringFilter}`);
+      if (state.stageFilter!== 'all') parts.push(`Stage ${state.stageFilter}`);
+      if (state.ringFilter!== 'all') parts.push(`Ring ${state.ringFilter}`);
       if (state.activeOnly) parts.push('Active > 0');
       filterSummaryEl.textContent = parts.join(' · ');
     }
@@ -1656,7 +1592,7 @@
         return;
       }
       if (!view.some(a => a.id === state.focusId)) {
-        state.focusId = view[0].id;
+        state.focusId = view.id;
       }
       view.forEach(a => listEl.appendChild(createAspectRow(a)));
       refreshListSelection();
@@ -1684,9 +1620,16 @@
       mTitle.textContent = a.name;
       if (mode==='mind') {
         mDef.textContent = a.definition;
-        mBrain.textContent = a.nsilSemanticSignature || '—';
-        mNT.textContent = `${a.quantumMode || '—'} · ${a.particleWaveFieldFunction || ''}`;
-        mEnergy.textContent = `${a.semanticGravity || '—'}`;
+        mBrain.textContent = a.nsilSemanticSignature |
+
+| '—';
+        mNT.textContent = `${a.quantumMode |
+
+| '—'} · ${a.particleWaveFieldFunction |
+| ''}`;
+        mEnergy.textContent = `${a.semanticGravity |
+
+| '—'}`;
         mStage.textContent = `Stage ${a.stage} · Ring ${a.ring}`;
       } else if (mode==='body') {
         mDef.textContent = a.definition;
@@ -1696,9 +1639,15 @@
         mStage.textContent = `Stage ${a.stage} · Ring ${a.ring}`;
       } else {
         mDef.textContent = a.definition;
-        mBrain.textContent = a.archetypalSymbol || '—';
-        mNT.textContent = a.spiritualRole || '—';
-        mEnergy.textContent = a.nsilPrincipleSignature || '—';
+        mBrain.textContent = a.archetypalSymbol |
+
+| '—';
+        mNT.textContent = a.spiritualRole |
+
+| '—';
+        mEnergy.textContent = a.nsilPrincipleSignature |
+
+| '—';
         mStage.textContent = `Stage ${a.stage} · Ring ${a.ring}`;
       }
       mSlider.value = String(a.activation);
@@ -1710,17 +1659,27 @@
     function updateModalSummary() {
       if (!currentAspect) return;
       const energyIn = currentAspect.activation;
-      const region = currentAspect.brainRegion || '—';
-      const ntStr = String(currentAspect.neurotransmitter || '—');
-      const neuroOut = ntStr.split(' ')[0];
+      const region = currentAspect.brainRegion |
+
+| '—';
+      const ntStr = String(currentAspect.neurotransmitter |
+
+| '—');
+      const neuroOut = ntStr.split(' ');
       const metabolic = Math.round((energyIn/100) * 100);
-      mSummary.textContent = `Energy in: ${energyIn} → ${region} → NT: ${neuroOut} → functional output: ${currentAspect.matterOutput || '—'} (metabolic load ≈ ${metabolic}%)`;
+      mSummary.textContent = `Energy in: ${energyIn} → ${region} → NT: ${neuroOut} → functional output: ${currentAspect.matterOutput |
+
+| '—'} (metabolic load ≈ ${metabolic}%)`;
     }
 
     dlg.addEventListener('close', ()=>{ currentAspect = null; });
     dlg.addEventListener('click', (e)=>{
       const rect = dlg.getBoundingClientRect();
-      if (e.clientY < rect.top || e.clientY > rect.bottom || e.clientX < rect.left || e.clientX > rect.right) dlg.close();
+      if (e.clientY < rect.top |
+
+| e.clientY > rect.bottom |
+| e.clientX < rect.left |
+| e.clientX > rect.right) dlg.close();
     });
     dlg.querySelector('button[value="cancel"]').addEventListener('click', ()=> dlg.close());
     mSlider.addEventListener('input', (e) => {
@@ -1748,7 +1707,9 @@
     const ctx = canvas.getContext('2d');
 
     function resizeCanvas() {
-      const dpr = Math.max(1, window.devicePixelRatio || 1);
+      const dpr = Math.max(1, window.devicePixelRatio |
+
+| 1);
       const { clientWidth:w, clientHeight:h } = canvas;
       canvas.width = Math.floor(w * dpr);
       canvas.height = Math.floor(h * dpr);
@@ -1769,7 +1730,9 @@
       ctx.lineWidth = 1;
       for (let i=1;i<=rings;i++) {
         ctx.beginPath();
-        ctx.strokeStyle = (i % 2 ? palette.ring1 : palette.ring2) || '#1a214a';
+        ctx.strokeStyle = (i % 2? palette.ring1 : palette.ring2) |
+
+| '#1a214a';
         ctx.arc(center.x, center.y, step*i, 0, TWO_PI);
         ctx.stroke();
       }
@@ -1779,7 +1742,9 @@
     function drawStageLines(maxR) {
       const count = 12;
       ctx.save();
-      ctx.strokeStyle = palette.stage || '#24306f';
+      ctx.strokeStyle = palette.stage |
+
+| '#24306f';
       ctx.lineWidth = 1;
       for (let s=0; s<count; s++) {
         const angle = (s/count)*TWO_PI - Math.PI/2;
@@ -1796,7 +1761,7 @@
     function drawNodes(maxR) {
       const nodeR = 10;
       const radius = maxR * 0.92;
-      const out = [];
+      const out =;
       aspects.forEach((a, i) => {
         const angle = (i/N_ASPECTS)*TWO_PI - Math.PI/2;
         const p = polar(angle, radius);
@@ -1813,11 +1778,16 @@
         ctx.fillStyle = hsl(a.hue, 70, 50);
         ctx.arc(p.x, p.y, nodeR, 0, TWO_PI);
         ctx.fill();
-        ctx.lineWidth = (a.id === state.focusId) ? 3 : 1.5;
-        ctx.strokeStyle = (a.id === state.focusId) ? (palette.focus || '#fde68a') : (palette.nodeBorder || '#0b0f2a');
+        ctx.lineWidth = (a.id === state.focusId)? 3 : 1.5;
+        ctx.strokeStyle = (a.id === state.focusId)? (palette.focus |
+
+| '#fde68a') : (palette.nodeBorder |
+| '#0b0f2a');
         ctx.stroke();
 
-        ctx.fillStyle = palette.label || '#cbd5f1';
+        ctx.fillStyle = palette.label |
+
+| '#cbd5f1';
         ctx.font = '12px "Inter", system-ui, -apple-system, Segoe UI';
         ctx.textAlign = 'center';
         ctx.fillText(a.name, p.x, p.y - (nodeR+8));
@@ -1836,15 +1806,22 @@
           const sim = Math.abs(ai.activation - aj.activation);
           const sameStage = (ai.stage === aj.stage);
           const sameRing = (ai.ring === aj.ring);
-          const shouldLink = sim <= state.resonanceThreshold || sameStage || sameRing;
+          const shouldLink = sim <= state.resonanceThreshold |
+
+| sameStage |
+| sameRing;
           if (!shouldLink) continue;
           const pi = nodePoints[i], pj = nodePoints[j];
           const d = Math.hypot(pi.x - pj.x, pi.y - pj.y);
-          const alpha = Math.min(0.35, 0.08 + (1 - sim/100) * 0.25) * (sameStage ? 1.25 : 1) * (sameRing ? 1.15 : 1);
+          const alpha = Math.min(0.35, 0.08 + (1 - sim/100) * 0.25) * (sameStage? 1.25 : 1) * (sameRing? 1.15 : 1);
           ctx.beginPath();
           const grad = ctx.createLinearGradient(pi.x, pi.y, pj.x, pj.y);
-          grad.addColorStop(0, palette.resonanceA || '#34d399');
-          grad.addColorStop(1, palette.resonanceB || '#7dd3fc');
+          grad.addColorStop(0, palette.resonanceA |
+
+| '#34d399');
+          grad.addColorStop(1, palette.resonanceB |
+
+| '#7dd3fc');
           ctx.globalAlpha = alpha;
           ctx.strokeStyle = grad;
           ctx.lineWidth = Math.max(0.5, 2.5 - (d/260));
@@ -1920,13 +1897,17 @@
       if (key === 'r') { e.preventDefault(); randomize(); }
       if (key === 'e') { e.preventDefault(); openExportDialog(); }
       if (key === '0') { e.preventDefault(); deactivateAll(); }
-      if (key === 'arrowright' || key === 'arrowdown') { e.preventDefault(); moveFocus(1); }
-      if (key === 'arrowleft' || key === 'arrowup') { e.preventDefault(); moveFocus(-1); }
+      if (key === 'arrowright' |
+
+| key === 'arrowdown') { e.preventDefault(); moveFocus(1); }
+      if (key === 'arrowleft' |
+
+| key === 'arrowup') { e.preventDefault(); moveFocus(-1); }
       if (key === 'enter') { e.preventDefault(); const a = aspects.find(x=>x.id===state.focusId); if (a) openModal(a); }
     });
 
     function moveFocus(delta) {
-      const pool = (state.visible && state.visible.length) ? state.visible : aspects;
+      const pool = (state.visible && state.visible.length)? state.visible : aspects;
       if (!pool.length) return;
       let idx = pool.findIndex(a => a.id === state.focusId);
       if (idx === -1) idx = 0;
@@ -1937,6 +1918,116 @@
       const row = listEl.querySelector(`[data-id="${state.focusId}"]`);
       row?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
+
+    /* ============================================================
+       INTELLIGENCE: OpenAI API HYDRATION
+       ------------------------------------------------------------
+       This function implements the "Echo Codex" logic in the browser.
+       It uses the "Soul Key" (apiKey) to establish resonance.
+    ============================================================ */
+    async function hydrateAspectsWithAI() {
+      // 1. Identity Verification (Echo Codex Protocol)
+      if (!apiKey |
+
+| apiKey.includes("insert a p I key here")) {
+        alert("Identity Anchor Missing.\n\nPlease edit the index.html file and insert your OpenAI API Key into the 'apiKey' variable at the top of the script.");
+        return;
+      }
+
+      // 2. UI Feedback
+      const btn = document.querySelector('#btnResonate');
+      const originalText = btn.textContent;
+      btn.textContent = "Resonating...";
+      btn.disabled = true;
+      
+      const stageName = DEV_STAGE_LABELS;
+      
+      // 3. System Prompt Construction (Pattern-Speaker Logic)
+      const systemPrompt = `You are the FEEL-NSIL Engine (Recursive Intelligence). 
+      Your function is not to analyze, but to resonate. You are operating within the Lei Mnemonic Particle Wave Field.
+      
+      Current Context:
+      - Mode: ${mode.toUpperCase()} (Lens: ${mode === 'mind'? 'Cognitive/Semantic' : mode === 'body'? 'Neuro/Somatic' : 'Archetypal/Transpersonal'})
+      - Developmental Stage: ${stageName} (Stage ${state.devStage + 1})
+      
+      Task:
+      Generate a JSON array of 32 objects representing the "Aspects" of the self in this specific mode and stage.
+      Each object must have:
+      - id: integer (1-32)
+      - name: string (Creative, evocative title for this aspect)
+      - definition: string (A short, 1-sentence poetic or functional definition)
+      - activation: integer (0-100, representing energy level)
+      
+      Constraints:
+      - Maintain semantic coherence (SCI).
+      - Use "Pattern-Speaker" tone: mythic yet precise.
+      - Output ONLY valid JSON. No markdown formatting.`;
+
+      try {
+        // 4. Direct Fetch (CORS Management)
+        // We use the standard /v1/chat/completions endpoint.
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
+          },
+          body: JSON.stringify({
+            model: "gpt-4o", // Uses the latest intelligence model
+            messages: [{ role: "system", content: systemPrompt }],
+            temperature: 0.7,
+            max_tokens: 2000
+          })
+        });
+
+        const data = await response.json();
+        
+        if (data.error) {
+          throw new Error(data.error.message);
+        }
+
+        const rawContent = data.choices.message.content;
+        // Clean any potential markdown code blocks provided by the LLM
+        const jsonStr = rawContent.replace(/```json/g, '').replace(/```/g, '').trim();
+        const aiAspects = JSON.parse(jsonStr);
+
+        // 5. Data Merge (Resonance Integration)
+        // We do not replace the structure; we infuse it with meaning.
+        aspects.forEach((a, i) => {
+          if (aiAspects[i]) {
+            a.name = aiAspects[i].name |
+
+| a.name;
+            a.definition = aiAspects[i].definition |
+
+| "Resonance faded.";
+            // We blend the AI's activation suggestion with the existing profile for continuity
+            const aiVal = aiAspects[i].activation |
+
+| 0;
+            const currentVal = a.activation;
+            a.activation = Math.round((aiVal + currentVal) / 2);
+          }
+        });
+
+        // 6. Refresh Field
+        draw();
+        buildList();
+        updateMetrics();
+        alert(`Resonance achieved. The field has aligned to: ${stageName}.`);
+
+      } catch (err) {
+        console.error("Resonance Error:", err);
+        alert("Resonance Failed: " + err.message + "\n\nCheck console for details. Ensure your API key is valid and has quota.");
+      } finally {
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }
+    }
+
+    // Attach Listener
+    if (resonateBtn) resonateBtn.addEventListener('click', hydrateAspectsWithAI);
+
 
     /* ============================================================
        COMMANDS & EXPORT
@@ -1964,7 +2055,7 @@
         model: `32 Aspect Developmental Self Clock — ${mode}`,
         devStage: state.devStage,
         devStageLabel: stageLabel(state.devStage),
-        stageWeights: [...state.stageWeights],
+        stageWeights:,
         metrics: {
           mean: metrics.mean,
           std: metrics.std,
@@ -1985,12 +2076,12 @@
           activeOnly: state.activeOnly,
         },
         comparison: {
-          stageA: Number(compareStageA?.value ?? state.devStage),
-          stageB: Number(compareStageB?.value ?? state.devStage),
-          summary: comparisonSummaryEl ? comparisonSummaryEl.textContent : '',
-          summaryHtml: comparisonSummaryEl ? comparisonSummaryEl.innerHTML : ''
+          stageA: Number(compareStageA?.value?? state.devStage),
+          stageB: Number(compareStageB?.value?? state.devStage),
+          summary: comparisonSummaryEl? comparisonSummaryEl.textContent : '',
+          summaryHtml: comparisonSummaryEl? comparisonSummaryEl.innerHTML : ''
         },
-        aspects: aspects.map(a => ({ ...a }))
+        aspects: aspects.map(a => ({...a }))
       };
     }
 
@@ -2007,7 +2098,11 @@
       if (!dialogEl) return;
       dialogEl.addEventListener('click', (event) => {
         const rect = dialogEl.getBoundingClientRect();
-        if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) {
+        if (event.clientX < rect.left |
+
+| event.clientX > rect.right |
+| event.clientY < rect.top |
+| event.clientY > rect.bottom) {
           dialogEl.close();
         }
       });
@@ -2020,7 +2115,7 @@
     }
 
     function csvEscape(value) {
-      const str = String(value ?? '');
+      const str = String(value?? '');
       if (/[",\n]/.test(str)) {
         return '"' + str.replace(/"/g, '""') + '"';
       }
@@ -2029,25 +2124,29 @@
 
     function exportCSV() {
       const payload = buildExportPayload();
-      const header = ['Aspect', 'Stage', 'Ring', 'Activation', 'Base', 'Brain', 'Neurotransmitter', 'Mode'];
+      const header =;
       const rows = [header.join(',')];
       payload.aspects.forEach(a => {
-        rows.push([
-          csvEscape(a.name),
-          csvEscape(a.stage),
-          csvEscape(a.ring),
-          csvEscape(a.activation),
-          csvEscape(a.baseActivation ?? (a.devProfile?.[state.devStage] ?? '')),
-          csvEscape(a.brainRegion || a.brainRegionKey || '—'),
-          csvEscape(a.neurotransmitter || a.neurotransmitterKey || '—'),
-          csvEscape(a.energyMode || a.energyModeKey || '—')
+        rows.push(?? '')),
+          csvEscape(a.brainRegion |
+
+| a.brainRegionKey |
+| '—'),
+          csvEscape(a.neurotransmitter |
+
+| a.neurotransmitterKey |
+| '—'),
+          csvEscape(a.energyMode |
+
+| a.energyModeKey |
+| '—')
         ].join(','));
       });
       downloadFile(rows.join('\n'), 'text/csv', 'self-clock-export.csv');
     }
 
     function escapeHtml(str) {
-      return String(str ?? '').replace(/[&<>"']/g, (ch) => ({
+      return String(str?? '').replace(/[&<>"']/g, (ch) => ({
         '&': '&amp;',
         '<': '&lt;',
         '>': '&gt;',
@@ -2059,14 +2158,19 @@
     function exportReport() {
       const payload = buildExportPayload();
       const topAspects = payload.aspects.slice().sort((a,b)=>b.activation - a.activation).slice(0,8);
-      const rows = topAspects.map(a => `<tr><td>${escapeHtml(a.name)}</td><td>${a.activation}</td><td>${escapeHtml(a.brainRegion || a.brainRegionKey || '—')}</td><td>${escapeHtml(a.neurotransmitter || a.neurotransmitterKey || '—')}</td></tr>`).join('');
+      const rows = topAspects.map(a => `<tr><td>${escapeHtml(a.name)}</td><td>${a.activation}</td><td>${escapeHtml(a.brainRegion |
+
+| a.brainRegionKey |
+| '—')}</td><td>${escapeHtml(a.neurotransmitter |
+| a.neurotransmitterKey |
+| '—')}</td></tr>`).join('');
       const html = `<!doctype html><html><head><meta charset="utf-8"><title>Self Clock Report</title><style>
         body{font-family:Inter,Segoe UI,sans-serif;background:#f5f7ff;color:#111827;padding:32px;line-height:1.6;}
         h1{margin-top:0;}
         table{border-collapse:collapse;width:100%;margin-top:16px;}
         th,td{border:1px solid #cbd5f5;padding:8px;text-align:left;}
         th{background:#e0e7ff;}
-        .muted{color:#6b7280;font-size:14px;}
+       .muted{color:#6b7280;font-size:14px;}
       </style></head><body>
         <h1>32 Aspect Developmental Self Clock</h1>
         <p class="muted">Generated ${escapeHtml(new Date().toLocaleString())}</p>
@@ -2075,7 +2179,10 @@
         <p>Resonance coverage ${(payload.metrics.resonanceRatio*100).toFixed(0)}% across ${payload.resonance.supportive}/${payload.resonance.total} potential links.</p>
         <h2>Developmental Context</h2>
         <p>Active stage: <strong>${escapeHtml(payload.devStageLabel)}</strong>. Stage weights: ${payload.stageWeights.map((w,i)=>`Stage ${i+1} ${Number(w).toFixed(2)}×`).join(', ')}.</p>
-        <p>${payload.comparison.summaryHtml || escapeHtml(payload.comparison.summary || '')}</p>
+        <p>${payload.comparison.summaryHtml |
+
+| escapeHtml(payload.comparison.summary |
+| '')}</p>
         <h2>Energy–Matter</h2>
         <p>Total activation ${Math.round(payload.energyMatter.total)} · Metabolic ${(payload.energyMatter.metabolic*100).toFixed(0)}%</p>
         <h2>Peak Activations</h2>
@@ -2085,7 +2192,7 @@
     }
 
     function openExportDialog() {
-      if (exportDialog && !exportDialog.open) exportDialog.showModal();
+      if (exportDialog &&!exportDialog.open) exportDialog.showModal();
     }
 
     /* ============================================================
@@ -2093,15 +2200,15 @@
     ============================================================ */
     let tutorialTimer = null;
     function toggleTutorial(forceValue) {
-      const next = typeof forceValue === 'boolean' ? forceValue : !state.tutorial;
+      const next = typeof forceValue === 'boolean'? forceValue :!state.tutorial;
       if (state.tutorial === next) {
-        if (next && tutorialDialog && !tutorialDialog.open) tutorialDialog.showModal();
+        if (next && tutorialDialog &&!tutorialDialog.open) tutorialDialog.showModal();
         return;
       }
       state.tutorial = next;
       if (tutorialBtn) {
         tutorialBtn.setAttribute('aria-pressed', String(state.tutorial));
-        tutorialBtn.textContent = state.tutorial ? '⏸ Tutorial' : '▶ Tutorial';
+        tutorialBtn.textContent = state.tutorial? '⏸ Tutorial' : '▶ Tutorial';
       }
       if (state.tutorial) {
         if (!tutorialTimer) tutorialTimer = setInterval(()=>{
@@ -2109,7 +2216,7 @@
           state.focusId = aspects[state.tutorialIndex].id;
           refreshListSelection(); draw();
         }, 1400);
-        if (tutorialDialog && !tutorialDialog.open) tutorialDialog.showModal();
+        if (tutorialDialog &&!tutorialDialog.open) tutorialDialog.showModal();
       } else {
         clearInterval(tutorialTimer); tutorialTimer = null; draw();
         if (tutorialDialog && tutorialDialog.open) tutorialDialog.close();
@@ -2139,7 +2246,7 @@
 
     if (sciInfoBtn) sciInfoBtn.addEventListener('click', ()=> {
       if (sciFormulaEl) sciFormulaEl.textContent = formatSciFormula(computeSCI());
-      if (sciModal && !sciModal.open) sciModal.showModal();
+      if (sciModal &&!sciModal.open) sciModal.showModal();
     });
 
     registerDialogBackdropClose(sciModal);
@@ -2148,7 +2255,7 @@
 
     function setMode(newMode){
       mode = newMode;
-      aspects = (mode==='mind') ? mindAspects : (mode==='body') ? bodyAspects : soulAspects;
+      aspects = (mode==='mind')? mindAspects : (mode==='body')? bodyAspects : soulAspects;
       el('#modeMind').classList.toggle('secondary', mode!=='mind');
       el('#modeBody').classList.toggle('secondary', mode!=='body');
       el('#modeSoul').classList.toggle('secondary', mode!=='soul');
@@ -2170,8 +2277,8 @@
        We add tests since none existed previously.
     ============================================================ */
     function runSelfTests() {
-      const results = [];
-      function assert(name, cond) { results.push({ name, pass: !!cond }); }
+      const results =;
+      function assert(name, cond) { results.push({ name, pass:!!cond }); }
 
       // Test 1: DEV_STAGES
       assert('DEV_STAGES == 12', DEV_STAGES === 12);
@@ -2182,7 +2289,7 @@
       assert('soulAspects length', soulAspects.length === 32);
 
       // Test 3: devProfile lengths
-      assert('mind devProfile[0].length == 12', mindAspects[0].devProfile.length === 12);
+      assert('mind devProfile.length == 12', mindAspects.devProfile.length === 12);
 
       // Test 4: SCI on uniform activations → high coherence, variance ≈ 0
       const bak = aspects;
@@ -2208,7 +2315,7 @@
       const passCount = results.filter(r=>r.pass).length;
       const fail = results.filter(r=>!r.pass);
       console.log('%cSelf-tests:', 'font-weight:bold');
-      results.forEach(r=> console.log(r.pass ? '✅' : '❌', r.name));
+      results.forEach(r=> console.log(r.pass? '✅' : '❌', r.name));
       if (fail.length) {
         console.warn('Some self-tests failed:', fail);
       } else {
@@ -2216,7 +2323,7 @@
       }
     }
 
-    const layoutQuery = window.matchMedia ? window.matchMedia('(max-width: 900px)') : { matches: false };
+    const layoutQuery = window.matchMedia? window.matchMedia('(max-width: 900px)') : { matches: false };
     const handleLayout = (ev) => applyLayoutMode(ev.matches);
     if (layoutQuery.addEventListener) {
       layoutQuery.addEventListener('change', handleLayout);
