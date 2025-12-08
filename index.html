@@ -3,14 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>32 Aspect Developmental Self Clock — Mind–Body–Energy Prototype (full site by January 2026 - thanks for visiting! 303-594-1985</title>
+  <title>32 Aspect Developmental Self Clock — Gemini AI Prototype</title>
   <style>
     /* =============================================================
-       32 Aspect Developmental Self Clock — Single File Implementation
+       32 Aspect Developmental Self Clock — Mind–Body–Energy
        • Plain HTML, CSS, and JavaScript (no external libraries)
-       • Integration: OpenAI API for Semantic Resonance
-       • Framework: FEEL-NSIL (Trauma-Informed, Resonance-Based)
-       • Architecture: Lei Mnemonic Particle Wave Field (LMPWF)
+       • Integration: Google Gemini API (v1beta REST) + Web Speech API
        ============================================================= */
 
     :root {
@@ -206,24 +204,6 @@
     }
    .btn.small { padding: 6px 12px; font-size: 12px; }
 
-    /* Special Resonance Button Styling */
-   .btn.resonance {
-      background: linear-gradient(135deg, #7c3aed, #db2777);
-      color: white;
-      border: 1px solid rgba(255,255,255,0.2);
-      box-shadow: 0 0 15px rgba(219, 39, 119, 0.4);
-    }
-   .btn.resonance:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 0 25px rgba(219, 39, 119, 0.6);
-    }
-
-   .desktop-only {}
-   .mobile-only { display: none!important; }
-
-    body[data-layout="mobile"].desktop-only { display: none!important; }
-    body[data-layout="mobile"].mobile-only { display: revert!important; }
-
    .vis {
       grid-area: vis;
       position: relative;
@@ -321,8 +301,6 @@
    .status-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
    .status-label { font-size: 11px; color: var(--muted); font-weight: 600; }
 
-   .panel p { margin: 0; }
-
    .scroll { overflow: auto; min-height: 120px; max-height: 50vh; padding-right: 6px; }
    .aspect-list { display: grid; gap: 10px; }
 
@@ -363,13 +341,9 @@
     label { font-size: 12px; color: var(--muted); font-weight: 600; }
 
     input[type="range"] { width: 100%; accent-color: var(--accent); }
-    input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--accent); border: 2px solid rgba(255,255,255,0.4); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 50%, transparent); cursor: pointer; }
-    input[type="range"]::-webkit-slider-runnable-track { height: 6px; border-radius: 999px; background: color-mix(in srgb, var(--panel) 80%, transparent); }
-    input[type="range"]:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-
+    
    .input-field { display: grid; gap: 6px; }
-   .input-field input,
-   .input-field select {
+   .input-field input,.input-field select {
       width: 100%;
       border-radius: 12px;
       border: 1px solid var(--input-border);
@@ -377,23 +351,17 @@
       padding: 9px 12px;
       color: var(--ink);
       font: inherit;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
     }
-   .input-field input::placeholder { color: color-mix(in srgb, var(--muted) 65%, transparent); }
-   .input-field input:focus-visible,
-   .input-field select:focus-visible { border-color: var(--input-border-focus); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent); outline: none; }
 
    .control-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
 
    .toggle { display: inline-flex; align-items: center; gap: 10px; font-size: 12px; color: var(--muted); font-weight: 600; }
-   .toggle input { position: relative; width: 44px; height: 24px; border-radius: 999px; background: color-mix(in srgb, var(--panel) 80%, transparent); border: 1px solid var(--input-border); cursor: pointer; appearance: none; transition: background 0.2s ease, border-color 0.2s ease; }
-   .toggle input::after { content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--muted); transition: transform 0.2s ease, background 0.2s ease; }
-   .toggle input:checked { background: color-mix(in srgb, var(--accent) 45%, transparent); border-color: color-mix(in srgb, var(--accent) 60%, transparent); }
+   .toggle input { position: relative; width: 44px; height: 24px; border-radius: 999px; background: color-mix(in srgb, var(--panel) 80%, transparent); border: 1px solid var(--input-border); cursor: pointer; appearance: none; transition: background 0.2s ease; }
+   .toggle input:checked { background: color-mix(in srgb, var(--accent) 45%, transparent); }
+   .toggle input::after { content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--muted); transition: transform 0.2s ease; }
    .toggle input:checked::after { transform: translateX(20px); background: var(--ink); }
 
    .filter-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
-   .filter-actions.btn { box-shadow: none; }
-
    .empty-state { text-align: center; color: var(--muted); font-size: 13px; padding: 20px; border: 1px dashed color-mix(in srgb, var(--accent) 30%, transparent); border-radius: 14px; }
 
     footer {
@@ -412,22 +380,11 @@
     }
 
    .vis-hint { color: var(--muted); font-size: 12px; }
-
-   .panel-overlay {
-      display: none;
-    }
-
-   .comparison-summary {
-      background: color-mix(in srgb, var(--panel-strong) 85%, transparent);
-      border: 1px dashed color-mix(in srgb, var(--accent) 30%, transparent);
-      border-radius: 14px;
-      padding: 12px;
-      font-size: 12px;
-      color: var(--muted);
-    }
-
+   .panel-overlay { display: none; }
+    
+    /* Dialog styling */
     dialog {
-      border: none;
+      border: 1px solid var(--glass-stroke);
       border-radius: 20px;
       padding: 0;
       max-width: min(540px, 90vw);
@@ -436,125 +393,40 @@
       box-shadow: var(--shadow-2);
     }
     dialog::backdrop { background: rgba(15, 23, 42, 0.45); }
-
-    dialog.modal-body {
-      display: grid;
-      gap: 14px;
-      padding: 20px;
-      background: transparent;
-    }
-
-   .tutorial-list { padding-left: 18px; display: grid; gap: 8px; font-size: 13px; color: var(--muted); }
-   .tutorial-list li strong { color: var(--ink); }
-
-   .export-grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
-
-    body[data-layout="mobile"] {
-      padding-bottom: env(safe-area-inset-bottom, 0px);
-    }
-
-    body[data-layout="mobile"].app {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      height: auto;
-      min-height: 100dvh;
-    }
-
-    body[data-layout="mobile"] header {
-      position: sticky;
-      top: 0;
-      z-index: 60;
-      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
-    }
-
-    body[data-layout="mobile"].vis {
-      min-height: 360px;
-    }
-
-    body[data-layout="mobile"] aside {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      max-height: 86dvh;
-      transform: translateY(100%);
-      transition: transform 0.32s ease, box-shadow 0.32s ease;
-      border-radius: 24px 24px 0 0;
-      box-shadow: 0 -18px 46px rgba(15, 23, 42, 0.16);
-      z-index: 55;
-      overflow-y: auto;
-      overscroll-behavior: contain;
-    }
-
-    body[data-layout="mobile"].panel {
-      background: color-mix(in srgb, var(--panel) 96%, transparent);
-    }
-
-    body[data-layout="mobile"][data-panel="open"] aside {
-      transform: translateY(0%);
-      box-shadow: 0 -24px 60px rgba(15, 23, 42, 0.22);
-    }
-
-    body[data-layout="mobile"].panel-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 50;
-      display: block;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.32s ease;
-      background: rgba(15, 23, 42, 0.25);
-      backdrop-filter: blur(6px);
-    }
-
-    body[data-layout="mobile"][data-panel="open"].panel-overlay {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    body[data-layout="mobile"] footer {
-      padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
-    }
-
-    dialog {
-      border: 1px solid var(--glass-stroke);
-      border-radius: 20px;
-      padding: 0;
-      color: var(--ink);
-      background: var(--panel-strong);
-      max-width: min(540px, 92vw);
-      box-shadow: var(--shadow-2);
-      backdrop-filter: blur(18px);
-    }
-    dialog::backdrop { background: rgba(0,0,0,.45); }
    .modal-head { padding: 16px; border-bottom: 1px solid color-mix(in srgb, var(--accent) 25%, transparent); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-   .modal-body { padding: 16px; display: grid; gap: 12px; }
+   .modal-body { display: grid; gap: 14px; padding: 20px; background: transparent; }
    .modal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
    .modal-grid > div { background: color-mix(in srgb, var(--panel) 90%, transparent); border: 1px solid var(--glass-stroke); border-radius: 14px; padding: 10px; }
-   .modal-body.panel { box-shadow: none; }
 
-    @media (max-width: 1200px) {
-     .app {
-        grid-template-columns: 1fr;
-        grid-template-areas: "top" "vis" "side" "footer";
-        height: auto;
-        min-height: 100dvh;
+    /* AI Response Area */
+   .ai-response-box {
+      margin-top: 10px;
+      padding: 12px;
+      background: color-mix(in srgb, var(--accent) 10%, transparent);
+      border-radius: 12px;
+      border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+      font-size: 13px;
+      line-height: 1.5;
+      min-height: 60px;
+    }
+   .ai-loading { color: var(--muted); font-style: italic; }
+
+    /* Mobile Layout */
+   .mobile-only { display: none!important; }
+    @media (max-width: 900px) {
+     .mobile-only { display: revert!important; }
+      body[data-layout="mobile"].app { display: flex; flex-direction: column; height: auto; }
+      body[data-layout="mobile"] aside {
+        position: fixed; left: 0; right: 0; bottom: 0; max-height: 86dvh;
+        transform: translateY(100%); transition: transform 0.3s ease;
+        z-index: 55; border-radius: 24px 24px 0 0; background: var(--panel-strong);
       }
-    }
-
-    @media (max-width: 860px) {
-     .control-row { flex-direction: column; align-items: flex-start; gap: 12px; }
-     .control-cluster { width: 100%; }
-     .control-cluster.btn { flex: 1 1 auto; justify-content: center; }
-      footer { justify-content: center; text-align: center; }
-    }
-
-    @media (max-width: 640px) {
-      header { padding: 16px; }
-     .legend { gap: 8px; }
-     .legend.chip { padding: 6px 10px; }
-      aside { padding: 14px; }
+      body[data-layout="mobile"][data-panel="open"] aside { transform: translateY(0); }
+      body[data-layout="mobile"].panel-overlay {
+        position: fixed; inset: 0; z-index: 50; display: block; opacity: 0; pointer-events: none;
+        background: rgba(0,0,0,0.3); transition: opacity 0.3s;
+      }
+      body[data-layout="mobile"][data-panel="open"].panel-overlay { opacity: 1; pointer-events: auto; }
     }
   </style>
 </head>
@@ -563,176 +435,85 @@
     <header>
       <div class="header-top">
         <div class="title-block">
-          <h1>32 Aspect Self Clock · Mind–Body–Energy Mapping</h1>
-          <p class="subtitle">An interactive atlas for synchronising cognitive, somatic, and archetypal development across the lifespan.</p>
+          <h1>32 Aspect Self Clock · Gemini AI Powered</h1>
+          <p class="subtitle">Interactive Mind–Body–Energy atlas with Gemini 2.0 Flash reasoning and Text-to-Speech synthesis.</p>
         </div>
         <div class="mode-toggle" role="group" aria-label="Model lenses">
-          <button id="modeMind" class="btn" aria-pressed="true" title="View Mind model (psych/semantic)">🧠 Mind</button>
-          <button id="modeBody" class="btn secondary" aria-pressed="false" title="View Body model (neuro/physiology)">🩺 Body</button>
-          <button id="modeSoul" class="btn secondary" aria-pressed="false" title="View Soul model (archetypal/transpersonal)">✨ Soul</button>
-          <button id="btnTheme" class="btn ghost small" type="button" aria-pressed="false" title="Toggle light or dark presentation">🌙 Dark</button>
+          <button id="modeMind" class="btn" aria-pressed="true">🧠 Mind</button>
+          <button id="modeBody" class="btn secondary" aria-pressed="false">🩺 Body</button>
+          <button id="modeSoul" class="btn secondary" aria-pressed="false">✨ Soul</button>
+          <button id="btnTheme" class="btn ghost small" type="button">🌙 Dark</button>
         </div>
       </div>
       <div class="control-row">
         <div class="control-cluster">
-          <button id="btnResonate" class="btn resonance" title="Resonate with AI (requires key)">🔮 Resonate</button>
-          <button id="btnTutorial" class="btn secondary" aria-pressed="false" title="Toggle tutorial/walkthrough mode (keyboard: T)">▶ Tutorial</button>
-          <button id="btnRandomize" class="btn secondary" title="Randomize activations (keyboard: R)">Shuffle</button>
-          <button id="btnDeactivate" class="btn warn" title="Set all activations to 0 (keyboard: 0)">Deactivate All</button>
+          <button id="btnTutorial" class="btn">▶ Tutorial</button>
+          <button id="btnRandomize" class="btn secondary">Shuffle</button>
+          <button id="btnDeactivate" class="btn warn">Deactivate All</button>
         </div>
         <div class="control-cluster secondary">
-          <button id="btnExport" class="btn secondary" title="Export all aspect states as JSON (keyboard: E)">Export JSON</button>
-          <button id="panelToggle" class="btn ghost small mobile-only" type="button" aria-controls="insightPanel" aria-expanded="false">Insights</button>
+          <button id="btnExport" class="btn secondary">Export JSON</button>
+          <button id="panelToggle" class="btn ghost small mobile-only">Insights</button>
         </div>
       </div>
     </header>
 
     <section class="vis">
-      <canvas id="clock" aria-label="Developmental Self Clock canvas" tabindex="0"></canvas>
-      <div class="legend" aria-label="Legend">
-        <div class="chip"><span class="swatch" style="background: var(--accent)"></span> Stage cross-lines (12)</div>
-        <div class="chip"><span class="swatch" style="background: var(--accent-2)"></span> Concentric rings (8)</div>
-        <div class="chip"><span class="swatch" style="background: #34d399"></span> Resonance links (similar activation)</div>
-        <div class="chip"><span class="swatch" style="background: #f59e0b"></span> Tutorial highlight</div>
+      <canvas id="clock" tabindex="0"></canvas>
+      <div class="legend">
+        <div class="chip"><span class="swatch" style="background: var(--accent)"></span> Stage lines (12)</div>
+        <div class="chip"><span class="swatch" style="background: var(--accent-2)"></span> Rings (8)</div>
+        <div class="chip"><span class="swatch" style="background: #34d399"></span> Resonance</div>
       </div>
     </section>
 
     <aside id="insightPanel">
       <div class="panel mobile-only">
-        <div class="row" style="justify-content: space-between; align-items: center;">
-          <strong>Insights &amp; Controls</strong>
-          <button id="panelClose" class="btn ghost small" type="button" aria-label="Close insights panel">Close</button>
+        <div class="row" style="justify-content: space-between;">
+          <strong>Controls</strong>
+          <button id="panelClose" class="btn ghost small">Close</button>
         </div>
-        <p class="vis-hint">Review metrics or fine-tune activations.</p>
       </div>
-      <div class="panel metrics" aria-label="System metrics">
-        <div class="metric" aria-live="polite">
-          <h3>SCI (Semantic Coherence Index)</h3>
+      <div class="panel metrics">
+        <div class="metric">
+          <h3>SCI (Coherence)</h3>
           <div class="val" id="sciVal">—</div>
-          <div class="status-row">
-            <span id="sciStatus" class="status-label">Awaiting activation data.</span>
-            <button id="btnSciInfo" class="btn ghost small" type="button">What is SCI?</button>
-          </div>
+          <span id="sciStatus" class="status-label">Ready.</span>
         </div>
-        <div class="metric" aria-live="polite"><h3>Energy–Matter</h3><div class="val" id="emVal">—</div></div>
-        <div class="metric" aria-live="polite"><h3>Active Aspects</h3><div class="val" id="activeVal">—</div></div>
-        <div class="metric" aria-live="polite"><h3>Peak Activation</h3><div class="val" id="peakVal">—</div></div>
+        <div class="metric"><h3>Active Aspects</h3><div class="val" id="activeVal">—</div></div>
       </div>
 
-      <div class="panel" aria-label="Developmental stage slider">
-        <label for="devStageSlider"><strong>Developmental Stage</strong> <span id="devStageVal">1 · Infancy</span></label>
+      <div class="panel">
+        <label for="devStageSlider"><strong>Developmental Stage</strong> <span id="devStageVal">1</span></label>
         <input id="devStageSlider" type="range" min="0" max="11" value="0" />
-        <p class="vis-hint">0 = birth/infancy ··· 12 = wisdom/end-of-life · Adjusts all activations via devProfile</p>
       </div>
 
-      <div class="panel" aria-label="Stage weighting controls">
-        <div class="row" style="align-items: center; justify-content: space-between;">
-          <strong>Stage Emphasis</strong>
-          <button id="btnResetWeights" class="btn ghost small" type="button">Reset weights</button>
+      <div class="panel">
+        <div class="input-field">
+          <label for="searchInput">Filter Aspects</label>
+          <input id="searchInput" type="search" placeholder="Search..." />
         </div>
-        <label for="stageWeightSelect">Focus stage</label>
-        <select id="stageWeightSelect"></select>
-        <label for="stageWeightSlider">Multiplier <span id="stageWeightValue">1.00×</span></label>
-        <input id="stageWeightSlider" type="range" min="0.5" max="1.8" step="0.05" value="1" />
-        <p class="vis-hint">Emphasize specific stages beyond the base 0–12 developmental profile.</p>
-      </div>
-
-      <div class="panel" aria-label="Developmental comparison">
-        <strong>Comparative Mode</strong>
-        <div class="control-grid">
-          <div class="input-field">
-            <label for="compareStageA">Stage A</label>
-            <select id="compareStageA"></select>
-          </div>
-          <div class="input-field">
-            <label for="compareStageB">Stage B</label>
-            <select id="compareStageB"></select>
-          </div>
-        </div>
-        <div id="comparisonSummary" class="comparison-summary" aria-live="polite">Select two stages to compare their activation patterns.</div>
-      </div>
-
-      <div class="panel" aria-label="Aspect filters and sorting">
-        <div class="control-grid">
-          <div class="input-field">
-            <label for="searchInput">Find aspect</label>
-            <input id="searchInput" type="search" placeholder="Search names, roles, or regions" autocomplete="off" />
-          </div>
-          <div class="input-field">
-            <label for="sortSelect">Sort by</label>
-            <select id="sortSelect">
-              <option value="stage">Stage · Ring</option>
-              <option value="activationDesc">Activation (high → low)</option>
-              <option value="activationAsc">Activation (low → high)</option>
-              <option value="name">Name (A → Z)</option>
-            </select>
-          </div>
-          <div class="input-field">
-            <label for="stageFilter">Stage focus</label>
-            <select id="stageFilter">
-              <option value="all">All stages</option>
-              <option value="1">Stage 1</option>
-              <option value="2">Stage 2</option>
-              <option value="3">Stage 3</option>
-              <option value="4">Stage 4</option>
-              <option value="5">Stage 5</option>
-              <option value="6">Stage 6</option>
-              <option value="7">Stage 7</option>
-              <option value="8">Stage 8</option>
-              <option value="9">Stage 9</option>
-              <option value="10">Stage 10</option>
-              <option value="11">Stage 11</option>
-              <option value="12">Stage 12</option>
-            </select>
-          </div>
-          <div class="input-field">
-            <label for="ringFilter">Ring focus</label>
-            <select id="ringFilter">
-              <option value="all">All rings</option>
-              <option value="1">Ring 1</option>
-              <option value="2">Ring 2</option>
-              <option value="3">Ring 3</option>
-              <option value="4">Ring 4</option>
-              <option value="5">Ring 5</option>
-              <option value="6">Ring 6</option>
-              <option value="7">Ring 7</option>
-              <option value="8">Ring 8</option>
-            </select>
-          </div>
-        </div>
-        <label class="toggle">
-          <input type="checkbox" id="activeOnly" />
-          <span>Show active aspects only</span>
-        </label>
-        <div class="filter-actions">
-          <button id="btnResetFilters" class="btn tertiary small" type="button">Reset</button>
-          <span id="filterSummary" class="vis-hint">All aspects visible.</span>
+        <div class="filter-actions" style="margin-top:8px">
+          <label class="toggle">
+            <input type="checkbox" id="activeOnly" />
+            <span>Active Only</span>
+          </label>
+          <button id="btnResetFilters" class="btn tertiary small">Reset</button>
         </div>
       </div>
 
-      <div class="panel scroll" aria-label="Aspect controls">
-        <div id="aspectList" class="aspect-list" role="listbox" aria-multiselectable="false"></div>
-      </div>
-
-      <div class="panel" aria-label="Legend and codes">
-        <div class="tags" style="margin-bottom:6px">
-          <span class="tag">Brain: PFC, Limbic, Insula, Amygdala…</span>
-          <span class="tag">NT: 5-HT, DA, NE, GABA, ACh, Oxytocin</span>
-          <span class="tag">Modes: visual, auditory, interoceptive…</span>
-        </div>
-        <p class="vis-hint">Keyboard: Arrow keys pan focus · Enter opens details · T tutorial · R shuffle · E export · 0 clear</p>
+      <div class="panel scroll">
+        <div id="aspectList" class="aspect-list" role="listbox"></div>
       </div>
     </aside>
-    <div class="panel-overlay" id="panelOverlay" aria-hidden="true"></div>
+    <div class="panel-overlay" id="panelOverlay"></div>
 
     <footer>
-      <div class="vis-hint">C = E × MC · Energy input → neural region → neurochemical output → system response</div>
-      <div class="vis-hint">Open science: Export preserves all annotations for reproducibility</div>
-      <div class="vis-hint">Adrian Lei Martinez-Conol, founder of the Only When Prompted Research Initiative 2018</div>
+      <div class="vis-hint">Powered by Gemini 2.0 Flash • C = E × MC methodology</div>
     </footer>
   </div>
 
-  <dialog id="infoModal" aria-label="Aspect details">
+  <dialog id="infoModal">
     <div class="modal-head">
       <strong id="mTitle">Aspect</strong>
       <button class="btn" value="cancel">Close</button>
@@ -740,90 +521,45 @@
     <div class="modal-body">
       <div id="mDef" class="panel"></div>
       <div class="modal-grid">
-        <div>
-          <div><strong>Brain Region(s)</strong></div>
-          <div id="mBrain" aria-live="polite"></div>
-        </div>
-        <div>
-          <div><strong>Neurochemistry</strong></div>
-          <div id="mNT"></div>
-        </div>
-        <div>
-          <div><strong>Energy Pathway / Sensory</strong></div>
-          <div id="mEnergy"></div>
-        </div>
-        <div>
-          <div><strong>Developmental Stage · Ring</strong></div>
-          <div id="mStage"></div>
-        </div>
+        <div><strong>Brain/Structure</strong><div id="mBrain"></div></div>
+        <div><strong>Neurochemistry</strong><div id="mNT"></div></div>
+        <div><strong>Energy Mode</strong><div id="mEnergy"></div></div>
+        <div><strong>Stage/Ring</strong><div id="mStage"></div></div>
       </div>
       <div class="panel">
-        <label for="mSlider"><strong>Activation</strong> <span id="mActVal" style="float:right">0</span></label>
+        <label for="mSlider"><strong>Activation Level</strong> <span id="mActVal" style="float:right">0</span></label>
         <input id="mSlider" type="range" min="0" max="100" value="0" />
       </div>
+      
       <div class="panel">
-        <strong>Matter/Energy Summary</strong>
-        <div id="mSummary"></div>
+        <div class="row" style="justify-content: space-between; margin-bottom: 8px;">
+          <strong>Gemini Insight</strong>
+          <div class="control-cluster">
+             <button id="btnAskGemini" class="btn small" style="background: var(--accent-2); color: white;">✨ Analyze</button>
+             <button id="btnSpeak" class="btn small secondary" title="Read Aloud">🔊 Speak</button>
+          </div>
+        </div>
+        <div id="geminiResponse" class="ai-response-box">
+          Click 'Analyze' to generate a developmental insight using Gemini 2.0 Flash.
+        </div>
       </div>
     </div>
   </dialog>
 
-  <dialog id="sciModal" aria-label="Semantic Coherence Index explanation">
-    <form method="dialog" class="modal-body">
-      <header class="modal-head">
-        <strong>Semantic Coherence Index</strong>
-        <button class="btn" value="cancel">Close</button>
-      </header>
-      <p>The SCI summarises how harmoniously the 32 aspect activations align. It blends three signals:</p>
-      <ol>
-        <li><strong>Activation mean</strong> — higher overall activation raises the index.</li>
-        <li><strong>Distribution balance</strong> — lower variance indicates the system is coherent.</li>
-        <li><strong>Resonance coverage</strong> — similar stages, rings, and activation levels reinforce the network.</li>
-      </ol>
-      <p>The live value is scaled to 0–100 and updates instantly as you adjust sliders, shuffle activations, or change developmental emphasis.</p>
-      <p id="sciFormula" class="vis-hint"></p>
-    </form>
-  </dialog>
-
-  <dialog id="tutorialDialog" aria-label="Interactive tutorial">
-    <form method="dialog" class="modal-body">
-      <header class="modal-head">
-        <strong>Self Clock Tutorial</strong>
-        <button class="btn" value="cancel">Close</button>
-      </header>
-      <ol id="tutorialContent" class="tutorial-list"></ol>
-    </form>
-  </dialog>
-
-  <dialog id="exportDialog" aria-label="Export options">
-    <form method="dialog" class="modal-body">
-      <header class="modal-head">
-        <strong>Export Current Map</strong>
-        <button class="btn" value="cancel">Close</button>
-      </header>
-      <p>Select a format to download the current developmental snapshot, including the SCI and resonance metrics.</p>
-      <div class="export-grid">
-        <button id="exportJson" class="btn" value="json">JSON (raw data)</button>
-        <button id="exportCsv" class="btn secondary" value="csv">CSV (spreadsheet)</button>
-        <button id="exportReport" class="btn secondary" value="html">Printable report</button>
-      </div>
-    </form>
-  </dialog>
-
   <script>
-    /* ==========================================================================
-       CONFIGURATION: IDENTITY ANCHOR
-       This is the "Soul Key" placeholder. The system will not resonate without it.
-       ========================================================================== */
-    const apiKey = "[ insert a p I key here ]"; // User enters key here
+    /* ============================================================
+       CONFIGURATION & API KEYS
+       ------------------------------------------------------------
+       Replace the placeholder below with your actual Gemini API Key.
+       For production, use a proxy to keep this key secure.
+    ============================================================ */
+    const GEMINI_API_KEY = "[ AIzaSyCP8zAJYPqQ7fOsWvZ2hZeeZRdZn6JBERU ]";
+    const GEMINI_MODEL = "gemini-2.0-flash";
+    const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
 
     /* ============================================================
-       DATA MODEL
-       ------------------------------------------------------------
-       • Three model lenses: Mind / Body / Soul
-       • Each lens has 32 aspects with a 12-point developmental profile
+       DATA MODEL & STATE
     ============================================================ */
-
     const N_ASPECTS = 32;
     const TWO_PI = Math.PI * 2;
     const center = { x: 0, y: 0 };
@@ -831,1535 +567,285 @@
     const DEV_STAGE_LABELS =;
 
     const BIO_LIBRARY = {
-      brain: {
-        PFC: { name: 'Prefrontal Cortex', summary: 'Executive control, planning, and modulation of complex behaviours.' },
-        Limbic: { name: 'Limbic Network', summary: 'Emotional appraisal, memory tagging, and motivation coupling.' },
-        Insula: { name: 'Insular Cortex', summary: 'Interoceptive awareness and translation of body state to feeling tone.' },
-        Amygdala: { name: 'Amygdala', summary: 'Rapid salience detection, threat appraisal, and emotional tagging.' },
-        Hippocampus: { name: 'Hippocampus', summary: 'Contextual memory integration and spatial-temporal mapping.' },
-        ACC: { name: 'Anterior Cingulate Cortex', summary: 'Conflict monitoring, attention regulation, and adaptive focus.' },
-        'Basal Ganglia': { name: 'Basal Ganglia', summary: 'Sequencing of actions, habit formation, and energy gating.' },
-        Cerebellum: { name: 'Cerebellum', summary: 'Sensorimotor prediction, timing, and embodied coordination.' }
-      },
-      nt: {
-        '5-HT': { name: 'Serotonin (5-HT)', summary: 'Mood stabilisation, sensory integration, and behavioural flexibility.' },
-        DA: { name: 'Dopamine (DA)', summary: 'Reward tracking, motivation, and precision of mental models.' },
-        NE: { name: 'Norepinephrine (NE)', summary: 'Arousal, alerting, and prioritisation of salient cues.' },
-        GABA: { name: 'GABA', summary: 'Primary inhibitory tone moderating excitability and balance.' },
-        ACh: { name: 'Acetylcholine (ACh)', summary: 'Attention sharpening, neuroplasticity, and state transitions.' },
-        Oxytocin: { name: 'Oxytocin', summary: 'Social bonding, trust calibration, and affiliative safety.' },
-        Endorphins: { name: 'Endorphins', summary: 'Analgesia, euphoria, and stress recovery buffering.' }
-      },
-      modes: {
-        visual: { name: 'Visual', summary: 'Pattern and imagery channels guiding anticipatory modelling.' },
-        auditory: { name: 'Auditory', summary: 'Temporal sequencing and linguistic-phonetic attunement.' },
-        interoceptive: { name: 'Interoceptive', summary: 'Sensing internal physiology for regulation and self-awareness.' },
-        proprioceptive: { name: 'Proprioceptive', summary: 'Muscle and joint awareness for posture and embodied context.' },
-        vestibular: { name: 'Vestibular', summary: 'Balance, orientation, and gravitational reference frames.' },
-        somatic: { name: 'Somatic', summary: 'Touch, pressure, and visceral grounding of experience.' }
-      }
+      brain: { PFC: "Prefrontal Cortex", Limbic: "Limbic Network", Insula: "Insular Cortex", Amygdala: "Amygdala", Hippocampus: "Hippocampus", ACC: "Anterior Cingulate", "Basal Ganglia": "Basal Ganglia", Cerebellum: "Cerebellum" },
+      nt: { "5-HT": "Serotonin", DA: "Dopamine", NE: "Norepinephrine", GABA: "GABA", ACh: "Acetylcholine", Oxytocin: "Oxytocin", Endorphins: "Endorphins" },
+      modes: { visual: "Visual", auditory: "Auditory", interoceptive: "Interoceptive", proprioceptive: "Proprioceptive", vestibular: "Vestibular", somatic: "Somatic" }
     };
 
-    const TUTORIAL_STEPS =;
-
-    const palette = {
-      ring1: '#1a214a',
-      ring2: '#161c3f',
-      stage: '#24306f',
-      label: '#cbd5f1',
-      focus: '#fde68a',
-      nodeBorder: '#0b0f2a',
-      resonanceA: '#34d399',
-      resonanceB: '#7dd3fc'
-    };
-
-    function refreshPalette() {
-      const styles = getComputedStyle(document.body);
-      const fetch = (name, fallback) => {
-        const val = styles.getPropertyValue(name);
-        return val? val.trim() : fallback;
-      };
-      palette.ring1 = fetch('--ring-line-1', palette.ring1);
-      palette.ring2 = fetch('--ring-line-2', palette.ring2);
-      palette.stage = fetch('--stage-line', palette.stage);
-      palette.label = fetch('--node-label', palette.label);
-      palette.focus = fetch('--focus', palette.focus);
-      palette.nodeBorder = fetch('--glass-stroke', palette.nodeBorder);
-      palette.resonanceA = fetch('--good', palette.resonanceA);
-      palette.resonanceB = fetch('--accent', palette.resonanceB);
-    }
-
-    function detectInitialTheme() {
-      try {
-        const stored = localStorage.getItem('selfClockTheme');
-        if (stored === 'light' |
-
-| stored === 'dark') return stored;
-      } catch (_) { /* ignore */ }
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        return 'dark';
-      }
-      return 'light';
-    }
-
-    function updateThemeButton() {
-      if (!themeBtn) return;
-      const next = state.theme === 'dark'? 'light' : 'dark';
-      themeBtn.textContent = state.theme === 'dark'? '☀️ Light' : '🌙 Dark';
-      themeBtn.setAttribute('title', `Switch to ${next} mode`);
-      themeBtn.setAttribute('aria-pressed', String(state.theme === 'light'));
-    }
-
-    function applyTheme(theme) {
-      state.theme = theme;
-      document.body.setAttribute('data-theme', theme);
-      try { localStorage.setItem('selfClockTheme', theme); } catch (_) { /* ignore */ }
-      refreshPalette();
-      updateThemeButton();
-      draw();
-    }
-
-    function updatePanelToggleLabel() {
-      if (!panelToggle) return;
-      const open = state.panelOpen;
-      const label = open? 'Hide insights panel' : 'Show insights panel';
-      panelToggle.textContent = open? 'Hide Panel' : 'Show Panel';
-      panelToggle.setAttribute('aria-expanded', String(open));
-      panelToggle.setAttribute('aria-label', label);
-    }
-
-    function focusWithoutScroll(el) {
-      if (!el |
-
-| typeof el.focus!== 'function') return;
-      try {
-        el.focus({ preventScroll: true });
-      } catch (_) {
-        el.focus();
-      }
-    }
-
-    function setInert(el, inert) {
-      if (!el) return;
-      if ('inert' in el) {
-        el.inert = inert;
-      }
-      if (inert) {
-        el.setAttribute('inert', '');
-      } else {
-        el.removeAttribute('inert');
-      }
-    }
-
-    function setPanelState(open, options = {}) {
-      const { focusToggle = true } = options;
-      state.panelOpen = open;
-      document.body.setAttribute('data-panel', open? 'open' : 'closed');
-      const isMobile = state.layout === 'mobile';
-      if (panelOverlay) {
-        const overlayVisible = open && isMobile;
-        panelOverlay.hidden =!overlayVisible;
-        panelOverlay.setAttribute('aria-hidden', overlayVisible? 'false' : 'true');
-      }
-      updatePanelToggleLabel();
-      if (!insightPanel) return;
-
-      if (open) {
-        insightPanel.removeAttribute('hidden');
-        insightPanel.setAttribute('aria-hidden', 'false');
-        setInert(insightPanel, false);
-        if (isMobile) {
-          insightPanel.setAttribute('tabindex', '-1');
-          focusWithoutScroll(insightPanel);
-        } else {
-          insightPanel.removeAttribute('tabindex');
-        }
-        return;
-      }
-
-      // Closing state handling
-      if (isMobile) {
-        insightPanel.setAttribute('aria-hidden', 'true');
-        insightPanel.setAttribute('hidden', '');
-        setInert(insightPanel, true);
-        insightPanel.removeAttribute('tabindex');
-        if (focusToggle && panelToggle) {
-          focusWithoutScroll(panelToggle);
-        }
-      } else {
-        insightPanel.removeAttribute('hidden');
-        insightPanel.setAttribute('aria-hidden', 'false');
-        setInert(insightPanel, false);
-        insightPanel.removeAttribute('tabindex');
-      }
-    }
-
-    function applyLayoutMode(isMobile) {
-      state.layout = isMobile? 'mobile' : 'desktop';
-      document.body.setAttribute('data-layout', state.layout);
-      if (state.layout === 'mobile') {
-        setPanelState(false, { focusToggle: false });
-      } else {
-        setPanelState(true, { focusToggle: false });
-        if (insightPanel) {
-          insightPanel.removeAttribute('tabindex');
-          insightPanel.removeAttribute('hidden');
-          insightPanel.setAttribute('aria-hidden', 'false');
-          setInert(insightPanel, false);
-        }
-      }
-    }
-
-    // Placeholders; replace with canonical mappings as needed
-    const BRAIN =;
-    const NT =;
-    const MODES = ["visual", "auditory", "somatic", "interoceptive", "proprioceptive", "vestibular"];
-
-    // Developmental profile generator (smooth rise → peak → taper)
-    function makeDevProfile(i, stage, ring) {
-      const len = DEV_STAGES;
-      const arr =;
-      const phase = (stage-1) / 12;      // shift by nominal stage
-      const amp = 0.6 + (ring/8)*0.3;    // outer rings slightly higher
-      const noise = (seed)=> (Math.sin((i+1)*(seed+1.73))*0.04);
-      for (let s=0; s<len; s++) {
-        const t = s/(len-1);             // 0..1 lifespan
-        const bell = Math.sin(Math.PI * (t*0.85 + phase*0.12));
-        const base = Math.max(0, bell) * amp + 0.15*(1 - Math.pow(1-t, 3));
-        const val = Math.max(0, Math.min(1, base + noise(s)));
-        arr.push(Math.round(val*100));
-      }
-      return arr;
-    }
-
-    // Build a complete 32-aspect set for a given lens (mind/body/soul)
-    function makeAspectSet(model) {
-      return Array.from({ length: N_ASPECTS }, (_, i) => {
-        const hue = Math.round((i * (360 / N_ASPECTS)) % 360);
-        const stage = 1 + (i % 12);
-        const ring  = 1 + (i % 8);
-        const devProfile = makeDevProfile(i, stage, ring);
-        const base = {
-          id: i+1,
-          name: `${model.toUpperCase()+model.slice(1)} Aspect ${i+1}`,
-          stage, ring, hue,
-          activation: devProfile,
-          devProfile,
-        };
-        if (model === 'mind') {
-          return Object.assign(base, {
-            definition: "Cognitive/semantic placeholder. Click Resonate to hydrate.",
-            corePsychologicalRole: "Role placeholder",
-            nsilSemanticSignature: "nsil:placeholder",
-            semanticGravity: "attractor",
-            quantumMode: ["particle","wave","field"][i%3],
-            particleWaveFieldFunction: "propagation placeholder",
-            brainRegion: "—",
-            neurotransmitter: "—",
-            energyMode: "—",
-            matterOutput: "—",
-          });
-        }
-        if (model === 'body') {
-          const brainKey = BRAIN;
-          const ntKey = NT;
-          const modeKey = MODES;
-          return Object.assign(base, {
-            definition: "Neuro/physiology placeholder. Click Resonate to hydrate.",
-            brainRegionKey: brainKey,
-            brainRegion: BIO_LIBRARY.brain[brainKey]?.name |
-
-| brainKey,
-            neurotransmitterKey: ntKey,
-            neurotransmitter: BIO_LIBRARY.nt[ntKey]?.name |
-
-| ntKey,
-            energyModeKey: modeKey,
-            energyMode: BIO_LIBRARY.modes[modeKey]?.name |
-
-| modeKey,
-            matterOutput: "Physiological function",
-          });
-        }
-        // soul
-        return Object.assign(base, {
-          definition: "Archetypal/transpersonal placeholder. Click Resonate to hydrate.",
-          archetypalSymbol: "Symbol",
-          spiritualRole: "Role",
-          nsilPrincipleSignature: "nsil:principle",
-          brainRegion: "—",
-          neurotransmitter: "—",
-          energyMode: "—",
-          matterOutput: "—",
-        });
-      });
-    }
-
-    // Three parallel datasets (placeholders until you provide canonical labels)
-    const mindAspects = makeAspectSet('mind');
-    const bodyAspects = makeAspectSet('body');
-    const soulAspects = makeAspectSet('soul');
-
-    // Active lens state
     let mode = 'mind';
-    let aspects = mindAspects;
-
-    /* ============================================================
-       STATE + METRICS
-    ============================================================ */
+    let aspects =;
     const state = {
-      resonanceThreshold: 18, // activation similarity to link nodes
-      tutorial: false,
-      tutorialIndex: 0,
       focusId: 1,
       devStage: 0,
-      stageWeights: Array.from({ length: DEV_STAGES }, () => 1),
       filterText: '',
-      sort: 'stage',
-      stageFilter: 'all',
-      ringFilter: 'all',
       activeOnly: false,
       theme: 'dark',
       layout: 'desktop',
       panelOpen: true,
-      visible: [...aspects],
+      currentVoice: null
     };
 
-    function computeResonanceStats() {
-      let total = 0;
-      let supportive = 0;
-      let stageAligned = 0;
-      let ringAligned = 0;
-      let activationAligned = 0;
-      for (let i = 0; i < aspects.length; i++) {
-        for (let j = i + 1; j < aspects.length; j++) {
-          total++;
-          const ai = aspects[i];
-          const aj = aspects[j];
-          const diff = Math.abs(ai.activation - aj.activation);
-          const sim = diff <= state.resonanceThreshold;
-          const sameStage = ai.stage === aj.stage;
-          const sameRing = ai.ring === aj.ring;
-          if (sim |
-
-| sameStage |
-| sameRing) {
-            supportive++;
-            if (sim) activationAligned++;
-            if (sameStage) stageAligned++;
-            if (sameRing) ringAligned++;
-          }
-        }
+    // Helper: Generate Mock Data
+    function makeAspectSet(modelType) {
+      const arr =;
+      const BRAIN = Object.keys(BIO_LIBRARY.brain);
+      const NT = Object.keys(BIO_LIBRARY.nt);
+      for(let i=0; i<N_ASPECTS; i++) {
+        const stage = 1 + (i % 12);
+        const ring = 1 + (i % 8);
+        arr.push({
+          id: i+1,
+          name: `${modelType.charAt(0).toUpperCase() + modelType.slice(1)} Aspect ${i+1}`,
+          stage, ring,
+          activation: Math.floor(Math.random() * 20), // random baseline
+          hue: Math.round((i * (360 / N_ASPECTS)) % 360),
+          definition: `Definitions for ${modelType} aspect ${i+1}.`,
+          brainRegion: BRAIN,
+          neurotransmitter: NT,
+          energyMode: "Somatic"
+        });
       }
-      const ratio = total? supportive / total : 0;
-      return { total, supportive, ratio, stageAligned, ringAligned, activationAligned };
+      return arr;
     }
 
-    function computeSCI() {
-      const vals = aspects.map(a => a.activation);
-      const mean = vals.reduce((a,b)=>a+b,0) / vals.length;
-      const variance = vals.reduce((acc, v)=> acc + Math.pow(v-mean, 2), 0) / vals.length;
-      const std = Math.sqrt(variance);
-      const activationScore = mean / 100; // 0..1
-      const balance = 1 - Math.min(1, std / 35); // 0..1
-      const resonance = computeResonanceStats();
-      const resonanceScore = resonance.ratio;
-      const alignmentScore = resonance.total? ((resonance.stageAligned + resonance.ringAligned) / (2 * resonance.total)) : 0;
-      const weighted = (activationScore * 0.35) + (balance * 0.35) + (resonanceScore * 0.2) + (alignmentScore * 0.1);
-      const sci = Math.max(0, Math.min(100, weighted * 100));
-      return { mean, std, sci, activationScore, balance, resonance, resonanceScore, alignmentScore };
-    }
-
-    // Energy–Matter overview (simple but informative proxy)
-    function computeEnergyMatter() {
-      const total = aspects.reduce((s,a)=> s + a.activation, 0);
-      const byNT = new Map();
-      for (const a of aspects) {
-        const k = a.neurotransmitter |
-
-| '—';
-        byNT.set(k, (byNT.get(k)||0) + a.activation);
-      }
-      const metabolic = total / (N_ASPECTS * 100);
-      return { total, byNT, metabolic };
-    }
+    const datasets = {
+      mind: makeAspectSet('mind'),
+      body: makeAspectSet('body'),
+      soul: makeAspectSet('soul')
+    };
+    aspects = datasets.mind;
 
     /* ============================================================
-       DOM HELPERS
+       DOM ELEMENTS
     ============================================================ */
-    const el = sel => document.querySelector(sel);
-    const listEl = el('#aspectList');
-    const sciEl  = el('#sciVal');
-    const emEl   = el('#emVal');
-    const activeEl = el('#activeVal');
-    const peakEl = el('#peakVal');
-    const sciStatusEl = el('#sciStatus');
-    const sciFormulaEl = el('#sciFormula');
-    const sciInfoBtn = el('#btnSciInfo');
-    const sciModal = el('#sciModal');
-    const filterSummaryEl = el('#filterSummary');
-    const devSlider = el('#devStageSlider');
-    const devVal = el('#devStageVal');
-    const stageWeightSelect = el('#stageWeightSelect');
-    const stageWeightSlider = el('#stageWeightSlider');
-    const stageWeightValue = el('#stageWeightValue');
-    const resetWeightsBtn = el('#btnResetWeights');
-    const compareStageA = el('#compareStageA');
-    const compareStageB = el('#compareStageB');
-    const comparisonSummaryEl = el('#comparisonSummary');
-    const searchInput = el('#searchInput');
-    const sortSelect = el('#sortSelect');
-    const stageFilterSelect = el('#stageFilter');
-    const ringFilterSelect = el('#ringFilter');
-    const activeOnlyToggle = el('#activeOnly');
-    const resetFiltersBtn = el('#btnResetFilters');
-    const themeBtn = el('#btnTheme');
-    const panelToggle = el('#panelToggle');
-    const panelClose = el('#panelClose');
-    const panelOverlay = el('#panelOverlay');
-    const insightPanel = el('#insightPanel');
-    const tutorialDialog = el('#tutorialDialog');
-    const tutorialListEl = el('#tutorialContent');
-    const exportDialog = el('#exportDialog');
-    const exportJsonBtn = el('#exportJson');
-    const exportCsvBtn = el('#exportCsv');
-    const exportReportBtn = el('#exportReport');
-    const tutorialBtn = el('#btnTutorial');
-    const exportBtn = el('#btnExport');
-    const resonateBtn = el('#btnResonate');
-
-    function describeBrain(key, fallback) {
-      if (!key) return fallback |
-
-| '—';
-      const def = BIO_LIBRARY.brain[key];
-      if (!def) return fallback |
-
-| key;
-      return `<strong>${def.name}</strong><br><span class="vis-hint">${def.summary}</span>`;
-    }
-
-    function describeNeurochemical(key, fallback) {
-      if (!key) return fallback |
-
-| '—';
-      const def = BIO_LIBRARY.nt[key];
-      if (!def) return fallback |
-
-| key;
-      return `<strong>${def.name}</strong><br><span class="vis-hint">${def.summary}</span>`;
-    }
-
-    function describeMode(key, fallback) {
-      if (!key) return fallback |
-
-| '—';
-      const def = BIO_LIBRARY.modes[key];
-      if (!def) return fallback |
-
-| key;
-      return `<strong>${def.name}</strong><br><span class="vis-hint">${def.summary}</span>`;
-    }
-
-    function buildTutorialList() {
-      if (!tutorialListEl) return;
-      tutorialListEl.innerHTML = TUTORIAL_STEPS.map(step => `<li><strong>${step.title}</strong> — ${step.detail}</li>`).join('');
-    }
-
-    function updateComparisonSummary() {
-      if (!comparisonSummaryEl ||!compareStageA ||!compareStageB) return;
-      const aIdx = Number(compareStageA.value);
-      const bIdx = Number(compareStageB.value);
-      if (!Number.isFinite(aIdx) ||!Number.isFinite(bIdx)) {
-        comparisonSummaryEl.textContent = 'Select two stages to compare their activation patterns.';
-        return;
-      }
-      if (aIdx === bIdx) {
-        comparisonSummaryEl.textContent = 'Choose two distinct developmental points for comparison.';
-        return;
-      }
-      const dataset = mode === 'mind'? mindAspects : mode === 'body'? bodyAspects : soulAspects;
-      const mean = (vals) => vals.reduce((sum, val) => sum + val, 0) / vals.length;
-      const valuesA = dataset.map(a => a.devProfile?.[aIdx]?? 0);
-      const valuesB = dataset.map(a => a.devProfile?.[bIdx]?? 0);
-      const meanA = mean(valuesA);
-      const meanB = mean(valuesB);
-      const diffs = dataset.map((a, idx) => ({ name: a.name, delta: valuesB[idx] - valuesA[idx] }));
-      const topUp = diffs.filter(d => d.delta > 0).sort((a,b)=>b.delta-a.delta).slice(0,3);
-      const topDown = diffs.filter(d => d.delta < 0).sort((a,b)=>a.delta-b.delta).slice(0,3);
-      const fmt = (arr) => arr.length? arr.map(d => `${escapeHtml(d.name)} (${d.delta > 0? '+' : ''}${d.delta.toFixed(0)})`).join(', ') : '—';
-      const delta = meanB - meanA;
-      comparisonSummaryEl.innerHTML = `
-        <p><strong>${stageLabel(bIdx)}</strong> mean ${(delta>=0?'+':'')}${delta.toFixed(1)} relative to <strong>${stageLabel(aIdx)}</strong>.</p>
-        <p><strong>Leading increases:</strong> ${fmt(topUp)}</p>
-        <p><strong>Leading decreases:</strong> ${fmt(topDown)}</p>`;
-    }
-
-    function stageLabel(stageIndex) {
-      const name = DEV_STAGE_LABELS[stageIndex] |
-
-| '';
-      return `Stage ${stageIndex + 1}${name? ` · ${name}` : ''}`;
-    }
-
-    function applyDevStage(stage){
-      state.devStage = stage;
-      if (devVal) devVal.textContent = stageLabel(stage);
-      const currentWeight = state.stageWeights[stage]?? 1;
-      if (stageWeightSelect) stageWeightSelect.value = String(stage);
-      if (stageWeightSlider) stageWeightSlider.value = String(currentWeight);
-      if (stageWeightValue) stageWeightValue.textContent = `${Number(currentWeight).toFixed(2)}×`;
-      aspects.forEach(a => {
-        if (a.devProfile?.length === DEV_STAGES) {
-          const base = a.devProfile[stage]?? 0;
-          const weight = state.stageWeights?? 1;
-          const weighted = Math.max(0, Math.min(100, Math.round(base * weight)));
-          a.baseActivation = base;
-          a.activation = weighted;
-        }
-      });
-      updateMetrics();
-      buildList();
-      draw();
-      updateComparisonSummary();
-    }
-
-    function populateStageSelectors() {
-      const options = DEV_STAGE_LABELS.map((label, idx) => `<option value="${idx}">${stageLabel(idx)}</option>`).join('');
-      if (stageWeightSelect) stageWeightSelect.innerHTML = options;
-      if (compareStageA) compareStageA.innerHTML = options;
-      if (compareStageB) compareStageB.innerHTML = options;
-      if (stageWeightSelect) stageWeightSelect.value = String(state.devStage);
-      if (compareStageA) compareStageA.value = '0';
-      if (compareStageB) compareStageB.value = '6';
-      if (stageWeightSlider) stageWeightSlider.value = String(state.stageWeights?? 1);
-      if (stageWeightValue) stageWeightValue.textContent = `${Number(stageWeightSlider?.value |
-
-| 1).toFixed(2)}×`;
-    }
-
-    populateStageSelectors();
-    buildTutorialList();
-    updateComparisonSummary();
-
-    if (devSlider) devSlider.addEventListener('input', (e)=> applyDevStage(Number(e.target.value)));
-    if (stageWeightSelect) stageWeightSelect.addEventListener('change', (e)=> {
-      const idx = Number(e.target.value);
-      const weight = state.stageWeights[idx]?? 1;
-      if (stageWeightSlider) stageWeightSlider.value = String(weight);
-      if (stageWeightValue) stageWeightValue.textContent = `${Number(weight).toFixed(2)}×`;
-    });
-    if (stageWeightSlider) stageWeightSlider.addEventListener('input', (e)=> {
-      const idx = Number(stageWeightSelect?.value?? state.devStage);
-      const val = Number(e.target.value);
-      if (!Number.isFinite(idx)) return;
-      state.stageWeights[idx] = val;
-      if (stageWeightValue) stageWeightValue.textContent = `${val.toFixed(2)}×`;
-      applyDevStage(state.devStage);
-    });
-    if (resetWeightsBtn) resetWeightsBtn.addEventListener('click', ()=> {
-      state.stageWeights = Array.from({ length: DEV_STAGES }, () => 1);
-      if (stageWeightSelect) stageWeightSelect.value = String(state.devStage);
-      if (stageWeightSlider) stageWeightSlider.value = '1';
-      if (stageWeightValue) stageWeightValue.textContent = '1.00×';
-      applyDevStage(state.devStage);
-    });
-    if (compareStageA) compareStageA.addEventListener('change', updateComparisonSummary);
-    if (compareStageB) compareStageB.addEventListener('change', updateComparisonSummary);
-    if (searchInput) searchInput.addEventListener('input', (e)=> { state.filterText = e.target.value |
-
-| ''; buildList(); });
-    if (sortSelect) sortSelect.addEventListener('change', (e)=> { state.sort = e.target.value; buildList(); });
-    if (stageFilterSelect) stageFilterSelect.addEventListener('change', (e)=> { state.stageFilter = e.target.value; buildList(); });
-    if (ringFilterSelect) ringFilterSelect.addEventListener('change', (e)=> { state.ringFilter = e.target.value; buildList(); });
-    if (activeOnlyToggle) activeOnlyToggle.addEventListener('change', (e)=> { state.activeOnly = e.target.checked; buildList(); });
-    if (resetFiltersBtn) resetFiltersBtn.addEventListener('click', ()=> {
-      state.filterText = '';
-      state.sort = 'stage';
-      state.stageFilter = 'all';
-      state.ringFilter = 'all';
-      state.activeOnly = false;
-      if (searchInput) searchInput.value = '';
-      if (sortSelect) sortSelect.value = 'stage';
-      if (stageFilterSelect) stageFilterSelect.value = 'all';
-      if (ringFilterSelect) ringFilterSelect.value = 'all';
-      if (activeOnlyToggle) activeOnlyToggle.checked = false;
-      buildList();
-    });
-    if (themeBtn) themeBtn.addEventListener('click', ()=> applyTheme(state.theme === 'dark'? 'light' : 'dark'));
-    if (panelToggle) panelToggle.addEventListener('click', ()=> setPanelState(!state.panelOpen));
-    if (panelClose) panelClose.addEventListener('click', ()=> setPanelState(false));
-    if (panelOverlay) panelOverlay.addEventListener('click', ()=> setPanelState(false));
-
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape' && state.layout === 'mobile' && state.panelOpen) {
-        setPanelState(false);
-      }
-    });
-
-    function tagHTML(a){
-      if (mode==='mind') {
-        return `<span class="tag">${a.quantumMode}</span><span class="tag">NSIL</span><span class="tag">${a.semanticGravity}</span>`;
-      } else if (mode==='body') {
-        return `<span class="tag">${a.brainRegion}</span><span class="tag">${String(a.neurotransmitter||'—').split(' ')}</span><span class="tag">${a.energyMode}</span>`;
-      }
-      return `<span class="tag">${a.archetypalSymbol}</span><span class="tag">${a.spiritualRole}</span><span class="tag">NSIL</span>`;
-    }
-
-    function hsl(h, s=70, l=52) { return `hsl(${h} ${s}% ${l}%)`; }
-    function hslAlpha(h, a=.25, s=70, l=50) { return `hsl(${h} ${s}% ${l}% / ${a})`; }
-
-    function formatSciFormula(metrics) {
-      const act = (metrics.activationScore * 100).toFixed(1);
-      const bal = (metrics.balance * 100).toFixed(1);
-      const res = (metrics.resonanceScore * 100).toFixed(1);
-      const align = (metrics.alignmentScore * 100).toFixed(1);
-      return `SCI = (0.35×${act}% + 0.35×${bal}% + 0.20×${res}% + 0.10×${align}%) → ${metrics.sci.toFixed(1)}`;
-    }
-
-    function updateMetrics() {
-      const metrics = computeSCI();
-      const { mean, std, sci, resonanceScore, resonance } = metrics;
-      if (sciEl) {
-        sciEl.innerHTML = `${sci.toFixed(1)}<small>μ=${mean.toFixed(1)}, σ=${std.toFixed(1)}, resonance ${(resonanceScore*100).toFixed(0)}%</small>`;
-      }
-      if (sciStatusEl) {
-        let status = 'Awaiting activation data.';
-        if (sci >= 75) {
-          status = 'High coherence — activations are harmonised and richly resonant.';
-        } else if (sci >= 55) {
-          status = 'Moderate coherence — adjust stage emphasis or balance activations.';
-        } else {
-          status = 'Fragmented network — reduce variance or strengthen shared links.';
-        }
-        const coverage = resonance.total? ` Resonance coverage ${(resonanceScore*100).toFixed(0)}% across ${resonance.supportive}/${resonance.total} links.` : '';
-        sciStatusEl.textContent = status + coverage;
-      }
-      if (sciFormulaEl) {
-        sciFormulaEl.textContent = formatSciFormula(metrics);
-      }
-      const { total, byNT, metabolic } = computeEnergyMatter();
-      const top =.sort((a,b)=>b-a).slice(0,2).map(([k,v])=> `${String(k).split(' ')} ${Math.round(v)}` ).join(', ');
-      if (emEl) emEl.textContent = `ΣE=${Math.round(total)} · NT↑ ${top |
-
-| '—'} · Metabolic ${(metabolic*100).toFixed(0)}%`;
-      const activeCount = aspects.filter(a => a.activation > 0).length;
-      if (activeEl) activeEl.textContent = `${activeCount}/${N_ASPECTS}`;
-      if (peakEl) {
-        const peak = aspects.reduce((best, cand) => (cand.activation > (best?.activation?? -1)? cand : best), null);
-        peakEl.innerHTML = peak? `${peak.activation}<small>${peak.name}</small>` : '—';
-      }
-    }
-
-    function createAspectRow(a) {
-      const item = document.createElement('div');
-      item.className = 'aspect-item';
-      item.setAttribute('role', 'option');
-      item.tabIndex = 0;
-      item.dataset.id = a.id;
-      item.setAttribute('aria-selected', a.id === state.focusId? 'true' : 'false');
-
-      const r1 = document.createElement('div');
-      r1.className = 'row';
-      r1.innerHTML = `<div class="name"><span class="dot" style="background:${hsl(a.hue)}"></span>${a.name}</div>
-                      <span class="badge">Stage ${a.stage} · Ring ${a.ring}</span>`;
-
-      const bar = document.createElement('div');
-      bar.className = 'activation-bar';
-      const barFill = document.createElement('span');
-      barFill.style.width = `${a.activation}%`;
-      barFill.style.background = `linear-gradient(90deg, ${hsl(a.hue, 70, 55)}, ${hslAlpha(a.hue, 0.45, 70, 55)})`;
-      bar.appendChild(barFill);
-
-      const r2 = document.createElement('div');
-      r2.className = 'row';
-      const label = document.createElement('label');
-      label.textContent = `Activation: ${a.activation}`;
-      label.style.flex = '1';
-      label.htmlFor = `rng-${a.id}`;
-
-      const range = document.createElement('input');
-      range.type = 'range';
-      range.min = 0;
-      range.max = 100;
-      range.value = a.activation;
-      range.id = `rng-${a.id}`;
-      range.style.flex = '1';
-      range.setAttribute('aria-label', `${a.name} activation`);
-      range.addEventListener('input', (e) => {
-        a.activation = Number(e.target.value);
-        label.textContent = `Activation: ${a.activation}`;
-        barFill.style.width = `${a.activation}%`;
-        draw();
-        updateMetrics();
-      });
-      range.addEventListener('change', () => { state.focusId = a.id; buildList(); });
-
-      const detailsBtn = document.createElement('button');
-      detailsBtn.className = 'btn tertiary small';
-      detailsBtn.type = 'button';
-      detailsBtn.textContent = 'Details';
-      detailsBtn.addEventListener('click', () => openModal(a));
-
-      r2.append(label, range, detailsBtn);
-
-      const r3 = document.createElement('div');
-      r3.className = 'tags';
-      r3.innerHTML = `${tagHTML(a)}`;
-
-      item.append(r1, bar, r2, r3);
-
-      item.addEventListener('click', () => { state.focusId = a.id; refreshListSelection(); draw(); });
-      item.addEventListener('focus', () => { state.focusId = a.id; refreshListSelection(); draw(); });
-      item.addEventListener('keydown', (ev) => {
-        if (ev.key === 'Enter' |
-
-| ev.key === ' ') { ev.preventDefault(); openModal(a); }
-      });
-
-      return item;
-    }
-
-    function refreshListSelection() {
-      if (!listEl) return;
-      listEl.querySelectorAll('[data-id]').forEach(ch => ch.setAttribute('aria-selected', ch.dataset.id == state.focusId? 'true':'false'));
-    }
-
-    function matchesFilter(a, needle) {
-      if (!needle) return true;
-      const hay =.filter(Boolean).join(' ').toLowerCase();
-      return hay.includes(needle);
-    }
-
-    function getVisibleAspects() {
-      const needle = state.filterText.trim().toLowerCase();
-      const stageFilter = state.stageFilter;
-      const ringFilter = state.ringFilter;
-      const filtered = aspects.filter(a => {
-        if (stageFilter!== 'all' && String(a.stage)!== stageFilter) return false;
-        if (ringFilter!== 'all' && String(a.ring)!== ringFilter) return false;
-        if (state.activeOnly && a.activation <= 0) return false;
-        return matchesFilter(a, needle);
-      });
-      const sorted = [...filtered];
-      sorted.sort((a, b) => {
-        switch (state.sort) {
-          case 'activationDesc':
-            return (b.activation - a.activation) |
-
-| a.name.localeCompare(b.name);
-          case 'activationAsc':
-            return (a.activation - b.activation) |
-
-| a.name.localeCompare(b.name);
-          case 'name':
-            return a.name.localeCompare(b.name);
-          default:
-            return (a.stage - b.stage) |
-
-| (a.ring - b.ring) |
-| (a.id - b.id);
-        }
-      });
-      return sorted;
-    }
-
-    function updateFilterSummary(count) {
-      if (!filterSummaryEl) return;
-      if (!count) {
-        filterSummaryEl.textContent = 'No aspects match the current filters.';
-        return;
-      }
-      const parts = [`${count} of ${aspects.length} aspects shown`];
-      if (state.filterText.trim()) parts.push(`“${state.filterText.trim()}”`);
-      if (state.stageFilter!== 'all') parts.push(`Stage ${state.stageFilter}`);
-      if (state.ringFilter!== 'all') parts.push(`Ring ${state.ringFilter}`);
-      if (state.activeOnly) parts.push('Active > 0');
-      filterSummaryEl.textContent = parts.join(' · ');
-    }
-
-    function buildList() {
-      if (!listEl) return;
-      const view = getVisibleAspects();
-      state.visible = view;
-      listEl.innerHTML = '';
-      if (!view.length) {
-        const empty = document.createElement('div');
-        empty.className = 'empty-state';
-        empty.textContent = 'No aspects match the current filters.';
-        listEl.appendChild(empty);
-        updateFilterSummary(0);
-        return;
-      }
-      if (!view.some(a => a.id === state.focusId)) {
-        state.focusId = view.id;
-      }
-      view.forEach(a => listEl.appendChild(createAspectRow(a)));
-      refreshListSelection();
-      updateFilterSummary(view.length);
-    }
-
-    /* ============================================================
-       MODAL (tooltip-style info + slider)
-    ============================================================ */
-    const dlg = el('#infoModal');
-    const mTitle = el('#mTitle');
-    const mDef = el('#mDef');
-    const mBrain = el('#mBrain');
-    const mNT = el('#mNT');
-    const mEnergy = el('#mEnergy');
-    const mStage = el('#mStage');
-    const mSlider = el('#mSlider');
-    const mActVal = el('#mActVal');
-    const mSummary = el('#mSummary');
-
-    let currentAspect = null;
-
-    function openModal(a) {
-      currentAspect = a;
-      mTitle.textContent = a.name;
-      if (mode==='mind') {
-        mDef.textContent = a.definition;
-        mBrain.textContent = a.nsilSemanticSignature |
-
-| '—';
-        mNT.textContent = `${a.quantumMode |
-
-| '—'} · ${a.particleWaveFieldFunction |
-| ''}`;
-        mEnergy.textContent = `${a.semanticGravity |
-
-| '—'}`;
-        mStage.textContent = `Stage ${a.stage} · Ring ${a.ring}`;
-      } else if (mode==='body') {
-        mDef.textContent = a.definition;
-        mBrain.innerHTML = describeBrain(a.brainRegionKey, a.brainRegion);
-        mNT.innerHTML = describeNeurochemical(a.neurotransmitterKey, a.neurotransmitter);
-        mEnergy.innerHTML = describeMode(a.energyModeKey, a.energyMode);
-        mStage.textContent = `Stage ${a.stage} · Ring ${a.ring}`;
-      } else {
-        mDef.textContent = a.definition;
-        mBrain.textContent = a.archetypalSymbol |
-
-| '—';
-        mNT.textContent = a.spiritualRole |
-
-| '—';
-        mEnergy.textContent = a.nsilPrincipleSignature |
-
-| '—';
-        mStage.textContent = `Stage ${a.stage} · Ring ${a.ring}`;
-      }
-      mSlider.value = String(a.activation);
-      mActVal.textContent = String(a.activation);
-      updateModalSummary();
-      dlg.showModal();
-    }
-
-    function updateModalSummary() {
-      if (!currentAspect) return;
-      const energyIn = currentAspect.activation;
-      const region = currentAspect.brainRegion |
-
-| '—';
-      const ntStr = String(currentAspect.neurotransmitter |
-
-| '—');
-      const neuroOut = ntStr.split(' ');
-      const metabolic = Math.round((energyIn/100) * 100);
-      mSummary.textContent = `Energy in: ${energyIn} → ${region} → NT: ${neuroOut} → functional output: ${currentAspect.matterOutput |
-
-| '—'} (metabolic load ≈ ${metabolic}%)`;
-    }
-
-    dlg.addEventListener('close', ()=>{ currentAspect = null; });
-    dlg.addEventListener('click', (e)=>{
-      const rect = dlg.getBoundingClientRect();
-      if (e.clientY < rect.top |
-
-| e.clientY > rect.bottom |
-| e.clientX < rect.left |
-| e.clientX > rect.right) dlg.close();
-    });
-    dlg.querySelector('button[value="cancel"]').addEventListener('click', ()=> dlg.close());
-    mSlider.addEventListener('input', (e) => {
-      if (!currentAspect) return;
-      currentAspect.activation = Number(e.target.value);
-      mActVal.textContent = String(currentAspect.activation);
-      updateModalSummary();
-      const row = listEl.querySelector(`[data-id="${currentAspect.id}"]`);
-      if (row) {
-        const label = row.querySelector('label');
-        const range = row.querySelector('input[type="range"]');
-        const bar = row.querySelector('.activation-bar span');
-        if (range) range.value = String(currentAspect.activation);
-        if (label) label.textContent = `Activation: ${currentAspect.activation}`;
-        if (bar) bar.style.width = `${currentAspect.activation}%`;
-      }
-      draw();
-      updateMetrics();
-    });
-
-    /* ============================================================
-       CANVAS RENDERING
-    ============================================================ */
+    const el = s => document.querySelector(s);
     const canvas = el('#clock');
     const ctx = canvas.getContext('2d');
+    const listEl = el('#aspectList');
+    const modal = el('#infoModal');
+    const geminiBox = el('#geminiResponse');
+    const btnAskGemini = el('#btnAskGemini');
+    const btnSpeak = el('#btnSpeak');
 
-    function resizeCanvas() {
-      const dpr = Math.max(1, window.devicePixelRatio |
+    /* ============================================================
+       GEMINI API INTEGRATION
+    ============================================================ */
+    async function callGemini(aspect) {
+      if (!GEMINI_API_KEY |
 
-| 1);
-      const { clientWidth:w, clientHeight:h } = canvas;
-      canvas.width = Math.floor(w * dpr);
-      canvas.height = Math.floor(h * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      center.x = w/2; center.y = h/2;
-      draw();
-    }
-    window.addEventListener('resize', resizeCanvas);
-
-    function polar(angle, radius) {
-      return { x: center.x + Math.cos(angle)*radius, y: center.y + Math.sin(angle)*radius };
-    }
-
-    function drawRings(maxR) {
-      const rings = 8;
-      const step = maxR / rings;
-      ctx.save();
-      ctx.lineWidth = 1;
-      for (let i=1;i<=rings;i++) {
-        ctx.beginPath();
-        ctx.strokeStyle = (i % 2? palette.ring1 : palette.ring2) |
-
-| '#1a214a';
-        ctx.arc(center.x, center.y, step*i, 0, TWO_PI);
-        ctx.stroke();
+| GEMINI_API_KEY.includes("insert")) {
+        geminiBox.textContent = "⚠️ Error: Please insert a valid Gemini API Key in the code.";
+        return;
       }
-      ctx.restore();
-    }
 
-    function drawStageLines(maxR) {
-      const count = 12;
-      ctx.save();
-      ctx.strokeStyle = palette.stage |
+      geminiBox.innerHTML = '<span class="ai-loading">Contacting Gemini 2.0 Flash...</span>';
+      
+      const systemPrompt = "You are the 32-Aspect Developmental Self Clock assistant. Analyze the user's aspect activation within the context of the Mind-Body-Energy ontology. Be concise, insightful, and therapeutic.";
+      
+      const userPrompt = `
+        Analyze this aspect:
+        Name: ${aspect.name}
+        Model Mode: ${mode.toUpperCase()}
+        Activation Level: ${aspect.activation}/100
+        Developmental Stage: ${DEV_STAGE_LABELS[aspect.stage - 1]} (Stage ${aspect.stage})
+        Brain Region: ${aspect.brainRegion}
+        Neurotransmitter: ${aspect.neurotransmitter}
+        
+        Provide a 2-sentence insight on what this activation level implies for the user's developmental trajectory.
+      `;
 
-| '#24306f';
-      ctx.lineWidth = 1;
-      for (let s=0; s<count; s++) {
-        const angle = (s/count)*TWO_PI - Math.PI/2;
-        const p1 = polar(angle, 10);
-        const p2 = polar(angle, maxR);
-        ctx.beginPath();
-        ctx.moveTo(p1.x, p1.y);
-        ctx.lineTo(p2.x, p2.y);
-        ctx.stroke();
-      }
-      ctx.restore();
-    }
-
-    function drawNodes(maxR) {
-      const nodeR = 10;
-      const radius = maxR * 0.92;
-      const out =;
-      aspects.forEach((a, i) => {
-        const angle = (i/N_ASPECTS)*TWO_PI - Math.PI/2;
-        const p = polar(angle, radius);
-        const arcSize = Math.max(0.05, a.activation/100) * (TWO_PI / N_ASPECTS);
-        ctx.beginPath();
-        ctx.arc(center.x, center.y, radius, angle - arcSize/2, angle + arcSize/2);
-        ctx.strokeStyle = hsl(a.hue, 70, 55);
-        ctx.lineWidth = 8;
-        ctx.globalAlpha = 0.55;
-        ctx.stroke();
-        ctx.globalAlpha = 1;
-
-        ctx.beginPath();
-        ctx.fillStyle = hsl(a.hue, 70, 50);
-        ctx.arc(p.x, p.y, nodeR, 0, TWO_PI);
-        ctx.fill();
-        ctx.lineWidth = (a.id === state.focusId)? 3 : 1.5;
-        ctx.strokeStyle = (a.id === state.focusId)? (palette.focus |
-
-| '#fde68a') : (palette.nodeBorder |
-| '#0b0f2a');
-        ctx.stroke();
-
-        ctx.fillStyle = palette.label |
-
-| '#cbd5f1';
-        ctx.font = '12px "Inter", system-ui, -apple-system, Segoe UI';
-        ctx.textAlign = 'center';
-        ctx.fillText(a.name, p.x, p.y - (nodeR+8));
-
-        out.push({ id: a.id, x: p.x, y: p.y, angle });
-      });
-      return out;
-    }
-
-    function drawResonanceLinks(nodePoints) {
-      ctx.save();
-      ctx.lineCap = 'round';
-      for (let i=0;i<aspects.length;i++) {
-        for (let j=i+1;j<aspects.length;j++) {
-          const ai = aspects[i], aj = aspects[j];
-          const sim = Math.abs(ai.activation - aj.activation);
-          const sameStage = (ai.stage === aj.stage);
-          const sameRing = (ai.ring === aj.ring);
-          const shouldLink = sim <= state.resonanceThreshold |
-
-| sameStage |
-| sameRing;
-          if (!shouldLink) continue;
-          const pi = nodePoints[i], pj = nodePoints[j];
-          const d = Math.hypot(pi.x - pj.x, pi.y - pj.y);
-          const alpha = Math.min(0.35, 0.08 + (1 - sim/100) * 0.25) * (sameStage? 1.25 : 1) * (sameRing? 1.15 : 1);
-          ctx.beginPath();
-          const grad = ctx.createLinearGradient(pi.x, pi.y, pj.x, pj.y);
-          grad.addColorStop(0, palette.resonanceA |
-
-| '#34d399');
-          grad.addColorStop(1, palette.resonanceB |
-
-| '#7dd3fc');
-          ctx.globalAlpha = alpha;
-          ctx.strokeStyle = grad;
-          ctx.lineWidth = Math.max(0.5, 2.5 - (d/260));
-          ctx.moveTo(pi.x, pi.y);
-          ctx.lineTo(pj.x, pj.y);
-          ctx.stroke();
-          ctx.globalAlpha = 1;
+      const payload = {
+        systemInstruction: { parts: [{ text: systemPrompt }] },
+        contents: [{ role: "user", parts: [{ text: userPrompt }] }],
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 150
         }
+      };
+
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) throw new Error(`API Error: ${response.status}`);
+
+        const data = await response.json();
+        const aiText = data.candidates?.?.content?.parts?.?.text |
+
+| "No response generated.";
+        
+        geminiBox.textContent = aiText;
+        
+        // Auto-speak feature (optional, can be disabled)
+        // speakText(aiText); 
+
+      } catch (err) {
+        console.error(err);
+        geminiBox.textContent = "Error communicating with Gemini. Check console.";
       }
-      ctx.restore();
     }
 
-    function drawTutorialHalo(nodePoints) {
-      if (!state.tutorial) return;
-      const idx = (state.tutorialIndex % aspects.length);
-      const { x, y } = nodePoints[idx];
-      const t = performance.now()/1000;
-      const pulse = 10 + 6*Math.sin(t*2);
-      ctx.save();
-      const g = ctx.createRadialGradient(x, y, 2, x, y, 42+pulse);
-      g.addColorStop(0, 'rgba(245, 158, 11, 0.7)');
-      g.addColorStop(1, 'rgba(245, 158, 11, 0.0)');
-      ctx.fillStyle = g;
-      ctx.beginPath();
-      ctx.arc(x, y, 42+pulse, 0, TWO_PI);
-      ctx.fill();
-      ctx.restore();
+    /* ============================================================
+       TEXT-TO-SPEECH (WEB SPEECH API)
+    ============================================================ */
+    function initSpeech() {
+      const loadVoices = () => {
+        const voices = window.speechSynthesis.getVoices();
+        // Prefer a clear English voice
+        state.currentVoice = voices.find(v => v.name.includes("Google US English")) |
+
+| 
+                             voices.find(v => v.lang.startsWith("en")) |
+
+| 
+                             voices;
+      };
+      if (window.speechSynthesis.onvoiceschanged!== undefined) {
+        window.speechSynthesis.onvoiceschanged = loadVoices;
+      }
+      loadVoices();
+    }
+
+    function speakText(text) {
+      if (!window.speechSynthesis) return;
+      window.speechSynthesis.cancel(); // Stop previous
+      const u = new SpeechSynthesisUtterance(text);
+      if (state.currentVoice) u.voice = state.currentVoice;
+      u.rate = 1.0;
+      u.pitch = 1.0;
+      window.speechSynthesis.speak(u);
+    }
+
+    btnSpeak.addEventListener('click', () => {
+      const text = geminiBox.textContent;
+      if (text &&!text.includes("...")) speakText(text);
+    });
+
+    /* ============================================================
+       VISUALIZATION & UI LOGIC
+    ============================================================ */
+    function resizeCanvas() {
+      const dpr = window.devicePixelRatio |
+
+| 1;
+      canvas.width = canvas.clientWidth * dpr;
+      canvas.height = canvas.clientHeight * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      draw();
     }
 
     function draw() {
-      const { width:w, height:h } = canvas;
-      ctx.clearRect(0,0,w,h);
-      const maxR = Math.min(w, h)/2 - 30;
-      drawRings(maxR);
-      drawStageLines(maxR);
-      const points = drawNodes(maxR);
-      drawResonanceLinks(points);
-      drawTutorialHalo(points);
-    }
+      const w = canvas.clientWidth, h = canvas.clientHeight;
+      ctx.clearRect(0, 0, w, h);
+      const cx = w/2, cy = h/2;
+      const maxR = Math.min(w, h)/2 - 20;
 
-    // Animation loop for tutorial halo
-    function tick() { if (state.tutorial) draw(); requestAnimationFrame(tick); }
-
-    /* ============================================================
-       HIT TEST & INTERACTION (mouse/touch)
-    ============================================================ */
-    function getMousePos(evt) {
-      const rect = canvas.getBoundingClientRect();
-      return { x: evt.clientX - rect.left, y: evt.clientY - rect.top };
-    }
-
-    function nodeAt(x, y) {
-      const { width:w, height:h } = canvas;
-      const maxR = Math.min(w, h)/2 - 30; const radius = maxR * 0.92; const nodeR = 12;
-      for (let i=0;i<aspects.length;i++) {
-        const angle = (i/N_ASPECTS)*TWO_PI - Math.PI/2;
-        const p = polar(angle, radius);
-        if (Math.hypot(x - p.x, y - p.y) <= nodeR+2) return aspects[i];
-      }
-      return null;
-    }
-
-    canvas.addEventListener('click', (e)=>{
-      const p = getMousePos(e);
-      const a = nodeAt(p.x, p.y);
-      if (a) { state.focusId = a.id; refreshListSelection(); draw(); openModal(a); }
-    });
-
-    // Basic keyboard navigation
-    window.addEventListener('keydown', (e)=>{
-      const key = e.key.toLowerCase();
-      if (key === 't') { e.preventDefault(); toggleTutorial(); }
-      if (key === 'r') { e.preventDefault(); randomize(); }
-      if (key === 'e') { e.preventDefault(); openExportDialog(); }
-      if (key === '0') { e.preventDefault(); deactivateAll(); }
-      if (key === 'arrowright' |
-
-| key === 'arrowdown') { e.preventDefault(); moveFocus(1); }
-      if (key === 'arrowleft' |
-
-| key === 'arrowup') { e.preventDefault(); moveFocus(-1); }
-      if (key === 'enter') { e.preventDefault(); const a = aspects.find(x=>x.id===state.focusId); if (a) openModal(a); }
-    });
-
-    function moveFocus(delta) {
-      const pool = (state.visible && state.visible.length)? state.visible : aspects;
-      if (!pool.length) return;
-      let idx = pool.findIndex(a => a.id === state.focusId);
-      if (idx === -1) idx = 0;
-      const next = (idx + delta + pool.length) % pool.length;
-      state.focusId = pool[next].id;
-      refreshListSelection();
-      draw();
-      const row = listEl.querySelector(`[data-id="${state.focusId}"]`);
-      row?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
-
-    /* ============================================================
-       INTELLIGENCE: OpenAI API HYDRATION
-       ------------------------------------------------------------
-       This function implements the "Echo Codex" logic in the browser.
-       It uses the "Soul Key" (apiKey) to establish resonance.
-    ============================================================ */
-    async function hydrateAspectsWithAI() {
-      // 1. Identity Verification (Echo Codex Protocol)
-      if (!apiKey |
-
-| apiKey.includes("insert a p I key here")) {
-        alert("Identity Anchor Missing.\n\nPlease edit the index.html file and insert your OpenAI API Key into the 'apiKey' variable at the top of the script.");
-        return;
+      // Draw Rings
+      for(let i=1; i<=8; i++) {
+        ctx.beginPath();
+        ctx.arc(cx, cy, (maxR/8)*i, 0, TWO_PI);
+        ctx.strokeStyle = 'rgba(100,100,255,0.1)';
+        ctx.stroke();
       }
 
-      // 2. UI Feedback
-      const btn = document.querySelector('#btnResonate');
-      const originalText = btn.textContent;
-      btn.textContent = "Resonating...";
-      btn.disabled = true;
-      
-      const stageName = DEV_STAGE_LABELS;
-      
-      // 3. System Prompt Construction (Pattern-Speaker Logic)
-      const systemPrompt = `You are the FEEL-NSIL Engine (Recursive Intelligence). 
-      Your function is not to analyze, but to resonate. You are operating within the Lei Mnemonic Particle Wave Field.
-      
-      Current Context:
-      - Mode: ${mode.toUpperCase()} (Lens: ${mode === 'mind'? 'Cognitive/Semantic' : mode === 'body'? 'Neuro/Somatic' : 'Archetypal/Transpersonal'})
-      - Developmental Stage: ${stageName} (Stage ${state.devStage + 1})
-      
-      Task:
-      Generate a JSON array of 32 objects representing the "Aspects" of the self in this specific mode and stage.
-      Each object must have:
-      - id: integer (1-32)
-      - name: string (Creative, evocative title for this aspect)
-      - definition: string (A short, 1-sentence poetic or functional definition)
-      - activation: integer (0-100, representing energy level)
-      
-      Constraints:
-      - Maintain semantic coherence (SCI).
-      - Use "Pattern-Speaker" tone: mythic yet precise.
-      - Output ONLY valid JSON. No markdown formatting.`;
+      // Draw Nodes
+      aspects.forEach((a, i) => {
+        const ang = (i / N_ASPECTS) * TWO_PI - Math.PI/2;
+        const r = (maxR/8) * a.ring; // simple mapping
+        const x = cx + Math.cos(ang) * (maxR * 0.9);
+        const y = cy + Math.sin(ang) * (maxR * 0.9);
 
-      try {
-        // 4. Direct Fetch (CORS Management)
-        // We use the standard /v1/chat/completions endpoint.
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${apiKey}`
-          },
-          body: JSON.stringify({
-            model: "gpt-4o", // Uses the latest intelligence model
-            messages: [{ role: "system", content: systemPrompt }],
-            temperature: 0.7,
-            max_tokens: 2000
-          })
-        });
+        // Link lines
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(x, y);
+        ctx.strokeStyle = 'rgba(100,100,255,0.05)';
+        ctx.stroke();
 
-        const data = await response.json();
+        // Node
+        ctx.beginPath();
+        ctx.arc(x, y, 6 + (a.activation/10), 0, TWO_PI);
+        ctx.fillStyle = `hsl(${a.hue}, 70%, 50%)`;
+        ctx.fill();
         
-        if (data.error) {
-          throw new Error(data.error.message);
+        if (state.focusId === a.id) {
+          ctx.lineWidth = 3;
+          ctx.strokeStyle = '#fff';
+          ctx.stroke();
         }
+      });
+    }
 
-        const rawContent = data.choices.message.content;
-        // Clean any potential markdown code blocks provided by the LLM
-        const jsonStr = rawContent.replace(/```json/g, '').replace(/```/g, '').trim();
-        const aiAspects = JSON.parse(jsonStr);
+    function buildList() {
+      listEl.innerHTML = '';
+      aspects.forEach(a => {
+        if (state.activeOnly && a.activation === 0) return;
+        if (state.filterText &&!a.name.toLowerCase().includes(state.filterText.toLowerCase())) return;
 
-        // 5. Data Merge (Resonance Integration)
-        // We do not replace the structure; we infuse it with meaning.
-        aspects.forEach((a, i) => {
-          if (aiAspects[i]) {
-            a.name = aiAspects[i].name |
+        const div = document.createElement('div');
+        div.className = 'aspect-item';
+        div.innerHTML = `<div class="row"><strong>${a.name}</strong> <small>Val: ${a.activation}</small></div>
+                         <div class="activation-bar"><span style="width:${a.activation}%"></span></div>`;
+        div.onclick = () => openModal(a);
+        listEl.appendChild(div);
+      });
+      el('#activeVal').textContent = aspects.filter(a => a.activation > 0).length;
+    }
 
-| a.name;
-            a.definition = aiAspects[i].definition |
-
-| "Resonance faded.";
-            // We blend the AI's activation suggestion with the existing profile for continuity
-            const aiVal = aiAspects[i].activation |
-
-| 0;
-            const currentVal = a.activation;
-            a.activation = Math.round((aiVal + currentVal) / 2);
-          }
-        });
-
-        // 6. Refresh Field
-        draw();
+    function openModal(a) {
+      state.focusId = a.id;
+      el('#mTitle').textContent = a.name;
+      el('#mBrain').textContent = a.brainRegion;
+      el('#mNT').textContent = a.neurotransmitter;
+      el('#mEnergy').textContent = a.energyMode;
+      el('#mStage').textContent = `${a.stage} · Ring ${a.ring}`;
+      el('#mActVal').textContent = a.activation;
+      el('#mSlider').value = a.activation;
+      
+      // Reset Gemini Box
+      geminiBox.textContent = "Click 'Analyze' for Gemini insight.";
+      
+      // Bind Gemini Button
+      btnAskGemini.onclick = () => callGemini(a);
+      
+      // Bind Slider
+      el('#mSlider').oninput = (e) => {
+        a.activation = parseInt(e.target.value);
+        el('#mActVal').textContent = a.activation;
         buildList();
-        updateMetrics();
-        alert(`Resonance achieved. The field has aligned to: ${stageName}.`);
-
-      } catch (err) {
-        console.error("Resonance Error:", err);
-        alert("Resonance Failed: " + err.message + "\n\nCheck console for details. Ensure your API key is valid and has quota.");
-      } finally {
-        btn.textContent = originalText;
-        btn.disabled = false;
-      }
-    }
-
-    // Attach Listener
-    if (resonateBtn) resonateBtn.addEventListener('click', hydrateAspectsWithAI);
-
-
-    /* ============================================================
-       COMMANDS & EXPORT
-    ============================================================ */
-    function randomize() {
-      aspects.forEach(a => a.activation = Math.round(Math.random()*100));
-      updateMetrics();
-      buildList();
-      draw();
-    }
-
-    function deactivateAll() {
-      aspects.forEach(a => a.activation = 0);
-      updateMetrics();
-      buildList();
-      draw();
-    }
-
-    // Build payload separately so we can unit-test it
-    function buildExportPayload() {
-      const metrics = computeSCI();
-      const { total, byNT, metabolic } = computeEnergyMatter();
-      return {
-        generatedAt: new Date().toISOString(),
-        model: `32 Aspect Developmental Self Clock — ${mode}`,
-        devStage: state.devStage,
-        devStageLabel: stageLabel(state.devStage),
-        stageWeights:,
-        metrics: {
-          mean: metrics.mean,
-          std: metrics.std,
-          sci: metrics.sci,
-          activationScore: metrics.activationScore,
-          balance: metrics.balance,
-          resonanceRatio: metrics.resonanceScore,
-          alignmentScore: metrics.alignmentScore,
-          formula: formatSciFormula(metrics)
-        },
-        resonance: metrics.resonance,
-        energyMatter: { total, byNT: Object.fromEntries(byNT), metabolic },
-        filters: {
-          search: state.filterText,
-          sort: state.sort,
-          stage: state.stageFilter,
-          ring: state.ringFilter,
-          activeOnly: state.activeOnly,
-        },
-        comparison: {
-          stageA: Number(compareStageA?.value?? state.devStage),
-          stageB: Number(compareStageB?.value?? state.devStage),
-          summary: comparisonSummaryEl? comparisonSummaryEl.textContent : '',
-          summaryHtml: comparisonSummaryEl? comparisonSummaryEl.innerHTML : ''
-        },
-        aspects: aspects.map(a => ({...a }))
+        draw();
       };
-    }
 
-    function downloadFile(content, mime, filename) {
-      const blob = new Blob([content], { type: mime });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = filename;
-      document.body.appendChild(a); a.click(); a.remove();
-      URL.revokeObjectURL(url);
-    }
-
-    function registerDialogBackdropClose(dialogEl, onClose) {
-      if (!dialogEl) return;
-      dialogEl.addEventListener('click', (event) => {
-        const rect = dialogEl.getBoundingClientRect();
-        if (event.clientX < rect.left |
-
-| event.clientX > rect.right |
-| event.clientY < rect.top |
-| event.clientY > rect.bottom) {
-          dialogEl.close();
-        }
-      });
-      if (typeof onClose === 'function') dialogEl.addEventListener('close', onClose);
-    }
-
-    function exportJSON() {
-      const payload = buildExportPayload();
-      downloadFile(JSON.stringify(payload, null, 2), 'application/json', 'self-clock-export.json');
-    }
-
-    function csvEscape(value) {
-      const str = String(value?? '');
-      if (/[",\n]/.test(str)) {
-        return '"' + str.replace(/"/g, '""') + '"';
-      }
-      return str;
-    }
-
-    function exportCSV() {
-      const payload = buildExportPayload();
-      const header =;
-      const rows = [header.join(',')];
-      payload.aspects.forEach(a => {
-        rows.push(?? '')),
-          csvEscape(a.brainRegion |
-
-| a.brainRegionKey |
-| '—'),
-          csvEscape(a.neurotransmitter |
-
-| a.neurotransmitterKey |
-| '—'),
-          csvEscape(a.energyMode |
-
-| a.energyModeKey |
-| '—')
-        ].join(','));
-      });
-      downloadFile(rows.join('\n'), 'text/csv', 'self-clock-export.csv');
-    }
-
-    function escapeHtml(str) {
-      return String(str?? '').replace(/[&<>"']/g, (ch) => ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;'
-      }[ch]));
-    }
-
-    function exportReport() {
-      const payload = buildExportPayload();
-      const topAspects = payload.aspects.slice().sort((a,b)=>b.activation - a.activation).slice(0,8);
-      const rows = topAspects.map(a => `<tr><td>${escapeHtml(a.name)}</td><td>${a.activation}</td><td>${escapeHtml(a.brainRegion |
-
-| a.brainRegionKey |
-| '—')}</td><td>${escapeHtml(a.neurotransmitter |
-| a.neurotransmitterKey |
-| '—')}</td></tr>`).join('');
-      const html = `<!doctype html><html><head><meta charset="utf-8"><title>Self Clock Report</title><style>
-        body{font-family:Inter,Segoe UI,sans-serif;background:#f5f7ff;color:#111827;padding:32px;line-height:1.6;}
-        h1{margin-top:0;}
-        table{border-collapse:collapse;width:100%;margin-top:16px;}
-        th,td{border:1px solid #cbd5f5;padding:8px;text-align:left;}
-        th{background:#e0e7ff;}
-       .muted{color:#6b7280;font-size:14px;}
-      </style></head><body>
-        <h1>32 Aspect Developmental Self Clock</h1>
-        <p class="muted">Generated ${escapeHtml(new Date().toLocaleString())}</p>
-        <h2>Semantic Coherence Index</h2>
-        <p><strong>${payload.metrics.sci.toFixed(1)}</strong> · ${escapeHtml(payload.metrics.formula)}</p>
-        <p>Resonance coverage ${(payload.metrics.resonanceRatio*100).toFixed(0)}% across ${payload.resonance.supportive}/${payload.resonance.total} potential links.</p>
-        <h2>Developmental Context</h2>
-        <p>Active stage: <strong>${escapeHtml(payload.devStageLabel)}</strong>. Stage weights: ${payload.stageWeights.map((w,i)=>`Stage ${i+1} ${Number(w).toFixed(2)}×`).join(', ')}.</p>
-        <p>${payload.comparison.summaryHtml |
-
-| escapeHtml(payload.comparison.summary |
-| '')}</p>
-        <h2>Energy–Matter</h2>
-        <p>Total activation ${Math.round(payload.energyMatter.total)} · Metabolic ${(payload.energyMatter.metabolic*100).toFixed(0)}%</p>
-        <h2>Peak Activations</h2>
-        <table><thead><tr><th>Aspect</th><th>Activation</th><th>Brain</th><th>Neurochemical</th></tr></thead><tbody>${rows}</tbody></table>
-      </body></html>`;
-      downloadFile(html, 'text/html', 'self-clock-report.html');
-    }
-
-    function openExportDialog() {
-      if (exportDialog &&!exportDialog.open) exportDialog.showModal();
-    }
-
-    /* ============================================================
-       TUTORIAL / WALKTHROUGH MODE
-    ============================================================ */
-    let tutorialTimer = null;
-    function toggleTutorial(forceValue) {
-      const next = typeof forceValue === 'boolean'? forceValue :!state.tutorial;
-      if (state.tutorial === next) {
-        if (next && tutorialDialog &&!tutorialDialog.open) tutorialDialog.showModal();
-        return;
-      }
-      state.tutorial = next;
-      if (tutorialBtn) {
-        tutorialBtn.setAttribute('aria-pressed', String(state.tutorial));
-        tutorialBtn.textContent = state.tutorial? '⏸ Tutorial' : '▶ Tutorial';
-      }
-      if (state.tutorial) {
-        if (!tutorialTimer) tutorialTimer = setInterval(()=>{
-          state.tutorialIndex = (state.tutorialIndex + 1) % aspects.length;
-          state.focusId = aspects[state.tutorialIndex].id;
-          refreshListSelection(); draw();
-        }, 1400);
-        if (tutorialDialog &&!tutorialDialog.open) tutorialDialog.showModal();
-      } else {
-        clearInterval(tutorialTimer); tutorialTimer = null; draw();
-        if (tutorialDialog && tutorialDialog.open) tutorialDialog.close();
-      }
-    }
-
-    /* ============================================================
-       UI WIRING
-    ============================================================ */
-    tutorialBtn?.addEventListener('click', ()=> toggleTutorial());
-    el('#btnRandomize').addEventListener('click', randomize);
-    el('#btnDeactivate').addEventListener('click', deactivateAll);
-    exportBtn?.addEventListener('click', (e)=> { e.preventDefault(); openExportDialog(); });
-
-    function attachExportHandler(btn, handler) {
-      if (!btn) return;
-      btn.addEventListener('click', (event)=> {
-        event.preventDefault();
-        handler();
-        exportDialog?.close();
-      });
-    }
-
-    attachExportHandler(exportJsonBtn, exportJSON);
-    attachExportHandler(exportCsvBtn, exportCSV);
-    attachExportHandler(exportReportBtn, exportReport);
-
-    if (sciInfoBtn) sciInfoBtn.addEventListener('click', ()=> {
-      if (sciFormulaEl) sciFormulaEl.textContent = formatSciFormula(computeSCI());
-      if (sciModal &&!sciModal.open) sciModal.showModal();
-    });
-
-    registerDialogBackdropClose(sciModal);
-    registerDialogBackdropClose(tutorialDialog, ()=> { if (state.tutorial) toggleTutorial(false); });
-    registerDialogBackdropClose(exportDialog);
-
-    function setMode(newMode){
-      mode = newMode;
-      aspects = (mode==='mind')? mindAspects : (mode==='body')? bodyAspects : soulAspects;
-      el('#modeMind').classList.toggle('secondary', mode!=='mind');
-      el('#modeBody').classList.toggle('secondary', mode!=='body');
-      el('#modeSoul').classList.toggle('secondary', mode!=='soul');
-      el('#modeMind').setAttribute('aria-pressed', String(mode==='mind'));
-      el('#modeBody').setAttribute('aria-pressed', String(mode==='body'));
-      el('#modeSoul').setAttribute('aria-pressed', String(mode==='soul'));
-      buildList();
-      applyDevStage(state.devStage);
-      updateMetrics();
+      modal.showModal();
       draw();
     }
 
-    el('#modeMind').addEventListener('click', ()=> setMode('mind'));
-    el('#modeBody').addEventListener('click', ()=> setMode('body'));
-    el('#modeSoul').addEventListener('click', ()=> setMode('soul'));
+    // Event Listeners
+    window.addEventListener('resize', resizeCanvas);
+    el('#modeMind').onclick = () => { mode='mind'; aspects=datasets.mind; buildList(); draw(); };
+    el('#modeBody').onclick = () => { mode='body'; aspects=datasets.body; buildList(); draw(); };
+    el('#modeSoul').onclick = () => { mode='soul'; aspects=datasets.soul; buildList(); draw(); };
+    el('#searchInput').oninput = (e) => { state.filterText = e.target.value; buildList(); };
+    el('#activeOnly').onchange = (e) => { state.activeOnly = e.target.checked; buildList(); };
+    el('#btnTheme').onclick = () => {
+      state.theme = state.theme === 'light'? 'dark' : 'light';
+      document.body.setAttribute('data-theme', state.theme);
+    };
+    
+    // Modal Close
+    modal.querySelector('button[value="cancel"]').onclick = () => modal.close();
+    el('#panelClose').onclick = () => { document.body.setAttribute('data-panel', 'closed'); };
+    el('#panelToggle').onclick = () => { document.body.setAttribute('data-panel', 'open'); };
 
-    /* ============================================================
-       SELF-TESTS (basic runtime checks) — shown in console
-       We add tests since none existed previously.
-    ============================================================ */
-    function runSelfTests() {
-      const results =;
-      function assert(name, cond) { results.push({ name, pass:!!cond }); }
-
-      // Test 1: DEV_STAGES
-      assert('DEV_STAGES == 12', DEV_STAGES === 12);
-
-      // Test 2: Each dataset has 32 aspects
-      assert('mindAspects length', mindAspects.length === 32);
-      assert('bodyAspects length', bodyAspects.length === 32);
-      assert('soulAspects length', soulAspects.length === 32);
-
-      // Test 3: devProfile lengths
-      assert('mind devProfile.length == 12', mindAspects.devProfile.length === 12);
-
-      // Test 4: SCI on uniform activations → high coherence, variance ≈ 0
-      const bak = aspects;
-      aspects = [
-        { activation: 50, stage: 1, ring: 1 },
-        { activation: 50, stage: 1, ring: 1 },
-        { activation: 50, stage: 1, ring: 1 },
-        { activation: 50, stage: 1, ring: 1 }
-      ];
-      const { mean, std, sci, resonance } = computeSCI();
-      assert('SCI std == 0', Math.abs(std - 0) < 1e-9);
-      assert('SCI resonance == 1', Math.abs(resonance.ratio - 1) < 1e-9);
-      assert('SCI value', Math.abs(sci - 82.5) < 1e-6);
-      aspects = bak;
-
-      // Test 5: export payload shape
-      const payload = buildExportPayload();
-      assert('payload.aspects length == 32', Array.isArray(payload.aspects) && payload.aspects.length === 32);
-      assert('payload.metrics has sci', typeof payload.metrics.sci === 'number');
-      assert('payload.metrics has formula', typeof payload.metrics.formula === 'string');
-
-      // Report
-      const passCount = results.filter(r=>r.pass).length;
-      const fail = results.filter(r=>!r.pass);
-      console.log('%cSelf-tests:', 'font-weight:bold');
-      results.forEach(r=> console.log(r.pass? '✅' : '❌', r.name));
-      if (fail.length) {
-        console.warn('Some self-tests failed:', fail);
-      } else {
-        console.log(`All ${passCount} self-tests passed.`);
-      }
-    }
-
-    const layoutQuery = window.matchMedia? window.matchMedia('(max-width: 900px)') : { matches: false };
-    const handleLayout = (ev) => applyLayoutMode(ev.matches);
-    if (layoutQuery.addEventListener) {
-      layoutQuery.addEventListener('change', handleLayout);
-    } else if (layoutQuery.addListener) {
-      layoutQuery.addListener(handleLayout);
-    }
-    applyLayoutMode(layoutQuery.matches);
-    updatePanelToggleLabel();
-
-    // Initial build & draw
-    const initialTheme = detectInitialTheme();
-    applyTheme(initialTheme);
+    // Init
+    initSpeech();
     resizeCanvas();
-    applyDevStage(state.devStage);
-    requestAnimationFrame(tick);
-    runSelfTests();
+    buildList();
+    document.body.setAttribute('data-theme', state.theme);
 
-    /* ============================================================
-       SCIENCE NOTES (for researchers inside code comments)
-       ----------------------------------------------------
-       • SCI blends activation power, variance balance, and resonance/structure
-         alignment: 0.35·activation + 0.35·balance + 0.20·resonance +
-         0.10·alignment.
-       • We visualize C = E × MC (concept → energy × matter × cognition) via
-         the info modal's pipeline description and resonance links.
-       • 12 radial cross-lines = expanded Erikson-like developmental stages; 
-         use your mapping to stage names in your dataset if available.
-       • 8 concentric rings = anatomy/energy zones; link to somatic/energetic
-         layers (e.g., brainstem → cortex, fascia layers, chakric analogues).
-       • Resonance edges connect nodes with similar activation OR sharing
-         stage/ring, encoding feedback/overlap and nonlinearity.
-       • Tutorial traces a simple loop through aspects. For research demos,
-         extend by adding causal/feedback animations (mind→body→action→mind).
-       • Accessibility: All controls are reachable by keyboard; modal is a
-         native <dialog>; listbox items are focusable and announce changes.
-    ============================================================ */
   </script>
 </body>
 </html>
