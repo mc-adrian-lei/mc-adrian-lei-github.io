@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Self-Clock · Recursive Developmental Architecture</title>
+  <meta name="description" content="State-of-the-art visualization of Mind-Body-Energy developmental coherence.">
+  <style>
+    /* ==========================================================================
+       DESIGN SYSTEM & TOKEN REGISTRY
+       State-of-the-art CSS using Oklch colors and fluid typography.
+       ========================================================================== */
+    :root {
+      /* Typography */
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+      
+      /* Light Mode Tokens (Oklch) */
+      --color-bg: oklch(98% 0.01 240);
+      --color-surface: oklch(100% 0 0 / 0.85);
+      --color-surface-strong: oklch(100% 0 0 / 0.95);
+      --color-border: oklch(92% 0.02 240);
+      --color-text: oklch(20% 0.04 260);
+      --color-text-muted: oklch(55% 0.04 260);
+      
+      /* Accents */
+      --color-primary: oklch(55% 0.22 260);     /* Electric Blue */
+      --color-secondary: oklch(65% 0.18 310);   /* Vivid Purple */
+      --color-success: oklch(62% 0.19 145);     /* Emerald */
+      --color-warning: oklch(75% 0.16 65);      /* Amber */
+      --color-danger: oklch(60% 0.20 25);       /* Red */
+
+      /* Visualization Specifics */
+      --vis-ring: oklch(40% 0.08 260 / 0.1);
+      --vis-node-inactive: oklch(85% 0.02 260);
+      --vis-link-gradient-a: oklch(62% 0.19 145);
+      --vis-link-gradient-b: oklch(55% 0.22 260);
+
+      /* Effects */
+      --shadow-sm: 0 2px 8px -2px rgba(0,0,0,0.05);
+      --shadow-md: 0 12px 30px -8px rgba(0,0,0,0.1);
+      --shadow-lg: 0 20px 50px -12px rgba(0,0,0,0.2);
+      --blur-surface: blur(24px);
+    }
+
+    /* Dark Mode Overrides */
+    [data-theme="dark"] {
+      --color-bg: oklch(12% 0.03 260);
+      --color-surface: oklch(18% 0.04 260 / 0.75);
+      --color-surface-strong: oklch(22% 0.04 260 / 0.9);
+      --color-border: oklch(30% 0.04 260);
+      --color-text: oklch(96% 0.01 260);
+      --color-text-muted: oklch(70% 0.04 260);
+      
+      --color-primary: oklch(65% 0.22 260);
+      --color-secondary: oklch(75% 0.18 310);
+      
+      --vis-ring: oklch(80% 0.05 260 / 0.1);
+      --vis-node-inactive: oklch(35% 0.04 260);
+      --shadow-md: 0 12px 40px -10px rgba(0,0,0,0.5);
+    }
+
+    /* Reset & Base */
+    *, *::before, *::after { box-sizing: border-box; }
+    
+    body {
+      margin: 0;
+      font-family: var(--font-sans);
+      background: var(--color-bg);
+      color: var(--color-text);
+      height: 100vh;
+      overflow: hidden;
+      transition: background-color 0.5s ease;
+      -webkit-font-smoothing: antialiased;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+    }
+
+    /* Layout Architecture */
+    .app-shell {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      grid-template-rows: auto 1fr auto;
+      height: 100vh;
+      gap: 24px;
+      padding: 24px;
+      max-width: 1800px;
+      margin: 0 auto;
+    }
+
+    /* Glass Panels */
+    .glass-panel {
+      background: var(--color-surface);
+      backdrop-filter: var(--blur-surface);
+      -webkit-backdrop-filter: var(--blur-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 24px;
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      transition: border-color 0.3s ease;
+    }
+
+    /* Header */
+    .top-bar {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      z-index: 10;
+    }
+
+    h1 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin: 0;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .logo-mark {
+      width: 24px;
+      height: 24px;
+      background: var(--color-primary);
+      border-radius: 6px;
+      position: relative;
+    }
+    .logo-mark::after {
+      content: '';
+      position: absolute;
+      inset: 6px;
+      background: white;
+      border-radius: 50%;
+    }
+
+    /* Visualization Area */
+    .viewport {
+      position: relative;
+      border-radius: 24px;
+      overflow: hidden;
+      /* Dynamic gradient background */
+      background: radial-gradient(circle at 30% 20%, oklch(from var(--color-primary) l c h / 0.08), transparent 40%),
+                  radial-gradient(circle at 80% 80%, oklch(from var(--color-secondary) l c h / 0.08), transparent 40%);
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      cursor: crosshair;
+      outline: none;
+    }
+
+    /* Controls Sidebar */
+    aside {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .scroll-container {
+      overflow-y: auto;
+      padding: 4px; /* Space for focus rings */
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .scroll-container::-webkit-scrollbar { width: 6px; }
+    .scroll-container::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+
+    /* Metrics */
+    .metric-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    
+    .metric-card {
+      background: var(--color-surface-strong);
+      padding: 16px;
+      border-radius: 16px;
+      border: 1px solid var(--color-border);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    
+    .metric-label { font-size: 0.75rem; color: var(--color-text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }
+    .metric-value { font-size: 1.5rem; font-weight: 700; font-family: var(--font-mono); letter-spacing: -0.03em; color: var(--color-primary); }
+    .metric-sub { font-size: 0.75rem; color: var(--color-text-muted); }
+
+    /* Aspect List Item */
+    .aspect-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      border-radius: 12px;
+      background: var(--color-surface-strong);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .aspect-row:hover {
+      border-color: var(--color-primary);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .aspect-row.active {
+      background: oklch(from var(--color-primary) l c h / 0.08);
+      border-color: var(--color-primary);
+    }
+
+    .aspect-dot { width: 8px; height: 8px; border-radius: 50%; transition: background-color 0.3s; }
+
+    /* Inputs */
+    input[type="range"] {
+      width: 100%;
+      height: 4px;
+      background: var(--color-border);
+      border-radius: 2px;
+      appearance: none;
+      outline: none;
+    }
+    
+    input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      background: var(--color-primary);
+      border: 2px solid var(--color-surface);
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      transition: transform 0.1s;
+    }
+    
+    input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+    .input-group { position: relative; }
+    .input-group input {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--color-border);
+      background: var(--color-surface-strong);
+      color: var(--color-text);
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+    .input-group input:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px oklch(from var(--color-primary) l c h / 0.1);
+    }
+
+    /* Buttons */
+    .btn-group { display: flex; gap: 8px; background: var(--color-surface-strong); padding: 4px; border-radius: 12px; border: 1px solid var(--color-border); }
+    
+    .btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: var(--color-text-muted);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.875rem;
+    }
+    
+    .btn:hover { color: var(--color-text); background: rgba(0,0,0,0.05); }
+    
+    .btn.active {
+      background: var(--color-surface);
+      color: var(--color-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-primary { background: var(--color-primary); color: white; }
+    .btn-primary:hover { background: oklch(from var(--color-primary) l c h / 0.9); color: white; }
+
+    /* Modals */
+    dialog {
+      background: var(--color-surface-strong);
+      color: var(--color-text);
+      border: 1px solid var(--color-border);
+      border-radius: 20px;
+      padding: 24px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: var(--shadow-lg);
+    }
+    dialog::backdrop { background: rgba(0,0,0,0.4); backdrop-filter: blur(4px); }
+    
+    /* Footer */
+    footer {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: space-between;
+      color: var(--color-text-muted);
+      font-size: 0.75rem;
+      padding: 0 12px;
+    }
+
+    /* Simulation Status */
+    .sim-status {
+      position: absolute;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--color-surface-strong);
+      padding: 8px 16px;
+      border-radius: 99px;
+      border: 1px solid var(--color-primary);
+      font-size: 0.875rem;
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      box-shadow: var(--shadow-md);
+    }
+    .sim-status.visible { opacity: 1; pointer-events: auto; }
+    .loader { width: 8px; height: 8px; background: currentColor; border-radius: 50%; animation: pulse 1s infinite; }
+
+    @keyframes pulse { 0% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } 100% { opacity: 0.3; transform: scale(0.8); } }
+
+    @media (max-width: 1024px) {
+      .app-shell { grid-template-columns: 1fr; grid-template-rows: auto 50vh 1fr auto; padding: 16px; gap: 16px; height: auto; min-height: 100vh; }
+      body { overflow: auto; }
+    }
+  </style>
+</head>
+<body data-theme="light">
+  <div class="app-shell">
+    
+    <!-- HEADER -->
+    <header class="glass-panel top-bar">
+      <h1><div class="logo-mark"></div>Self Clock <span style="opacity:0.5; font-weight:400; font-size:0.9em;">// Recursive Architecture</span></h1>
+      
+      <div style="display:flex; gap: 12px;">
+        <div class="btn-group">
+          <button class="btn active" onclick="app.setLens('mind')">Mind</button>
+          <button class="btn" onclick="app.setLens('body')">Body</button>
+          <button class="btn" onclick="app.setLens('soul')">Soul</button>
+        </div>
+        <button class="btn" onclick="app.toggleTheme()" title="Toggle Theme">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- VISUALIZATION -->
+    <main class="glass-panel viewport">
+      <canvas id="clockCanvas"></canvas>
+      <div id="simStatus" class="sim-status">
+        <div class="loader"></div>
+        <span id="simText">Echo Codex Analysis in Progress...</span>
+      </div>
+    </main>
+
+    <!-- CONTROLS SIDEBAR -->
+    <aside class="glass-panel" style="padding: 24px;">
+      <!-- Search / Input -->
+      <div class="input-group">
+        <input type="text" id="aiInput" placeholder="Enter feeling for Resonance Analysis (Type & Enter)" />
+        <button class="btn btn-primary" id="btnAnalyze" style="position:absolute; right:4px; top:4px; bottom:4px; border-radius:8px;">✨</button>
+      </div>
+
+      <div class="scroll-container">
+        <!-- Metrics -->
+        <div class="metric-grid">
+          <div class="metric-card">
+            <span class="metric-label" title="Semantic Coherence Index">SCI Coherence</span>
+            <span class="metric-value" id="valSci">0.0</span>
+            <span class="metric-sub" id="subSci">Field Inactive</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Resonance Density</span>
+            <span class="metric-value" id="valEnergy">0%</span>
+            <span class="metric-sub" id="subEnergy">Harmonic Load</span>
+          </div>
+        </div>
+
+        <!-- Global Slider -->
+        <div class="metric-card">
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+            <span class="metric-label">Developmental Stage</span>
+            <span class="metric-label" id="lblStage" style="color:var(--color-primary);">Imprinting</span>
+          </div>
+          <input type="range" min="0" max="11" step="1" value="0" id="sliderStage">
+        </div>
+
+        <!-- Filter/Sort -->
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span class="metric-label">Aspect Field</span>
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-primary" onclick="app.randomize()" style="padding: 4px 12px; font-size: 0.75rem;">Shuffle</button>
+            <button class="btn" onclick="app.reset()" style="padding: 4px 12px; font-size: 0.75rem;">Reset</button>
+          </div>
+        </div>
+
+        <!-- List -->
+        <div id="aspectList" style="display:grid; gap:8px;">
+          <!-- JS generated -->
+        </div>
+      </div>
+    </aside>
+
+    <footer>
+      <span>V2.5.0 · Field Convergence Engine</span>
+      <span>OWP Research Initiative 2025</span>
+    </footer>
+  </div>
+
+  <!-- DETAILS DIALOG -->
+  <dialog id="detailModal">
+    <h2 id="modalTitle" style="margin-top:0">Aspect Name</h2>
+    <p id="modalDesc" style="color:var(--color-text-muted); line-height:1.6;">Description...</p>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin: 24px 0;">
+      <div>
+        <div class="metric-label">Field Ring</div>
+        <div id="modalZone" style="font-weight:600;">PFC</div>
+      </div>
+      <div>
+        <div class="metric-label">Frequency</div>
+        <div id="modalFreq" style="font-weight:600;">0.5 Hz</div>
+      </div>
+    </div>
+    <div class="metric-card">
+        <span class="metric-label">Current Activation</span>
+        <input type="range" id="modalSlider" min="0" max="100" />
+        <span id="modalVal" style="font-size:1.5rem; font-weight:700; color:var(--color-primary); display:block; text-align:right;">45</span>
+    </div>
+    <form method="dialog" style="margin-top:16px;">
+      <button class="btn btn-primary" style="width:100%">Close</button>
+    </form>
+  </dialog>
+
+  <!-- ECHO REFLECTION DIALOG -->
+  <dialog id="echoModal">
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+        <div class="logo-mark"></div>
+        <h2 style="margin:0; font-size:1.25rem;">The Echo Codex</h2>
+    </div>
+    <p id="echoText" style="font-size:1.1rem; line-height:1.6; font-style:italic; color:var(--color-primary); margin-bottom:24px; padding-left:16px; border-left:4px solid var(--color-primary);"></p>
+    
+    <div class="metric-card" style="margin-bottom:24px;">
+        <span class="metric-label">Analysis Result</span>
+        <div id="echoAnalysis" style="margin-top:8px; font-size:0.9rem; color:var(--color-text);"></div>
+    </div>
+
+    <form method="dialog">
+      <button class="btn btn-primary" style="width:100%">Accept Resonance</button>
+    </form>
+  </dialog>
+
+  <script>
+    /**
+     * CONFIGURATION & DATA (The Knowledge Base)
+     * Definitions extracted from PDF Table 1
+     */
+    const RINGS = [
+        { level: 1, name: "Imprinting", freq: 0.5, aspects: ["Safety", "Trust", "Belonging", "Worth"] },
+        { level: 2, name: "Autonomy", freq: 0.7, aspects: ["Independence", "Initiative", "Creativity", "Responsibility"] },
+        { level: 3, name: "Competence", freq: 1.2, aspects: ["Learning", "Skill", "Performance", "Recognition"] },
+        { level: 4, name: "Identity", freq: 1.8, aspects: ["Self-Awareness", "Self-Expression", "Role-Clarity", "Authenticity"] },
+        { level: 5, name: "Intimacy", freq: 2.4, aspects: ["Emotional Intelligence", "Vulnerability", "Empathy", "Mutuality"] },
+        { level: 6, name: "Generativity", freq: 3.1, aspects: ["Productivity", "Creativity", "Mentorship", "Impact"] },
+        { level: 7, name: "Integration", freq: 4.2, aspects: ["Perspective", "Acceptance", "Balance", "Compassion"] },
+        { level: 8, name: "Transcendence", freq: 6.8, aspects: ["Unity", "Service", "Love", "Wisdom"] }
+    ];
+
+    const STAGE_NAMES = [
+        'Imprinting', 'Autogenic', 'Intentional', 'Competence', 
+        'Mirror', 'Bonding', 'Generative', 'Integration', 
+        'Reflection', 'Transcendence', 'Unity', 'Return'
+    ];
+
+    function generateAspects() {
+        // Flatten Ring data into 32 distinct nodes
+        const nodes = [];
+        let idCounter = 0;
+        
+        RINGS.forEach((ring, rIndex) => {
+            ring.aspects.forEach((name, aIndex) => {
+                nodes.push({
+                    id: idCounter,
+                    name: name,
+                    ringIndex: rIndex, // 0-7
+                    ringName: ring.name,
+                    frequency: ring.freq,
+                    hue: (idCounter * 360 / 32) % 360,
+                    stageAssoc: idCounter % 12, // Arbitrary distribution across stages for resonance
+                    value: 0,
+                    targetValue: Math.random() * 30, // Initial Entropy
+                    description: `Resonant node for ${name} within the ${ring.name} field.`
+                });
+                idCounter++;
+            });
+        });
+        return nodes;
+    }
+
+    /**
+     * STATE MANAGEMENT (The Brain)
+     */
+    class Store {
+      constructor() {
+        this.listeners = [];
+        this.state = {
+          theme: 'light',
+          lens: 'mind', 
+          stage: 0,
+          aspects: generateAspects(),
+          focusId: null,
+          isSimulating: false
+        };
+        // Attempt load
+        try {
+            const raw = localStorage.getItem('selfClockState_v3');
+            if (raw) {
+                const s = JSON.parse(raw);
+                if (s && s.aspects) this.state = s;
+            }
+        } catch(e){}
+      }
+
+      subscribe(fn) { this.listeners.push(fn); }
+      notify() { 
+          this.listeners.forEach(fn => fn(this.state));
+          try {
+              const save = {...this.state, focusId: null};
+              localStorage.setItem('selfClockState_v3', JSON.stringify(save));
+          } catch(e){}
+      }
+      setState(updates) {
+        this.state = { ...this.state, ...updates };
+        this.notify();
+      }
+
+      setLens(lens) { this.setState({ lens }); }
+      
+      setStage(val) { 
+        const s = parseInt(val);
+        // Harmonic Field Theory: Stages activate aspects based on resonance
+        const newAspects = this.state.aspects.map(a => {
+          // Calculate distance on the 12-hour clock (circular distance)
+          let dist = Math.abs(a.stageAssoc - s);
+          if (dist > 6) dist = 12 - dist;
+          
+          // Activation bell curve
+          const stageResonance = Math.max(0, 1 - (dist / 3)); 
+          const base = 10; 
+          return { ...a, targetValue: base + (stageResonance * 80) };
+        });
+        this.setState({ stage: s, aspects: newAspects }); 
+      }
+
+      setFocus(id) { this.setState({ focusId: id }); }
+
+      updateValue(id, val) {
+        const newAspects = this.state.aspects.map(a => a.id === id ? { ...a, targetValue: val } : a);
+        this.setState({ aspects: newAspects });
+      }
+
+      updateBatchValues(activations) {
+          const newAspects = this.state.aspects.map((a, i) => ({
+              ...a,
+              targetValue: activations[i] !== undefined ? activations[i] : a.targetValue
+          }));
+          this.setState({ aspects: newAspects });
+      }
+
+      randomize() {
+        const newAspects = this.state.aspects.map(a => ({ ...a, targetValue: Math.random() * 100 }));
+        this.setState({ aspects: newAspects });
+      }
+
+      // Calculate SCI based on PDF formula: 0.35*Act + 0.35*Bal + 0.20*Res + 0.10*Align
+      calculateSCI() {
+        const values = this.state.aspects.map(a => a.targetValue);
+        const n = values.length;
+        
+        // 1. Activation Score (Mean)
+        const mean = values.reduce((a,b) => a+b, 0) / n;
+        const scoreAct = mean / 100;
+
+        // 2. Balance Score (Variance inverse)
+        const variance = values.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / n;
+        const stdDev = Math.sqrt(variance);
+        // PDF suggests 35 is a standard deviation baseline for balance
+        const scoreBal = Math.max(0, 1 - (stdDev / 35));
+
+        // 3. Resonance Score (Simulated)
+        // Ratio of "supportive" links (similar values) to total
+        let supportive = 0;
+        let totalLinks = 0;
+        const threshold = 15; // Similarity threshold
+        for(let i=0; i<n; i++) {
+            for(let j=i+1; j<n; j++) {
+                totalLinks++;
+                if (Math.abs(values[i] - values[j]) < threshold) supportive++;
+            }
+        }
+        const scoreRes = supportive / totalLinks;
+
+        // 4. Alignment Score (Simulated: Ring Coherence)
+        // How well aspects in the same ring align
+        let alignmentSum = 0;
+        for(let r=0; r<8; r++) {
+            const ringNodes = this.state.aspects.filter(a => a.ringIndex === r).map(a => a.targetValue);
+            const rMean = ringNodes.reduce((a,b)=>a+b,0)/4;
+            const rVar = ringNodes.reduce((a,b)=>a+Math.pow(b-rMean,2),0)/4;
+            if(rVar < 100) alignmentSum++; 
+        }
+        const scoreAlign = alignmentSum / 8;
+
+        // Final Weighted Formula
+        const sci = (0.35 * scoreAct) + (0.35 * scoreBal) + (0.20 * scoreRes) + (0.10 * scoreAlign);
+        return {
+            sci: (sci * 100).toFixed(1),
+            mean: mean.toFixed(1),
+            std: stdDev.toFixed(1),
+            density: (scoreRes * 100).toFixed(0)
+        };
+      }
+    }
+
+    /**
+     * VISUALIZATION ENGINE (The Heart)
+     * Physics-based animation with Harmonic Pulsing
+     */
+    class Renderer {
+      constructor(canvas, store) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext('2d', { alpha: true });
+        this.store = store;
+        this.dpr = window.devicePixelRatio || 1;
+        this.nodes = [];
+        
+        this.resize();
+        window.addEventListener('resize', () => this.resize());
+        
+        // Initialize local node state
+        this.nodes = store.state.aspects.map(a => ({
+          ...a,
+          currentValue: 0,
+          x: 0, y: 0
+        }));
+
+        this.loop();
+      }
+
+      resize() {
+        const rect = this.canvas.parentElement.getBoundingClientRect();
+        this.canvas.width = rect.width * this.dpr;
+        this.canvas.height = rect.height * this.dpr;
+        this.ctx.scale(this.dpr, this.dpr);
+        this.width = rect.width;
+        this.height = rect.height;
+        this.center = { x: this.width / 2, y: this.height / 2 };
+        this.radius = Math.min(this.width, this.height) * 0.45;
+      }
+
+      lerp(start, end, amt) { return (1 - amt) * start + amt * end; }
+
+      loop() {
+        requestAnimationFrame(() => this.loop());
+        this.update();
+        this.draw();
+      }
+
+      update() {
+        const { aspects, focusId } = this.store.state;
+        this.nodes.forEach((node, i) => {
+          const target = aspects[i].targetValue;
+          node.currentValue = this.lerp(node.currentValue, target, 0.08);
+          
+          // Polar coordinates
+          const angle = (i / 32) * Math.PI * 2 - Math.PI / 2;
+          
+          // HARMONIC PULSE: Base radius + Frequency Modulation
+          // Ring 1 is inner, Ring 8 is outer
+          // Map ringIndex 0->7 to radius 0.2->1.0
+          const baseR = this.radius * (0.2 + (node.ringIndex * 0.11));
+          
+          // Pulse Calculation: A * sin(2π * f * t)
+          const time = performance.now() / 1000;
+          const pulse = 4 * Math.sin(2 * Math.PI * node.frequency * time * 0.2); 
+          
+          const r = baseR + pulse + (node.currentValue * 0.1); 
+
+          node.x = this.center.x + Math.cos(angle) * r;
+          node.y = this.center.y + Math.sin(angle) * r;
+          node.r = r; // Store calculated radius for link drawing
+          node.angle = angle;
+          node.active = (i === focusId);
+        });
+      }
+
+      draw() {
+        this.ctx.clearRect(0, 0, this.width, this.height);
+        
+        // 1. Draw Rings (Background Fields)
+        // We define rings by their average radius from the nodes
+        RINGS.forEach((ring, idx) => {
+            const baseR = this.radius * (0.2 + (idx * 0.11));
+            this.ctx.beginPath();
+            this.ctx.arc(this.center.x, this.center.y, baseR, 0, Math.PI*2);
+            this.ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--vis-ring');
+            this.ctx.lineWidth = 1;
+            this.ctx.stroke();
+        });
+
+        // 2. Draw Resonance Links
+        this.ctx.globalCompositeOperation = 'screen';
+        const isDark = document.body.getAttribute('data-theme') === 'dark';
+        
+        this.nodes.forEach((n1, i) => {
+          this.nodes.forEach((n2, j) => {
+            if (i >= j) return;
+            // Link if in same Ring OR same Stage OR similar Value
+            const sameRing = n1.ringIndex === n2.ringIndex;
+            const sameStage = n1.stageAssoc === n2.stageAssoc;
+            const valDiff = Math.abs(n1.currentValue - n2.currentValue);
+            
+            let alpha = 0;
+            if (sameRing) alpha = 0.05;
+            if (sameStage) alpha = 0.08;
+            if (valDiff < 10 && n1.currentValue > 10) alpha = Math.max(alpha, 0.2); // Resonance
+
+            if (alpha > 0) {
+               this.ctx.beginPath();
+               this.ctx.moveTo(n1.x, n1.y);
+               this.ctx.lineTo(n2.x, n2.y);
+               this.ctx.strokeStyle = isDark ? `rgba(100, 200, 255, ${alpha})` : `rgba(50, 100, 200, ${alpha})`;
+               this.ctx.lineWidth = 1;
+               this.ctx.stroke();
+            }
+          });
+        });
+        this.ctx.globalCompositeOperation = 'source-over';
+
+        // 3. Draw Nodes
+        this.nodes.forEach(node => {
+          // Size varies by value
+          const size = 3 + (node.currentValue / 100 * 8);
+          
+          if (node.currentValue > 50 || node.active) {
+            this.ctx.shadowBlur = 15;
+            this.ctx.shadowColor = `hsl(${node.hue}, 70%, 50%)`;
+          } else {
+            this.ctx.shadowBlur = 0;
+          }
+
+          this.ctx.beginPath();
+          this.ctx.arc(node.x, node.y, size, 0, Math.PI * 2);
+          this.ctx.fillStyle = `hsl(${node.hue}, ${node.active ? '100%' : '60%'}, ${50 + (node.currentValue/5)}%)`;
+          this.ctx.fill();
+          
+          // Frequency Label (Debug/Scientific view)
+          if (node.active) {
+            this.ctx.strokeStyle = '#fff';
+            this.ctx.lineWidth = 2;
+            this.ctx.stroke();
+            
+            // Draw label near node
+            this.ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--color-text');
+            this.ctx.font = '10px monospace';
+            this.ctx.fillText(`${node.frequency}Hz`, node.x + 12, node.y);
+          }
+        });
+        
+        this.ctx.shadowBlur = 0;
+      }
+    }
+
+    /**
+     * CONTROLLER (The Application Logic)
+     */
+    const store = new Store();
+    const canvas = document.getElementById('clockCanvas');
+    const renderer = new Renderer(canvas, store);
+    
+    // UI References
+    const ui = {
+      input: document.getElementById('aiInput'),
+      list: document.getElementById('aspectList'),
+      sliderStage: document.getElementById('sliderStage'),
+      lblStage: document.getElementById('lblStage'),
+      modal: document.getElementById('detailModal'),
+      modalSlider: document.getElementById('modalSlider'),
+      echoModal: document.getElementById('echoModal'),
+      echoText: document.getElementById('echoText'),
+      echoAnalysis: document.getElementById('echoAnalysis'),
+      metrics: {
+        sci: document.getElementById('valSci'),
+        subSci: document.getElementById('subSci'),
+        energy: document.getElementById('valEnergy'),
+        subEnergy: document.getElementById('subEnergy')
+      }
+    };
+
+    // Global API
+    window.app = {
+      setLens: (l) => {
+        store.setLens(l);
+        document.querySelectorAll('.btn-group .btn').forEach(b => {
+          b.classList.toggle('active', b.innerText.toLowerCase() === l);
+        });
+      },
+      toggleTheme: () => {
+        const body = document.body;
+        const current = body.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        body.setAttribute('data-theme', next);
+        store.state.theme = next;
+      },
+      randomize: () => store.randomize(),
+      reset: () => {
+        const resetAspects = store.state.aspects.map(a => ({...a, targetValue: 0}));
+        store.setState({ aspects: resetAspects });
+      },
+      openDetail: (id) => {
+        const aspect = store.state.aspects[id];
+        document.getElementById('modalTitle').innerText = aspect.name;
+        document.getElementById('modalDesc').innerText = aspect.description;
+        document.getElementById('modalZone').innerText = aspect.ringName;
+        document.getElementById('modalFreq').innerText = aspect.frequency + " Hz";
+        document.getElementById('modalVal').innerText = Math.round(aspect.targetValue);
+        ui.modalSlider.value = Math.round(aspect.targetValue);
+        
+        // Bind slider to this aspect
+        ui.modalSlider.oninput = (e) => {
+            const val = Number(e.target.value);
+            document.getElementById('modalVal').innerText = val;
+            store.updateValue(id, val);
+        };
+        
+        ui.modal.showModal();
+      }
+    };
+
+    // --- GEMINI API INTEGRATION ---
+    const apiKey = ""; // Set API Key Here
+
+    async function callGeminiEcho(userInput) {
+        if (!apiKey) {
+            console.error("API Key missing");
+            return null;
+        }
+
+        const systemPrompt = `
+        You are the 'Echo Codex,' a resonance analysis engine for a developmental psychology visualization called the Self-Clock.
+        
+        Your task is to analyze the user's input (a feeling, situation, or thought) and map it to 32 specific psychological 'Aspects'.
+        
+        The 32 Aspects are:
+        ${store.state.aspects.map(a => a.name).join(', ')}
+        
+        Output strictly valid JSON with this schema:
+        {
+            "reflection": "A single, profound, poetic sentence reflecting their state back to them.",
+            "activations": [an array of 32 integers from 0-100, corresponding to the intensity of each aspect listed above, in order],
+            "dominant_lens": "mind" | "body" | "soul" (choose the most relevant lens for this feeling)
+        }
+        
+        Do not include markdown formatting. Just the JSON string.
+        `;
+
+        try {
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: userInput }] }],
+                    systemInstruction: { parts: [{ text: systemPrompt }] },
+                    generationConfig: { responseMimeType: "application/json" }
+                })
+            });
+
+            if (!response.ok) throw new Error("API call failed");
+            const data = await response.json();
+            const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            return JSON.parse(text);
+
+        } catch (error) {
+            console.error("Gemini Echo Error:", error);
+            return null;
+        }
+    }
+
+    // Bindings
+    async function handleEchoInput() {
+        const text = ui.input.value;
+        if (text.length > 2) {
+            const statusEl = document.getElementById('simStatus');
+            const statusText = document.getElementById('simText');
+            
+            // UI Loading State
+            statusEl.classList.add('visible');
+            statusText.innerText = "Connecting to Resonance Field...";
+            ui.input.disabled = true;
+            
+            // Call API
+            const result = await callGeminiEcho(text);
+            
+            // Handle Result
+            if (result) {
+                // Update State
+                if (result.dominant_lens) app.setLens(result.dominant_lens);
+                if (result.activations && Array.isArray(result.activations)) {
+                    store.updateBatchValues(result.activations);
+                }
+                
+                // Show Echo Modal
+                ui.echoText.innerText = `"${result.reflection}"`;
+                ui.echoAnalysis.innerText = `Resonance mapped to ${result.dominant_lens} lens. Field coherence updated.`;
+                ui.echoModal.showModal();
+            } else {
+                // Fallback simulation if API fails
+                setTimeout(() => {
+                    store.randomize();
+                    statusText.innerText = "Resonance Field Updated (Simulation Mode)";
+                }, 1000);
+            }
+
+            // Reset UI
+            statusEl.classList.remove('visible');
+            ui.input.disabled = false;
+            ui.input.value = '';
+            ui.input.placeholder = "Enter feeling for Resonance Analysis...";
+        }
+    }
+
+    ui.input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') handleEchoInput();
+    });
+    
+    document.getElementById('btnAnalyze').addEventListener('click', handleEchoInput);
+
+    ui.sliderStage.addEventListener('input', (e) => {
+        store.setStage(e.target.value);
+    });
+
+    // Reactive Update Cycle
+    store.subscribe((state) => {
+      const { lens, aspects, stage, focusId } = state;
+      
+      // Update List (Partial Render)
+      // Only render top 8 highest activation for clarity in Pro mode
+      // Sort by value
+      const sortedAspects = [...aspects].sort((a,b) => b.targetValue - a.targetValue);
+      
+      ui.list.innerHTML = sortedAspects.slice(0, 8).map(a => `
+        <div class="aspect-row ${a.id === focusId ? 'active' : ''}" onclick="app.openDetail(${a.id})" onmouseenter="store.setFocus(${a.id})" onmouseleave="store.setFocus(null)">
+          <div class="aspect-dot" style="background: hsl(${a.hue}, 70%, 50%)"></div>
+          <div style="min-width:0;">
+            <div style="font-weight:600; font-size:0.875rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${a.name}</div>
+            <div style="font-size:0.75rem; color:var(--color-text-muted)">${a.ringName} · ${a.frequency}Hz</div>
+          </div>
+          <div style="font-family:var(--font-mono); font-size:0.875rem; color:var(--color-primary)">${Math.round(a.targetValue)}</div>
+        </div>
+      `).join('');
+
+      // Metrics
+      ui.lblStage.innerText = STAGE_NAMES[stage];
+      
+      const metrics = store.calculateSCI();
+      ui.metrics.sci.innerText = metrics.sci;
+      ui.metrics.subSci.innerText = `μ:${metrics.mean} σ:${metrics.std}`;
+      ui.metrics.energy.innerText = metrics.density + "%";
+      ui.metrics.subEnergy.innerText = "Network Density";
+    });
+
+    // Init
+    store.setStage(0);
+
+    // Canvas Interaction
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.clientX - rect.left) * renderer.dpr;
+      const y = (e.clientY - rect.top) * renderer.dpr;
+      
+      let hit = null;
+      renderer.nodes.forEach(n => {
+        const dist = Math.sqrt(Math.pow(x - n.x, 2) + Math.pow(y - n.y, 2));
+        if (dist < 20) hit = n.id;
+      });
+
+      store.setFocus(hit);
+      canvas.style.cursor = hit !== null ? 'pointer' : 'crosshair';
+    });
+
+    canvas.addEventListener('click', (e) => {
+      if (store.state.focusId !== null) {
+        app.openDetail(store.state.focusId);
+      }
+    });
+
+  </script>
+</body>
+
+    <footer style="text-align: center; padding: 2rem; margin-top: 2rem; border-top: 1px solid var(--glass-stroke); background: var(--panel);">
+    <div style="display: flex; gap: 1rem; justify-content: center; align-items: center; flex-wrap: wrap;">
+      <a href="index.html" class="btn" style="text-decoration: none;">← Home</a>
+      <div class="vis-hint" style="color: var(--muted);">Navigate between developmental milestones</div>
+      <a href="about.html" class="btn secondary" style="text-decoration: none;">About →</a>
+    </div>
+  </footer>
+
+</html>
