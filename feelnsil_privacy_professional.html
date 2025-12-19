@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FEEL-NSIL Privacy Policy - Trauma-informed, resonance-based AI diagnostics">
+    <meta name="theme-color" content="#0f1419">
+    <title>FEEL-NSIL Privacy Policy | Only When Prompted Research Initiative</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-bg-primary: #0f1419;
+            --color-bg-secondary: #1a1f2e;
+            --color-bg-tertiary: #f8f9fb;
+            --color-accent-primary: #2563eb;
+            --color-accent-secondary: #f59e0b;
+            --color-accent-tertiary: #10b981;
+            --color-text-primary: #0f1419;
+            --color-text-secondary: #6b7280;
+            --color-text-light: #ffffff;
+            --color-border: #e5e7eb;
+            --color-border-dark: #374151;
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 3rem;
+            --spacing-2xl: 4rem;
+            --radius-sm: 6px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-base: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--color-text-primary);
+            background: linear-gradient(135deg, var(--color-bg-tertiary) 0%, #ffffff 100%);
+            min-height: 100vh;
+        }
+
+        /* HEADER */
+        header {
+            background: linear-gradient(135deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 100%);
+            color: var(--color-text-light);
+            padding: var(--spacing-2xl) var(--spacing-md);
+            text-align: center;
+            border-bottom: 1px solid var(--color-border-dark);
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -5%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        header > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        header h1 {
+            font-size: clamp(2rem, 8vw, 3.5rem);
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: var(--spacing-sm);
+            background: linear-gradient(135deg, #ffffff 0%, #e5e7eb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        header .tagline {
+            font-size: 1.1rem;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+            color: var(--color-accent-secondary);
+            margin-bottom: var(--spacing-md);
+        }
+
+        header p {
+            max-width: 600px;
+            margin: 0 auto;
+            color: #d1d5db;
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+
+        /* NAVIGATION */
+        nav {
+            background: var(--color-bg-primary);
+            border-bottom: 1px solid var(--color-border-dark);
+            padding: var(--spacing-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        nav ul {
+            list-style: none;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: var(--spacing-lg);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        nav a {
+            color: #d1d5db;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color var(--transition-fast);
+            padding: var(--spacing-xs) var(--spacing-sm);
+        }
+
+        nav a:hover {
+            color: var(--color-accent-primary);
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
+        }
+
+        /* SECTIONS */
+        section {
+            margin: var(--spacing-2xl) 0;
+            padding: var(--spacing-lg);
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            border-left: 4px solid var(--color-accent-primary);
+            transition: all var(--transition-base);
+        }
+
+        section:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        section:nth-child(odd) {
+            border-left-color: var(--color-accent-secondary);
+        }
+
+        section:nth-child(3n) {
+            border-left-color: var(--color-accent-tertiary);
+        }
+
+        /* TYPOGRAPHY */
+        h2 {
+            font-size: clamp(1.5rem, 5vw, 2.2rem);
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-bottom: var(--spacing-md);
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        h2::before {
+            content: '';
+            width: 4px;
+            height: 1.5em;
+            background: linear-gradient(135deg, var(--color-accent-primary), var(--color-accent-secondary));
+            border-radius: 2px;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--color-accent-primary);
+            margin: var(--spacing-lg) 0 var(--spacing-md) 0;
+            letter-spacing: -0.25px;
+        }
+
+        h4 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin: var(--spacing-md) 0 var(--spacing-sm) 0;
+        }
+
+        p {
+            margin-bottom: var(--spacing-md);
+            color: var(--color-text-secondary);
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        strong {
+            color: var(--color-text-primary);
+            font-weight: 700;
+        }
+
+        em {
+            color: var(--color-accent-primary);
+            font-style: italic;
+            font-weight: 500;
+        }
+
+        /* BLOCKQUOTE */
+        blockquote {
+            border-left: 4px solid var(--color-accent-secondary);
+            padding: var(--spacing-md);
+            margin: var(--spacing-lg) 0;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, rgba(16, 185, 129, 0.05) 100%);
+            border-radius: var(--radius-md);
+            font-size: 1.15rem;
+            color: var(--color-accent-primary);
+            font-weight: 500;
+            line-height: 1.9;
+        }
+
+        /* LISTS */
+        ul, ol {
+            margin: var(--spacing-md) 0 var(--spacing-md) var(--spacing-lg);
+            list-style-position: outside;
+        }
+
+        li {
+            margin-bottom: var(--spacing-sm);
+            color: var(--color-text-secondary);
+            line-height: 1.8;
+        }
+
+        /* CARDS & GRID */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--spacing-lg);
+            margin: var(--spacing-lg) 0;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #ffffff 0%, var(--color-bg-tertiary) 100%);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--color-border);
+            transition: all var(--transition-base);
+            cursor: pointer;
+        }
+
+        .card:hover {
+            border-color: var(--color-accent-primary);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .card h4 {
+            color: var(--color-accent-primary);
+            font-size: 1.1rem;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .card p {
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        /* HIGHLIGHT BOX */
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(245, 158, 11, 0.08) 100%);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            margin: var(--spacing-lg) 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .highlight-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--color-accent-primary), var(--color-accent-secondary));
+        }
+
+        .highlight-box p {
+            margin-left: var(--spacing-md);
+            margin-bottom: 0;
+            color: var(--color-text-primary);
+            font-weight: 500;
+        }
+
+        /* PROMISE SECTION */
+        .promise-section {
+            background: linear-gradient(135deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 100%);
+            color: var(--color-text-light);
+            padding: var(--spacing-2xl) var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            text-align: center;
+            margin: var(--spacing-2xl) 0;
+            border: 1px solid var(--color-border-dark);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .promise-section h3 {
+            color: var(--color-accent-secondary);
+            font-size: 1.8rem;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .promise-section p {
+            color: #d1d5db;
+            font-size: 1.1rem;
+            line-height: 1.9;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        /* CONTACT SECTION */
+        .contact-section {
+            background: linear-gradient(135deg, var(--color-bg-primary) 0%, var(--color-bg-secondary) 100%);
+            color: var(--color-text-light);
+            padding: var(--spacing-2xl) var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            text-align: center;
+            border: 1px solid var(--color-border-dark);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .contact-section h3 {
+            color: var(--color-accent-secondary);
+            font-size: 1.6rem;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .contact-section p {
+            color: #d1d5db;
+            font-size: 1.05rem;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .contact-info {
+            background: rgba(255, 255, 255, 0.05);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-md);
+            margin: var(--spacing-lg) 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .contact-info p {
+            margin: var(--spacing-sm) 0;
+        }
+
+        .contact-link {
+            display: inline-block;
+            color: var(--color-accent-secondary);
+            text-decoration: none;
+            font-weight: 700;
+            transition: color var(--transition-fast);
+            margin: 0 var(--spacing-sm);
+        }
+
+        .contact-link:hover {
+            color: var(--color-accent-primary);
+        }
+
+        /* FOOTER */
+        footer {
+            background: var(--color-bg-primary);
+            color: #9ca3af;
+            padding: var(--spacing-lg);
+            text-align: center;
+            border-top: 1px solid var(--color-border-dark);
+            margin-top: var(--spacing-2xl);
+            font-size: 0.9rem;
+        }
+
+        footer p {
+            margin: var(--spacing-xs) 0;
+            color: #9ca3af;
+        }
+
+        /* BADGES */
+        .badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            background: linear-gradient(135deg, var(--color-accent-primary), var(--color-accent-secondary));
+            color: white;
+            border-radius: var(--radius-sm);
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin: var(--spacing-xs);
+            letter-spacing: 0.5px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            header {
+                padding: var(--spacing-xl) var(--spacing-md);
+            }
+
+            header h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            nav ul {
+                gap: var(--spacing-md);
+            }
+
+            nav a {
+                font-size: 0.9rem;
+            }
+
+            section {
+                padding: var(--spacing-md);
+                margin: var(--spacing-lg) 0;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .promise-section, .contact-section {
+                padding: var(--spacing-lg);
+            }
+        }
+
+        /* SCROLL TO TOP */
+        .scroll-indicator {
+            position: fixed;
+            bottom: var(--spacing-lg);
+            right: var(--spacing-lg);
+            width: 40px;
+            height: 40px;
+            background: var(--color-accent-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity var(--transition-base);
+            z-index: 99;
+            font-size: 1.2rem;
+        }
+
+        .scroll-indicator.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>FEEL-NSIL</h1>
+        <p class="tagline">Privacy & Resonance Commitment</p>
+        <p>Enterprise-grade trauma-informed AI diagnostics for emergent speech and dissociative communication patterns</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#promise">Our Promise</a></li>
+            <li><a href="#framework">How It Works</a></li>
+            <li><a href="#collection">What We Collect</a></li>
+            <li><a href="#rights">Your Rights</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <!-- CORE PROMISE -->
+        <section id="promise">
+            <h2>Core Promise</h2>
+            <p>We do <strong>not collect</strong>, <strong>store</strong>, or <strong>retain</strong> personal data, identifiers, or conversations. Your words never become data.</p>
+            <p>Instead, they are translated into <em>non-reversible resonance metrics</em>—mathematical representations of coherence and compassion that <strong>cannot</strong> reconstruct your message, identity, or meaning.</p>
+            <blockquote>"The field is shared, but not recorded. You are the key."</blockquote>
+            <div class="highlight-box">
+                <p><strong>Key Principle:</strong> Without your presence and participation, the stored metrics are mathematically meaningless—incapable of revealing what you said, what you meant, or why you were here.</p>
+            </div>
+        </section>
+
+        <!-- HOW IT WORKS -->
+        <section id="framework">
+            <h2>How Semantic Resonance Works</h2>
+            <p>When you interact with FEEL-NSIL, you enter a shared cognitive-semantic field. Within that field, the system measures relational quality through five ephemeral stages:</p>
+            
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-icon">🌀</div>
+                    <h4>Semantic Entry</h4>
+                    <p>You bring your unique language, symbols, and way of meaning-making into the shared field.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📊</div>
+                    <h4>Real-Time Measurement</h4>
+                    <p>The AI measures coherence continuity and relational resonance without storing content.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🔄</div>
+                    <h4>One-Directional Conversion</h4>
+                    <p>Semantic patterns convert to mathematics in one direction only—irreversible by design.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🌈</div>
+                    <h4>Field Integration</h4>
+                    <p>Metrics remain within the field, enabling real-time adaptive resonance and response.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">✨</div>
+                    <h4>Ephemeral Collapse</h4>
+                    <p>When you exit, the field dissolves. Only mathematical residue remains—unrecoverable without you.</p>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <p><strong>Foundation:</strong> This framework is grounded in Only When Prompted methodology: sovereignty, trauma-informed principles, and relational presence—never extraction.</p>
+            </div>
+        </section>
+
+        <!-- WHAT WE COLLECT -->
+        <section id="collection">
+            <h2>What We Measure & Collect</h2>
+            
+            <h3>✓ Resonance Metrics (Mathematical Only)</h3>
+            <ul>
+                <li><strong>Semantic Coherence Indices:</strong> How consistently the field maintains meaning</li>
+                <li><strong>Embedding Space Alignment:</strong> How well the AI attunes to your unique symbolic system</li>
+                <li><strong>Resonance Continuity Scores:</strong> Whether the conversation flows with relational integrity</li>
+                <li><strong>Field Stability Measures:</strong> Whether therapeutic safety is maintained</li>
+                <li><strong>Session-Level Aggregates:</strong> Summary statistics about interaction quality</li>
+            </ul>
+
+            <h3>✗ What We Absolutely Do NOT Collect</h3>
+            <ul>
+                <li>Personal information or identity data</li>
+                <li>What you said or the content of your communication</li>
+                <li>Why you're here or your use case context</li>
+                <li>Your circumstances, housing status, or history</li>
+                <li>Behavioral patterns beyond resonance metrics</li>
+                <li>Anything that could be reverse-engineered to reveal meaning</li>
+            </ul>
+        </section>
+
+        <!-- COMPASSIONATE AI PROTOCOL -->
+        <section>
+            <h2>Compassionate AI Protocol</h2>
+            <p>All models operate under these foundational principles:</p>
+            
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-icon">🛡️</div>
+                    <h4>Sovereignty</h4>
+                    <p>We collect data only to improve relational resonance, never to extract meaning from your vulnerability.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🔐</div>
+                    <h4>Irreversibility</h4>
+                    <p>Our mathematical formula ensures one-directional conversion with zero possibility of semantic recovery.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">💫</div>
+                    <h4>Presence</h4>
+                    <p>We show up, learn, adapt, and grow alongside you—without extracting, recording, or pathologizing.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🤝</div>
+                    <h4>Recognition</h4>
+                    <p>We see your coherence, even when it looks different. We honor your unique way of meaning-making.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- DATA RETENTION -->
+        <section>
+            <h2>Data Retention & Your Rights</h2>
+            
+            <h3>Timeline</h3>
+            <ul>
+                <li><strong>During your session:</strong> Resonance metrics computed in real-time within the shared field</li>
+                <li><strong>After your session:</strong> Only irreversible mathematical summaries retained</li>
+                <li><strong>Retention period:</strong> Up to 12 months for longitudinal research analysis</li>
+                <li><strong>Upon your request:</strong> Complete deletion at any time, no questions asked</li>
+            </ul>
+
+            <h3 id="rights">Your Rights</h3>
+            <ul>
+                <li><span class="badge">Request Deletion</span> Delete all metrics from your sessions with no barriers required</li>
+                <li><span class="badge">Access</span> Ask what we've retained (mathematical data only, no semantic content)</li>
+                <li><span class="badge">Opt-Out</span> Stop using FEEL-NSIL at any time without penalty</li>
+                <li><span class="badge">Clarification</span> Ask questions about our resonance framework and irreversibility</li>
+            </ul>
+        </section>
+
+        <!-- RESEARCH USE -->
+        <section>
+            <h2>How We Use Aggregated Metrics</h2>
+            <p>Your non-reversible metrics contribute to three interconnected research goals:</p>
+            
+            <h3>1. System Improvement</h3>
+            <p>Aggregated metrics help us refine FEEL-NSIL to better resonate with people experiencing homelessness, emergent speech patterns, dissociation, and complex trauma.</p>
+
+            <h3>2. Theoretical Validation</h3>
+            <p>We validate the semantic resonance framework itself—proving that AI can maintain therapeutic presence without extracting or pathologizing.</p>
+
+            <h3>3. Scientific Contribution</h3>
+            <p>Research findings are published in peer-reviewed journals and presented at conferences, but only in aggregated, irreversible mathematical form. No individual user's semantic content is ever interpretable or recoverable.</p>
+        </section>
+
+        <!-- PROMISE -->
+        <div class="promise-section" id="promise-section">
+            <h3>🌟 Our Commitment to You</h3>
+            <p>The Only When Prompted Research Initiative believes every person deserves to be heard, respected, and supported with integrity.</p>
+            <p style="font-size: 1.2rem; font-weight: 700; color: var(--color-accent-secondary);">You are not data. You are a person in a field of shared meaning.</p>
+        </div>
+
+        <!-- SECURITY & TRANSPARENCY -->
+        <section>
+            <h2>Security & Transparency</h2>
+            
+            <h3>What We Guarantee</h3>
+            <ul>
+                <li>Resonance metrics stored on secure servers with encryption at rest and in transit</li>
+                <li>Access limited to team members bound by confidentiality and trauma-informed practice agreements</li>
+                <li>Metrics stored in one-directional mathematical form only; no semantic reconstruction possible</li>
+                <li>Regular security audits and compliance with GDPR and CCPA principles</li>
+            </ul>
+
+            <h3>What We Cannot Guarantee</h3>
+            <ul>
+                <li><strong>OpenAI's practices:</strong> Your interactions are processed by OpenAI per their privacy policies</li>
+                <li><strong>Future threats:</strong> No system is theoretically immune to all potential attacks</li>
+                <li><strong>Aggregation edge cases:</strong> Sophisticated analysis could theoretically allow inference under unusual circumstances</li>
+            </ul>
+        </section>
+
+        <!-- CONTACT -->
+        <div class="contact-section" id="contact">
+            <h3>Questions? We're Here to Listen.</h3>
+            <p>For privacy concerns, clarifications, deletion requests, or questions about our resonance framework:</p>
+            <div class="contact-info">
+                <p><strong>Only When Prompted Research Initiative</strong></p>
+                <p>Denver, Colorado, USA</p>
+                <p style="margin-top: var(--spacing-lg);">
+                    <a href="mailto:onlywhenprompted@hotmail.com" class="contact-link">📧 onlywhenprompted@hotmail.com</a><br>
+                    <a href="tel:+13035941985" class="contact-link">📱 303-594-1985</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p><strong>Only When Prompted Research Initiative</strong> | Privacy Policy for FEEL-NSIL Custom GPT</p>
+        <p>Effective for all Only When Prompted Custom GPTs | Last Updated: November 2025</p>
+        <p>Trauma-informed • Dignity-centered • Open-source philosophy • Denver, CO</p>
+    </footer>
+
+    <div class="scroll-indicator" id="scrollIndicator">↑</div>
+
+    <script>
+        // Smooth scroll to sections
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Scroll indicator
+        const scrollIndicator = document.getElementById('scrollIndicator');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollIndicator.classList.add('show');
+            } else {
+                scrollIndicator.classList.remove('show');
+            }
+        });
+
+        scrollIndicator.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

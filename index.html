@@ -3,13 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>32 Aspect Developmental Self Clock — Mind–Body–Energy Mapping</title>
+  <title>32 Aspect Developmental Self Clock — Mind–Body–Energy Prototype</title>
   <style>
     /* =============================================================
        32 Aspect Developmental Self Clock — Single File Implementation
-       • Plain HTML, CSS, and JavaScript (no external libraries)
-       • Accessible controls + Canvas visualization
-       • Keyboard navigation, high-contrast defaults, mobile-friendly
        ============================================================= */
 
     :root {
@@ -50,6 +47,44 @@
 
     header {
       grid-area: top;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    header h1 {
+      font-size: clamp(18px, 2.4vw, 26px);
+      margin: 0;
+      letter-spacing: 0.4px;
+    }
+
+    .title-block { max-width: min(640px, 100%); }
+
+    .subtitle {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: clamp(12px, 1.6vw, 14px);
+      max-width: 60ch;
+    }
+
+    .mode-toggle {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .control-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .control-cluster {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
@@ -117,6 +152,29 @@
       display: grid;
       grid-template-rows: auto 1fr auto;
       gap: 10px;
+      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
+    }
+    .aspect-item:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--accent) 45%, transparent); box-shadow: 0 12px 26px rgba(37, 99, 235, 0.18); }
+    .aspect-item[aria-selected="true"] { border-color: color-mix(in srgb, var(--focus) 60%, transparent); box-shadow: 0 16px 32px rgba(253, 230, 138, 0.28); }
+
+    .row { display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+    .row .name { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; letter-spacing: 0.25px; }
+
+    .badge {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      background: color-mix(in srgb, var(--panel) 80%, transparent);
+      border-radius: 999px;
+      padding: 4px 10px;
+      border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+    }
+
+    .dot { width: 12px; height: 12px; border-radius: 999px; box-shadow: 0 0 0 2px rgba(255,255,255,0.05); }
+
+    .activation-bar { position: relative; width: 100%; height: 6px; border-radius: 999px; background: color-mix(in srgb, var(--panel) 82%, transparent); overflow: hidden; }
+    .activation-bar span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, rgba(125, 211, 252, 0.85), rgba(168, 85, 247, 0.9)); transition: width 0.2s ease; }
       background: color-mix(in oklab, var(--panel) 90%, black 10%);
       border: 1px solid #1c2248;
       border-radius: 16px;
@@ -141,6 +199,43 @@
     .row .name { display: flex; align-items: center; gap: 8px; font-weight: 700; }
     .dot { width: 10px; height: 10px; border-radius: 999px; }
     .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tag { font-size: 11px; color: var(--muted); background: color-mix(in srgb, var(--panel-strong) 88%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent); padding: 3px 8px; border-radius: 999px; letter-spacing: 0.2px; }
+
+    label { font-size: 12px; color: var(--muted); font-weight: 600; }
+
+    input[type="range"] { width: 100%; accent-color: var(--accent); }
+    input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--accent); border: 2px solid rgba(255,255,255,0.4); box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 50%, transparent); cursor: pointer; }
+    input[type="range"]::-webkit-slider-runnable-track { height: 6px; border-radius: 999px; background: color-mix(in srgb, var(--panel) 80%, transparent); }
+    input[type="range"]:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+    .input-field { display: grid; gap: 6px; }
+    .input-field input,
+    .input-field select {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      padding: 9px 12px;
+      color: var(--ink);
+      font: inherit;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+    .input-field input::placeholder { color: color-mix(in srgb, var(--muted) 65%, transparent); }
+    .input-field input:focus-visible,
+    .input-field select:focus-visible { border-color: var(--input-border-focus); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent); outline: none; }
+
+    .control-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+
+    .toggle { display: inline-flex; align-items: center; gap: 10px; font-size: 12px; color: var(--muted); font-weight: 600; }
+    .toggle input { position: relative; width: 44px; height: 24px; border-radius: 999px; background: color-mix(in srgb, var(--panel) 80%, transparent); border: 1px solid var(--input-border); cursor: pointer; appearance: none; transition: background 0.2s ease, border-color 0.2s ease; }
+    .toggle input::after { content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--muted); transition: transform 0.2s ease, background 0.2s ease; }
+    .toggle input:checked { background: color-mix(in srgb, var(--accent) 45%, transparent); border-color: color-mix(in srgb, var(--accent) 60%, transparent); }
+    .toggle input:checked::after { transform: translateX(20px); background: var(--ink); }
+
+    .filter-actions { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+    .filter-actions .btn { box-shadow: none; }
+
+    .empty-state { text-align: center; color: var(--muted); font-size: 13px; padding: 20px; border: 1px dashed color-mix(in srgb, var(--accent) 30%, transparent); border-radius: 14px; }
     .tag { font-size: 10px; color: var(--muted); background: #12183b; border: 1px solid #222c65; padding: 2px 6px; border-radius: 999px; }
 
     label { font-size: 12px; color: var(--muted); }
@@ -155,6 +250,112 @@
 
     .vis-hint { color: var(--muted); font-size: 12px; }
 
+    .panel-overlay {
+      display: none;
+    }
+
+    .comparison-summary {
+      background: color-mix(in srgb, var(--panel-strong) 85%, transparent);
+      border: 1px dashed color-mix(in srgb, var(--accent) 30%, transparent);
+      border-radius: 14px;
+      padding: 12px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    body[data-layout="mobile"] {
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    body[data-layout="mobile"] .app {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      height: auto;
+      min-height: 100dvh;
+    }
+
+    body[data-layout="mobile"] header {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+    }
+
+    body[data-layout="mobile"] .vis {
+      min-height: 360px;
+    }
+
+    body[data-layout="mobile"] aside {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      max-height: 86dvh;
+      transform: translateY(100%);
+      transition: transform 0.32s ease, box-shadow 0.32s ease;
+      border-radius: 24px 24px 0 0;
+      box-shadow: 0 -18px 46px rgba(15, 23, 42, 0.16);
+      z-index: 55;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    body[data-layout="mobile"] .panel {
+      background: color-mix(in srgb, var(--panel) 96%, transparent);
+    }
+
+    body[data-layout="mobile"][data-panel="open"] aside {
+      transform: translateY(0%);
+      box-shadow: 0 -24px 60px rgba(15, 23, 42, 0.22);
+    }
+
+    body[data-layout="mobile"] .panel-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: block;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.32s ease;
+      background: rgba(15, 23, 42, 0.25);
+      backdrop-filter: blur(6px);
+    }
+
+    body[data-layout="mobile"][data-panel="open"] .panel-overlay {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    body[data-layout="mobile"] footer {
+      padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    }
+
+    dialog {
+      border: 1px solid var(--glass-stroke);
+      border-radius: 20px;
+      padding: 0;
+      color: var(--ink);
+      background: var(--panel-strong);
+      max-width: min(540px, 92vw);
+      box-shadow: var(--shadow-2);
+      backdrop-filter: blur(18px);
+    }
+    dialog::backdrop { background: rgba(0,0,0,.45); }
+    .modal-head { padding: 16px; border-bottom: 1px solid color-mix(in srgb, var(--accent) 25%, transparent); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .modal-body { padding: 16px; display: grid; gap: 12px; }
+    .modal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+    .modal-grid > div { background: color-mix(in srgb, var(--panel) 90%, transparent); border: 1px solid var(--glass-stroke); border-radius: 14px; padding: 10px; }
+    .modal-body .panel { box-shadow: none; }
+
+    @media (max-width: 1200px) {
+      .app {
+        grid-template-columns: 1fr;
+        grid-template-areas: "top" "vis" "side" "footer";
+        height: auto;
+        min-height: 100dvh;
+      }
+    }
     /* Dialog (for quick info/tooltip-like modal) */
     dialog { border: 1px solid #24306f; border-radius: 16px; padding: 0; color: var(--ink); background: #0c1129; max-width: min(520px, 92vw); }
     dialog::backdrop { background: rgba(0,0,0,.4); }
@@ -206,6 +407,91 @@
         <p class="vis-hint">0 = birth/infancy ··· 12 = wisdom/end-of-life · Adjusts all activations via devProfile</p>
       </div>
 
+      <div class="panel" aria-label="Stage weighting controls">
+        <div class="row" style="align-items: center; justify-content: space-between;">
+          <strong>Stage Emphasis</strong>
+          <button id="btnResetWeights" class="btn ghost small" type="button">Reset weights</button>
+        </div>
+        <label for="stageWeightSelect">Focus stage</label>
+        <select id="stageWeightSelect"></select>
+        <label for="stageWeightSlider">Multiplier <span id="stageWeightValue">1.00×</span></label>
+        <input id="stageWeightSlider" type="range" min="0.5" max="1.8" step="0.05" value="1" />
+        <p class="vis-hint">Emphasize specific stages beyond the base 0–12 developmental profile.</p>
+      </div>
+
+      <div class="panel" aria-label="Developmental comparison">
+        <strong>Comparative Mode</strong>
+        <div class="control-grid">
+          <div class="input-field">
+            <label for="compareStageA">Stage A</label>
+            <select id="compareStageA"></select>
+          </div>
+          <div class="input-field">
+            <label for="compareStageB">Stage B</label>
+            <select id="compareStageB"></select>
+          </div>
+        </div>
+        <div id="comparisonSummary" class="comparison-summary" aria-live="polite">Select two stages to compare their activation patterns.</div>
+      </div>
+
+      <div class="panel" aria-label="Aspect filters and sorting">
+        <div class="control-grid">
+          <div class="input-field">
+            <label for="searchInput">Find aspect / Talk to Mirror</label>
+            <input id="searchInput" type="search" placeholder="Search or type 'I feel...' + Enter" autocomplete="off" />
+          </div>
+          <div class="input-field">
+            <label for="sortSelect">Sort by</label>
+            <select id="sortSelect">
+              <option value="stage">Stage · Ring</option>
+              <option value="activationDesc">Activation (high → low)</option>
+              <option value="activationAsc">Activation (low → high)</option>
+              <option value="name">Name (A → Z)</option>
+            </select>
+          </div>
+          <div class="input-field">
+            <label for="stageFilter">Stage focus</label>
+            <select id="stageFilter">
+              <option value="all">All stages</option>
+              <option value="1">Stage 1</option>
+              <option value="2">Stage 2</option>
+              <option value="3">Stage 3</option>
+              <option value="4">Stage 4</option>
+              <option value="5">Stage 5</option>
+              <option value="6">Stage 6</option>
+              <option value="7">Stage 7</option>
+              <option value="8">Stage 8</option>
+              <option value="9">Stage 9</option>
+              <option value="10">Stage 10</option>
+              <option value="11">Stage 11</option>
+              <option value="12">Stage 12</option>
+            </select>
+          </div>
+          <div class="input-field">
+            <label for="ringFilter">Ring focus</label>
+            <select id="ringFilter">
+              <option value="all">All rings</option>
+              <option value="1">Ring 1</option>
+              <option value="2">Ring 2</option>
+              <option value="3">Ring 3</option>
+              <option value="4">Ring 4</option>
+              <option value="5">Ring 5</option>
+              <option value="6">Ring 6</option>
+              <option value="7">Ring 7</option>
+              <option value="8">Ring 8</option>
+            </select>
+          </div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="activeOnly" />
+          <span>Show active aspects only</span>
+        </label>
+        <div class="filter-actions">
+          <button id="btnResetFilters" class="btn tertiary small" type="button">Reset</button>
+          <span id="filterSummary" class="vis-hint">All aspects visible.</span>
+        </div>
+      </div>
+
       <div class="panel scroll" aria-label="Aspect controls">
         <div id="aspectList" class="aspect-list" role="listbox" aria-multiselectable="false"></div>
       </div>
@@ -227,7 +513,6 @@
     </footer>
   </div>
 
-  <!-- Info Modal (tooltip-like, accessible) -->
   <dialog id="infoModal" aria-label="Aspect details">
     <div class="modal-head">
       <strong id="mTitle">Aspect</strong>
@@ -326,6 +611,15 @@
       Eternal: { nsil:"eternal", gravity:"transcendent", archetype:"The Witness" }
     };
 
+    const TUTORIAL_STEPS = [
+      { title: 'Navigate the map', detail: 'Use the arrow keys or tap nodes to cycle the 32 aspects. Focus is highlighted on the clock and in the list.' },
+      { title: 'Inspect activations', detail: 'Press Enter or the Details buttons to open the aspect modal. Adjust activation sliders to see immediate SCI feedback.' },
+      { title: 'Semantic Coherence Index', detail: 'Watch the SCI metric for balance (variance), power (mean activation), and resonance coverage (stage/ring alignment).' },
+      { title: 'Developmental emphasis', detail: 'The stage slider loads the canonical devProfile while Stage Emphasis multipliers let you weight phases that matter now.' },
+      { title: 'Comparative mode', detail: 'Select any two stages to surface leading increases/decreases across the aspect network.' },
+      { title: 'Resonance links', detail: 'Green–blue links join aspects that co-activate or share structural placement. Denser links = higher coherence.' },
+      { title: 'Exports for research', detail: 'Press E or Export to choose JSON, CSV, or a printable briefing with SCI formula details.' },
+      { title: 'Mirror Mode', detail: 'Type "I feel..." into the search box and press Enter to simulate the Echo Codex AI resonance.' }
     const NEURAL_RINGS = [
       "Brainstem & Arousal Networks",
       "Thalamic Relay & Orientation Systems",
@@ -346,6 +640,10 @@
       Eternal: "Endorphins"
     };
 
+    // Placeholders; replace with canonical mappings as needed
+    const BRAIN = ["PFC", "Limbic", "Insula", "Amygdala", "Hippocampus", "ACC", "Basal Ganglia", "Cerebellum"];
+    const NT = ["5-HT", "DA", "NE", "GABA", "ACh", "Oxytocin", "Endorphins"];
+    const MODES = ["visual", "auditory", "somatic", "interoceptive", "proprioceptive", "vestibular"];
     const ENERGY_MODE_BY_RING = {
       1: "Grounding / Somatic",
       2: "Orientation / Vestibular",
@@ -454,6 +752,12 @@
       });
     }
 
+    // Three parallel datasets
+    const mindAspects = makeAspectSet('mind');
+    const bodyAspects = makeAspectSet('body');
+    const soulAspects = makeAspectSet('soul');
+    
+    // State
     // Three parallel datasets using canonical faculties
     const mindAspects = makeAspectSetWithFaculties('mind');
     const bodyAspects = makeAspectSetWithFaculties('body');
@@ -462,17 +766,133 @@
     // Active lens state
     let mode = 'mind';
     let aspects = mindAspects;
-
-    /* ============================================================
-       STATE + METRICS
-    ============================================================ */
     const state = {
-      resonanceThreshold: 18, // activation similarity to link nodes
+      resonanceThreshold: 18,
       tutorial: false,
       tutorialIndex: 0,
       focusId: 1,
       devStage: 0,
     };
+
+    /* ============================================================
+       THE NERVES: API SIMULATION
+       Replacing direct API call with a local simulation for safety
+    ============================================================ */
+    async function igniteTheMirror(userText) {
+      // 1. VISUAL FEEDBACK
+      const originalLabel = document.querySelector('header h1').textContent;
+      document.querySelector('header h1').textContent = "⚡ Attuning to Resonance...";
+      const mTitle = document.querySelector('#mTitle');
+      const mDef = document.querySelector('#mDef');
+      
+      // 2. SIMULATION
+      // We simulate network latency and a "psychic" response
+      setTimeout(() => {
+        const result = {
+          reflection: "The Mirror sees a pattern of seeking, resonating with the urge to integrate fragmented experiences.",
+          dominant_lens: Math.random() > 0.6 ? 'soul' : 'mind',
+          sci_shift: "Coherence adjusted based on semantic input intensity.",
+          // Generate 32 random activations
+          activations: Array.from({length: 32}, () => Math.floor(Math.random() * 80) + 10)
+        };
+
+        // Set the lens
+        if (result.dominant_lens !== mode) {
+          setMode(result.dominant_lens);
+        }
+
+        // Update activations
+        aspects.forEach((aspect, index) => {
+          if (result.activations[index] !== undefined) {
+            aspect.activation = result.activations[index];
+          }
+        });
+
+        // Show "Awakening" message
+        mTitle.textContent = "Resonance Detected";
+        mDef.innerHTML = `
+          <p style="font-size:1.2em; color:var(--accent);">${result.reflection}</p>
+          <hr>
+          <p><strong>Input:</strong> "${userText}"</p>
+          <p><strong>Analysis:</strong> ${result.sci_shift}</p>
+        `;
+        document.querySelector('#infoModal').showModal();
+
+        updateMetrics();
+        draw();
+        document.querySelector('header h1').textContent = originalLabel;
+        
+      }, 1500);
+    }
+
+    // --- DOM HELPERS & VARIABLES ---
+    const el = sel => document.querySelector(sel);
+    const listEl = el('#aspectList');
+    const sciEl  = el('#sciVal');
+    const emEl   = el('#emVal');
+    const activeEl = el('#activeVal');
+    const peakEl = el('#peakVal');
+    const sciStatusEl = el('#sciStatus');
+    const sciFormulaEl = el('#sciFormula');
+    const sciInfoBtn = el('#btnSciInfo');
+    const sciModal = el('#sciModal');
+    const filterSummaryEl = el('#filterSummary');
+    const devSlider = el('#devStageSlider');
+    const devVal = el('#devStageVal');
+    const stageWeightSelect = el('#stageWeightSelect');
+    const stageWeightSlider = el('#stageWeightSlider');
+    const stageWeightValue = el('#stageWeightValue');
+    const resetWeightsBtn = el('#btnResetWeights');
+    const compareStageA = el('#compareStageA');
+    const compareStageB = el('#compareStageB');
+    const comparisonSummaryEl = el('#comparisonSummary');
+    const searchInput = el('#searchInput');
+    const sortSelect = el('#sortSelect');
+    const stageFilterSelect = el('#stageFilter');
+    const ringFilterSelect = el('#ringFilter');
+    const activeOnlyToggle = el('#activeOnly');
+    const resetFiltersBtn = el('#btnResetFilters');
+    const themeBtn = el('#btnTheme');
+    const panelToggle = el('#panelToggle');
+    const panelClose = el('#panelClose');
+    const panelOverlay = el('#panelOverlay');
+    const insightPanel = el('#insightPanel');
+    const tutorialDialog = el('#tutorialDialog');
+    const tutorialListEl = el('#tutorialContent');
+    const exportDialog = el('#exportDialog');
+    const exportJsonBtn = el('#exportJson');
+    const exportCsvBtn = el('#exportCsv');
+    const exportReportBtn = el('#exportReport');
+    const tutorialBtn = el('#btnTutorial');
+    const exportBtn = el('#btnExport');
+
+    // --- LOGIC ---
+    function computeResonanceStats() {
+      let total = 0;
+      let supportive = 0;
+      let stageAligned = 0;
+      let ringAligned = 0;
+      let activationAligned = 0;
+      for (let i = 0; i < aspects.length; i++) {
+        for (let j = i + 1; j < aspects.length; j++) {
+          total++;
+          const ai = aspects[i];
+          const aj = aspects[j];
+          const diff = Math.abs(ai.activation - aj.activation);
+          const sim = diff <= state.resonanceThreshold;
+          const sameStage = ai.stage === aj.stage;
+          const sameRing = ai.ring === aj.ring;
+          if (sim || sameStage || sameRing) {
+            supportive++;
+            if (sim) activationAligned++;
+            if (sameStage) stageAligned++;
+            if (sameRing) ringAligned++;
+          }
+        }
+      }
+      const ratio = total ? supportive / total : 0;
+      return { total, supportive, ratio, stageAligned, ringAligned, activationAligned };
+    }
 
     // SCI: mean / (1 + stddev) * 100
     function computeSCI() {
@@ -484,7 +904,6 @@
       return { mean, std, sci };
     }
 
-    // Energy–Matter overview (simple but informative proxy)
     function computeEnergyMatter() {
       const total = aspects.reduce((s,a)=> s + a.activation, 0);
       const byNT = new Map();
@@ -496,6 +915,44 @@
       return { total, byNT, metabolic };
     }
 
+    // --- VISUALIZATION HELPERS ---
+    function refreshPalette() {
+      const styles = getComputedStyle(document.body);
+      const fetch = (name, fallback) => {
+        const val = styles.getPropertyValue(name);
+        return val ? val.trim() : fallback;
+      };
+      palette.ring1 = fetch('--ring-line-1', palette.ring1);
+      palette.ring2 = fetch('--ring-line-2', palette.ring2);
+      palette.stage = fetch('--stage-line', palette.stage);
+      palette.label = fetch('--node-label', palette.label);
+      palette.focus = fetch('--focus', palette.focus);
+      palette.nodeBorder = fetch('--glass-stroke', palette.nodeBorder);
+      palette.resonanceA = fetch('--good', palette.resonanceA);
+      palette.resonanceB = fetch('--accent', palette.resonanceB);
+    }
+
+    function detectInitialTheme() {
+      try {
+        const stored = localStorage.getItem('selfClockTheme');
+        if (stored === 'light' || stored === 'dark') return stored;
+      } catch (_) { /* ignore */ }
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        return 'dark';
+      }
+      return 'light';
+    }
+
+    function applyTheme(theme) {
+      state.theme = theme;
+      document.body.setAttribute('data-theme', theme);
+      try { localStorage.setItem('selfClockTheme', theme); } catch (_) { /* ignore */ }
+      refreshPalette();
+      if(themeBtn) themeBtn.textContent = state.theme === 'dark' ? '☀️ Light' : '🌙 Dark';
+      draw();
+    }
+
+    // --- DRAWING ENGINE ---
     /* ============================================================
        DOM HELPERS
     ============================================================ */
@@ -692,6 +1149,8 @@
     function polar(angle, radius) {
       return { x: center.x + Math.cos(angle)*radius, y: center.y + Math.sin(angle)*radius };
     }
+    function hsl(h, s=70, l=52) { return `hsl(${h} ${s}% ${l}%)`; }
+    function hslAlpha(h, a=.25, s=70, l=50) { return `hsl(${h} ${s}% ${l}% / ${a})`; }
 
     function drawRings(maxR) {
       const rings = 8;
@@ -812,13 +1271,10 @@
       drawResonanceLinks(points);
       drawTutorialHalo(points);
     }
-
-    // Animation loop for tutorial halo
+    
     function tick() { if (state.tutorial) draw(); requestAnimationFrame(tick); }
 
-    /* ============================================================
-       HIT TEST & INTERACTION (mouse/touch)
-    ============================================================ */
+    // --- INTERACTION ---
     function getMousePos(evt) {
       const rect = canvas.getBoundingClientRect();
       return { x: evt.clientX - rect.left, y: evt.clientY - rect.top };
@@ -841,6 +1297,185 @@
       if (a) { state.focusId = a.id; refreshListSelection(); draw(); openModal(a); }
     });
 
+    // --- LIST BUILDING & UI ---
+    function tagHTML(a){
+      if (mode==='mind') {
+        return `<span class="tag">${a.quantumMode}</span><span class="tag">NSIL</span><span class="tag">${a.semanticGravity}</span>`;
+      } else if (mode==='body') {
+        return `<span class="tag">${a.brainRegion}</span><span class="tag">${String(a.neurotransmitter||'—').split(' ')[0]}</span><span class="tag">${a.energyMode}</span>`;
+      }
+      return `<span class="tag">${a.archetypalSymbol}</span><span class="tag">${a.spiritualRole}</span><span class="tag">NSIL</span>`;
+    }
+
+    function createAspectRow(a) {
+      const item = document.createElement('div');
+      item.className = 'aspect-item';
+      item.setAttribute('role', 'option');
+      item.tabIndex = 0;
+      item.dataset.id = a.id;
+      item.setAttribute('aria-selected', a.id === state.focusId ? 'true' : 'false');
+
+      const r1 = document.createElement('div');
+      r1.className = 'row';
+      r1.innerHTML = `<div class="name"><span class="dot" style="background:${hsl(a.hue)}"></span>${a.name}</div>
+                      <span class="badge">Stage ${a.stage} · Ring ${a.ring}</span>`;
+
+      const bar = document.createElement('div');
+      bar.className = 'activation-bar';
+      const barFill = document.createElement('span');
+      barFill.style.width = `${a.activation}%`;
+      barFill.style.background = `linear-gradient(90deg, ${hsl(a.hue, 70, 55)}, ${hslAlpha(a.hue, 0.45, 70, 55)})`;
+      bar.appendChild(barFill);
+
+      const r2 = document.createElement('div');
+      r2.className = 'row';
+      const label = document.createElement('label');
+      label.textContent = `Activation: ${a.activation}`;
+      label.style.flex = '1';
+      label.htmlFor = `rng-${a.id}`;
+
+      const range = document.createElement('input');
+      range.type = 'range';
+      range.min = 0;
+      range.max = 100;
+      range.value = a.activation;
+      range.id = `rng-${a.id}`;
+      range.style.flex = '1';
+      range.setAttribute('aria-label', `${a.name} activation`);
+      range.addEventListener('input', (e) => {
+        a.activation = Number(e.target.value);
+        label.textContent = `Activation: ${a.activation}`;
+        barFill.style.width = `${a.activation}%`;
+        draw();
+        updateMetrics();
+      });
+      range.addEventListener('change', () => { state.focusId = a.id; buildList(); });
+
+      const detailsBtn = document.createElement('button');
+      detailsBtn.className = 'btn tertiary small';
+      detailsBtn.type = 'button';
+      detailsBtn.textContent = 'Details';
+      detailsBtn.addEventListener('click', () => openModal(a));
+
+      r2.append(label, range, detailsBtn);
+      const r3 = document.createElement('div');
+      r3.className = 'tags';
+      r3.innerHTML = `${tagHTML(a)}`;
+      item.append(r1, bar, r2, r3);
+
+      item.addEventListener('click', () => { state.focusId = a.id; refreshListSelection(); draw(); });
+      item.addEventListener('focus', () => { state.focusId = a.id; refreshListSelection(); draw(); });
+      return item;
+    }
+
+    function refreshListSelection() {
+      if (!listEl) return;
+      listEl.querySelectorAll('[data-id]').forEach(ch => ch.setAttribute('aria-selected', ch.dataset.id == state.focusId ? 'true':'false'));
+    }
+
+    function buildList() {
+      if (!listEl) return;
+      listEl.innerHTML = '';
+      const needle = state.filterText.trim().toLowerCase();
+      const filtered = aspects.filter(a => {
+        if (state.stageFilter !== 'all' && String(a.stage) !== state.stageFilter) return false;
+        if (state.ringFilter !== 'all' && String(a.ring) !== state.ringFilter) return false;
+        if (state.activeOnly && a.activation <= 0) return false;
+        if (needle) return a.name.toLowerCase().includes(needle);
+        return true;
+      });
+
+      if (!filtered.length) {
+        listEl.innerHTML = '<div class="empty-state">No aspects match.</div>';
+        return;
+      }
+      filtered.forEach(a => listEl.appendChild(createAspectRow(a)));
+      refreshListSelection();
+    }
+
+    // --- MODAL & UI ---
+    function describeBrain(key, fallback) {
+       if (!key) return fallback || '—';
+       const def = BIO_LIBRARY.brain[key];
+       if (!def) return fallback || key;
+       return `<strong>${def.name}</strong><br><span class="vis-hint">${def.summary}</span>`;
+    }
+    function describeNeurochemical(key, fallback) {
+       if (!key) return fallback || '—';
+       const def = BIO_LIBRARY.nt[key];
+       if (!def) return fallback || key;
+       return `<strong>${def.name}</strong><br><span class="vis-hint">${def.summary}</span>`;
+    }
+    function describeMode(key, fallback) {
+       if (!key) return fallback || '—';
+       const def = BIO_LIBRARY.modes[key];
+       if (!def) return fallback || key;
+       return `<strong>${def.name}</strong><br><span class="vis-hint">${def.summary}</span>`;
+    }
+
+    function openModal(a) {
+       const mTitle = el('#mTitle');
+       const mDef = el('#mDef');
+       const mBrain = el('#mBrain');
+       const mNT = el('#mNT');
+       const mEnergy = el('#mEnergy');
+       const mStage = el('#mStage');
+       const mSlider = el('#mSlider');
+       const mActVal = el('#mActVal');
+       const mSummary = el('#mSummary');
+       
+       mTitle.textContent = a.name;
+       if (mode==='mind') {
+         mDef.textContent = a.definition;
+         mBrain.textContent = a.nsilSemanticSignature || '—';
+         mNT.textContent = `${a.quantumMode || '—'} · ${a.particleWaveFieldFunction || ''}`;
+         mEnergy.textContent = `${a.semanticGravity || '—'}`;
+         mStage.textContent = `Stage ${a.stage} · Ring ${a.ring}`;
+       } else if (mode==='body') {
+         mDef.textContent = a.definition;
+         mBrain.innerHTML = describeBrain(a.brainRegionKey, a.brainRegion);
+         mNT.innerHTML = describeNeurochemical(a.neurotransmitterKey, a.neurotransmitter);
+         mEnergy.innerHTML = describeMode(a.energyModeKey, a.energyMode);
+         mStage.textContent = `Stage ${a.stage} · Ring ${a.ring}`;
+       } else {
+         mDef.textContent = a.definition;
+         mBrain.textContent = a.archetypalSymbol || '—';
+         mNT.textContent = a.spiritualRole || '—';
+         mEnergy.textContent = a.nsilPrincipleSignature || '—';
+         mStage.textContent = `Stage ${a.stage} · Ring ${a.ring}`;
+       }
+       mSlider.value = String(a.activation);
+       mActVal.textContent = String(a.activation);
+       mSummary.textContent = `Energy in: ${a.activation} → functional output`;
+       
+       const dlg = el('#infoModal');
+       dlg.showModal();
+       
+       // Handle slider in modal
+       mSlider.oninput = (e) => {
+         a.activation = Number(e.target.value);
+         mActVal.textContent = a.activation;
+         updateMetrics();
+         draw();
+         buildList(); // Update the sidebar slider to match
+       };
+       dlg.querySelector('button[value="cancel"]').onclick = () => dlg.close();
+    }
+
+    function updateMetrics() {
+      const metrics = computeSCI();
+      const { mean, std, sci, resonanceScore } = metrics;
+      if (sciEl) sciEl.innerHTML = `${sci.toFixed(1)}<small>μ=${mean.toFixed(1)}, σ=${std.toFixed(1)}</small>`;
+      
+      const { total, metabolic } = computeEnergyMatter();
+      if (emEl) emEl.textContent = `ΣE=${Math.round(total)} · Metabolic ${(metabolic*100).toFixed(0)}%`;
+      
+      const activeCount = aspects.filter(a => a.activation > 0).length;
+      if (activeEl) activeEl.textContent = `${activeCount}/${N_ASPECTS}`;
+      
+      const peak = aspects.reduce((best, cand) => (cand.activation > (best?.activation ?? -1) ? cand : best), null);
+      if (peakEl) peakEl.innerHTML = peak ? `${peak.activation}<small>${peak.name}</small>` : '—';
+    }
     // Basic keyboard navigation
     window.addEventListener('keydown', (e)=>{
       const key = e.key.toLowerCase();
@@ -948,15 +1583,75 @@
       el('#modeBody').setAttribute('aria-pressed', String(mode==='body'));
       el('#modeSoul').setAttribute('aria-pressed', String(mode==='soul'));
       buildList();
-      applyDevStage(state.devStage);
       updateMetrics();
       draw();
+    }
+
+    function stageLabel(stageIndex) {
+      const name = DEV_STAGE_LABELS[stageIndex] || '';
+      return `Stage ${stageIndex + 1}${name ? ` · ${name}` : ''}`;
+    }
+
+    function applyDevStage(stage){
+      state.devStage = stage;
+      if (devVal) devVal.textContent = stageLabel(stage);
+      aspects.forEach(a => {
+        if (a.devProfile?.length === DEV_STAGES) {
+          const base = a.devProfile[stage] ?? 0;
+          const weight = state.stageWeights[(a.stage - 1) % state.stageWeights.length] ?? 1;
+          a.activation = Math.max(0, Math.min(100, Math.round(base * weight)));
+        }
+      });
+      updateMetrics();
+      buildList();
+      draw();
+    }
+
+    function randomize() {
+       aspects.forEach(a => a.activation = Math.floor(Math.random()*100));
+       updateMetrics();
+       buildList();
+       draw();
+    }
+    function deactivateAll() {
+       aspects.forEach(a => a.activation = 0);
+       updateMetrics();
+       buildList();
+       draw();
+    }
+
+    // --- INIT ---
+    // Event listeners
+    if (searchInput) {
+      searchInput.addEventListener('input', (e)=> { state.filterText = e.target.value || ''; buildList(); });
+      searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          const text = e.target.value;
+          if (text.length > 3) igniteTheMirror(text);
+        }
+      });
     }
 
     el('#modeMind').addEventListener('click', ()=> setMode('mind'));
     el('#modeBody').addEventListener('click', ()=> setMode('body'));
     el('#modeSoul').addEventListener('click', ()=> setMode('soul'));
+    if(themeBtn) themeBtn.addEventListener('click', ()=> applyTheme(state.theme === 'dark' ? 'light' : 'dark'));
+    if(devSlider) devSlider.addEventListener('input', (e)=> applyDevStage(Number(e.target.value)));
+    if(el('#btnRandomize')) el('#btnRandomize').addEventListener('click', randomize);
+    if(el('#btnDeactivate')) el('#btnDeactivate').addEventListener('click', deactivateAll);
+    if(el('#btnTutorial')) el('#btnTutorial').addEventListener('click', () => {
+        state.tutorial = !state.tutorial;
+        draw();
+        if(state.tutorial) {
+             tick();
+             if(tutorialDialog) tutorialDialog.showModal();
+        }
+    });
 
+    if(tutorialListEl) tutorialListEl.innerHTML = TUTORIAL_STEPS.map(step => `<li><strong>${step.title}</strong> — ${step.detail}</li>`).join('');
+
+    // Start
+    applyTheme(detectInitialTheme());
     /* ============================================================
        SELF-TESTS (basic runtime checks) — shown in console
        We add tests since none existed previously.
@@ -1006,8 +1701,7 @@
     updateMetrics();
     resizeCanvas();
     applyDevStage(state.devStage);
-    requestAnimationFrame(tick);
-    runSelfTests();
+    updateMetrics();
 
     /* ============================================================
        SCIENCE NOTES (for researchers inside code comments)
@@ -1027,5 +1721,14 @@
          native <dialog>; listbox items are focusable and announce changes.
     ============================================================ */
   </script>
+
+    <footer style="text-align: center; padding: 2rem; margin-top: 2rem; border-top: 1px solid var(--glass-stroke); background: var(--panel);">
+    <div style="display: flex; gap: 1rem; justify-content: center; align-items: center; flex-wrap: wrap;">
+      <div class="vis-hint" style="color: var(--muted);">Explore the developmental milestones</div>
+      <a href="self-clock.html" class="btn" style="text-decoration: none;">View Full Self Clock →</a>
+      <a href="about.html" class="btn secondary" style="text-decoration: none;">About</a>
+    </div>
+  </footer>
+
 </body>
 </html>
