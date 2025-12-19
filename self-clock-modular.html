@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>32 Aspect Self Clock · Modular Interactive | Adrian Lei Martinez-Conol</title>
+    <meta name="description" content="Interactive 32-Aspect Self Clock visualization with modular ES6 architecture. Explore harmonic rings, developmental stages, and resonance patterns.">
+    <meta name="author" content="Adrian Lei Martinez-Conol">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #B0C4DE;
+            margin-bottom: 5px;
+        }
+        
+        .author {
+            font-size: 1rem;
+            color: #87CEEB;
+            font-style: italic;
+        }
+        
+        .visualization {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            margin-bottom: 30px;
+        }
+        
+        #selfClockSVG {
+            display: block;
+            margin: 0 auto;
+            background: radial-gradient(circle, rgba(30, 60, 114, 0.8) 0%, rgba(15, 30, 57, 0.9) 100%);
+            border-radius: 10px;
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        #mindBtn {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000;
+        }
+        
+        #bodyBtn {
+            background: linear-gradient(135deg, #FF6B6B, #EE5A6F);
+            color: #fff;
+        }
+        
+        #soulBtn {
+            background: linear-gradient(135deg, #9D4EDD, #C77DFF);
+            color: #fff;
+        }
+        
+        #tutorialBtn, #shuffleBtn, #deactivateBtn, #exportBtn {
+            background: linear-gradient(135deg, #4A90E2, #357ABD);
+            color: #fff;
+        }
+        
+        footer {
+            margin-top: auto;
+            text-align: center;
+            padding: 20px;
+            color: #B0C4DE;
+        }
+        
+        footer a {
+            color: #FFD700;
+            text-decoration: none;
+            margin: 0 10px;
+            transition: color 0.3s ease;
+        }
+        
+        footer a:hover {
+            color: #FFA500;
+            text-decoration: underline;
+        }
+        
+        .badge {
+            display: inline-block;
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid #FFD700;
+            border-radius: 20px;
+            padding: 5px 15px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            color: #FFD700;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            #selfClockSVG {
+                width: 100% !important;
+                height: auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>32 Aspect Self Clock Interactive</h1>
+        <p class="subtitle">Mind–Body–Energy Mapping · Modular Architecture</p>
+        <p class="author">Adrian Lei Martinez-Conol</p>
+        <div class="badge">Only When Prompted Research Initiative</div>
+    </header>
+    
+    <main class="visualization">
+        <svg id="selfClockSVG" width="800" height="800"></svg>
+        
+        <div class="controls">
+            <button id="mindBtn">Mind</button>
+            <button id="bodyBtn">Body</button>
+            <button id="soulBtn">Soul</button>
+            <button id="tutorialBtn">Tutorial</button>
+            <button id="shuffleBtn">Shuffle</button>
+            <button id="deactivateBtn">Deactivate All</button>
+            <button id="exportBtn">Export JSON</button>
+        </div>
+    </main>
+    
+    <footer>
+        <p>&copy; 2025 Adrian Lei Martinez-Conol · Only When Prompted</p>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="self-clock.html">Self Clock (Monolithic)</a>
+            <a href="self-clock-modular.html">Self Clock (Modular)</a>
+        </nav>
+    </footer>
+    
+    <!-- Import modular ES6 JavaScript -->
+    <script type="module" src="./js/main.js"></script>
+</body>
+</html>
